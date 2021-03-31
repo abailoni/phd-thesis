@@ -1,0 +1,34 @@
+%!TEX root = ../main.tex
+
+\begin{itemize}
+\item  
+\item 
+\begin{align}
+&\min_{x  \in [0,1]^{|E|}} Q^p(x) = \\ 
+&= \min_{x \in [0,1]^{|E|}} \left[ Q_0(x) + \sum_{1 \leq k\leq t} \lambda_k^p Q_k(x) \right ] \\ 
+&= \min_{x \in [0,1]^{|E|}} \left[ Q_0(x) + \sum_{1 \leq k\leq t} \left|  \frac{\tilde{w}_k}{2 \tilde{w}_1} \right|^p  \sum_{e\in E_{k}} x_e \right ] \\ 
+&= \min_{x \in [0,1]^{|E|}} \left[ \min_{x \in \mathsf{SC}(\mathcal{G},w)} ||x-x|| + \frac{1}{|2 \tilde{w}_1|^p} \sum_{e\in E} |w_e|^p x_e \right ] \\ 
+% &= \frac{1}{|2 w_1|^p} \min_{x \in \mathsf{SC}(\mathcal{G},w)} \sum_{e\in E} |w_e|^p x_e \\ 
+& < 2 |E|
+% & = \min_{x \in \mathsf{SC}(\mathcal{G},w)} \sum_{e\in E} |w_e|^p \,\,x_e \\
+% & = \sum_{1 \leq k\leq t} \left ( \left | \frac{w_k}{w_1} \right |^p \sum_{e\in E_{k}} x_e \right ) = \\
+% & = \frac{1}{|w_1|^p} \sum_{e \in E} |w_k|^p \,\,x_e 
+\end{align}
+where we defined $Q_k(x)$ as continuous functions on $\mathbb{R}^{|E|}$. Eq. (??) defines the vertices of a polytope in  $Q_0(x)$ is defined as the distance to the closest vertex of the SC polytope:
+\begin{equation}
+Q_0(x) = \min_{x \in \mathsf{SC}(\mathcal{G},w)} ||x-x||
+\end{equation}
+
+\item \UPDATE{If we can show that Alg. \ref{PWS_general_alg_MWS} is a special version of Alg. \ref{PWS_general_alg}}, then we can apply the PWS theorem and get $x^*$ given by:
+\begin{align}
+x^* \in \lim_{p\rightarrow \infty} \argmin_{x\in \mathsf{SC}(\mathcal{G},w)} \, Q^p(x)
+\end{align}
+where 
+\begin{align}
+Q^p(x) =& \sum_{1 \leq k\leq t} \lambda^p_k Q_k (x) = \\
+ =& \sum_{1 \leq k\leq t} \left ( \left | \frac{w_k}{w_1} \right |^p \sum_{e\in E_{k}} x_e \right ) = \\
+ =& \frac{1}{|w_1|^p} \sum_{e \in E} |w_k|^p \,\,x_e 
+\end{align}
+Since in the limit $p \rightarrow \infty$ we get a Dominant Power, then we have that $x^*$ is also a solution to the MWS Objective \ref{eq:new_MWS_objective} and $x^*$ is given by Alg. \ref{PWS_general_alg_MWS}.
+\end{itemize}
+

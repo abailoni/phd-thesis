@@ -1,0 +1,9 @@
+%!TEX root = ../damws_review.tex
+
+\subsection*{Exploratory Study on Natural Images and Future Work}
+
+Additionally to neurological data we want to explore the MWS on natural images. However, recent datasets \cite{Cordts2016Cityscapes,lin2014microsoft,mottaghi_cvpr14} require semantic segmentation of natural images. In future work we will extend our algorithm with class assigning edges, but for this exploratory study we use the cityscapes dataset\cite{Cordts2016Cityscapes} to derive a pure car instance segmentation task, where we first train a Pyramid Scene Parsing Network\cite{zhao2017pyramid} to detect the semantic car class. 
+
+Using the 2D connectivity pattern as defined in \autoref{fig:2d-connection} we predict affinities and apply the Mutex Watershed algorithm on every connected component.
+
+

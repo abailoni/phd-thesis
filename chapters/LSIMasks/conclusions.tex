@@ -1,0 +1,6 @@
+% !TEX root = ../../main.tex
+
+\section{Conclusions}
+We have presented a new proposal-free method predicting encoded \maskname masks in a sliding window style, one for each pixel of the input image, and introduced a parameter-free approach to aggregate predictions from overlapping masks and obtain all instances concurrently.
+When applied to large volumetric biological images, the resulting method proved to be strongly robust to noise and compared favorably to competing methods that need super-pixels and hence more hyper parameters.
+The proposed method also endows its predictions with an uncertainty measure, depending on the consensus of the overlapping  \maskname masks. In future work, we plan to use these uncertainty measures to estimate the confidence of individual instances, which could help facilitate the subsequent proof-reading step still needed in neuron segmentation.

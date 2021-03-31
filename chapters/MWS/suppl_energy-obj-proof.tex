@@ -1,0 +1,343 @@
+%!TEX root = ../main.tex
+
+% !TEX root = ../main.tex
+
+
+% \begin{algorithm}[h]
+% % \centering
+% % \parbox[t]{.7\linewidth}{
+%  \hrulefill \\
+%    \textbf{Input: }
+%      weighted graph $G(V,  E^+\cup E^-, W^+\cup W^-)$ and an already activated set of edges $A$, that can be empty\;
+%       \textbf{Output: }
+%      clusters defined by activated edges $A^* \cap E^+$\;
+%      \hrulefill\\
+%  \For{$(i,j) = e \in E^+\cup \! E^- $ {\rm in descending order of } $W^+ \cup W^-$} 
+%  {
+%    % \eIf{$e \in E^+$}
+%    % {
+%    \If{\rm \text{e does not introduce a cycle with 0 or 1 repulsive edge}}
+%     {
+%           $A \leftarrow A \cup e$\;
+%     }
+%    % }{
+%    %  \If{\rm \text{e does not introduce a cycle with 1 repulsive edge}}
+%    %    {
+%    %        $A \leftarrow A \cup e$\;
+%    %    }
+%    % }
+%  }
+%  $A^* \leftarrow A$\;
+%   \vspace{-6pt}\hrulefill
+%  \caption{This is a renamed version of the mutex watershed, that better matches the notion of cycle constraints from the optimization problem, but is exactly equivalent to the published algorithm, where \textit{connected} and \textit{mutex} check for 0 and 1 cycles.}
+%  \label{algo_code_original}
+% % }
+% \end{algorithm}
+
+\section{Optimality of the Mutex Watershed Algorithm} \label{sec:optimality_MWS}
+
+
+
+% \begin{definition}
+% Let us consider the ordering set $\sigma := \langle e_1,e_2,\ldots,e_M \rangle$ of all the edges in $E$ sorted by their weight $W^+ \cup W^-$. The integer index $j_{e} \in \mathbb{N}$ denotes the sorting index of the edge $e$, so that $\sigma_{j_{e}}=e$. 
+% We then define the \textbf{Mutex Watershed Objective} as:
+% \begin{align}
+%   A^* =\argmax_{A \subseteq E} \quad \sum_{e \in A} 2^{j_e} \quad \mathrm{ s.t. } \quad \mathcal{C}_{0/1}(A) = \emptyset \label{eq:full_problem}
+% \end{align}
+% The optimal solution $A^{*}$ defines a clustering, where every cluster is a connected component of the spanning forest $A^{*} \cap E^+$.
+% \end{definition}
+
+
+% \subsection{Greedy algorithm for the Mutex Watershed Objective}
+
+In this section we prove Theorem \ref{def:Objective}, i.e. that the Mutex Watershed Objective defined in Equation \ref{eq:full_problem} is optimally solved by the Mutex Watershed algorithm \ref{algo_code}. 
+
+First, we modify the Mutex Watershed algorithm \ref{algo_code} to include subproblems, by fixing an initial set of active edges $A_0$ to a partial solution. 
+The pseudocode is presented in algorithm \ref{algo_subproblems} and we note that the two algorithms are equivalent when $A_0 = \emptyset$. 
+We then define the first feasible edge selected by the algorithm as follows. 
+
+\begin{definition}
+\textbf{Greedy choice.}
+Let us consider an initial active set $A_0$ and assume to have a non-trivial problem, so that the final set of activated edges $A$ selected by algorithm \ref{algo_subproblems} is not empty and there exists at least one feasible edge. Then, let $g$ be the first feasible edge selected by the algorithm:
+\begin{equation}\label{eq:greedy_step}
+       g := \underset{e \in (E \setminus A_0)}{\text{argmax}} \;  \; w(e) \quad \mathrm{ s.t. } \quad \mathcal{C}_{0/1}(A_0 \cup \{e\}) = \emptyset. 
+\end{equation} 
+% We call this the first greedy choice of the algorithm. \TODO{Comment about existence}
+\end{definition}
+
+We now generalize the Mutex Watershed Objective to include subproblems of the Mutex Watershed, given the initial set of active edges $A_0$.
+% To do so,  we first consider the following more general optimization problem.
+
+\begin{definition} \label{def:general_MWS_obj}
+\textbf{Energy optimization subproblem.}
+% Given a graph $G = (V, E^+ \cup E^-)$, let us consider the set ${\sigma := \langle e_1,e_2,\ldots,e_M \rangle}$ of edges in $E$ sorted in descending order by their weight $W^+ \cup W^-$. The integer index $j_{e} \in \mathbb{N}$ denotes the sorting index of the edge $e$, so that $\sigma_{j_{e}}=e$. 
+Let $\mathcal{G} = (V, E^+ \cup E^-)$ be a weighted graph with weights $w$. Let $\intweight$ be the index that sorts $E^+ \cup E^-$ by their weight $w$ in increasing order.
+Let us then define the following optimization problem:
+\begin{align} \label{eq:general_MWS_obj}
+  \subproblem(\mathcal{G},A_0) :=& \underset{A \subseteq (E \setminus A_0)}{\text{argmax}} \quad T(A) \quad \mathrm{ s.t. } \quad \mathcal{C}_{0/1}(A \cup A_0) = \emptyset,
+\end{align}
+\begin{equation}\label{eq:def_energy}
+   T(A) := \sum_{e \in A} 2^{\intweight (e)},
+\end{equation}
+ where $A_0$ is a set of initially activated edges such that $\mathcal{C}_{0}(A_0) = \emptyset$ and $\mathcal{C}_{1}(A_0) = \emptyset$. We note that when $A_0 = \emptyset$, the maximized energy is equal to the Mutex Watershed Objective defined in Equation \ref{eq:full_problem}.
+\end{definition}
+\noindent In the next two following theorems, we prove that if we combine the first greedy choice of the algorithm with an optimal solution of the remaining subproblem, then we always find an optimal solution of the global problem.
+In other words, we prove that the Mutex Watershed algorithm has an \emph{optimal substructure property} and a \emph{greedy choice property} \cite{cormen2009introduction}. 
+% These two properties are then sufficient to prove that the greedy \autoref{algo_subproblems} optimally solves the optimization problem \ref{eq:general_MWS_obj} and that the mutex watershed objective defined in \autoref{eq:full_problem} is solved by the mutex watershed algorithm. 
+These two properties are then sufficient to prove that the Mutex Watershed algorithm finds the optimum of the Mutex Watershed Objective.
+
+% The following two theorems prove the two named properties.
+% We note that when $A_0 = \emptyset$, $\subproblem(\mathcal{G},A_0=\emptyset)$ is the solution of the mutex watershed objective defined in \autoref{eq:full_problem} and that \autoref{algo_subproblems} is equivalent to the mutex watershed \autoref{algo_code}.
+
+% {\color{red}We note that in the special case the mutex watershed objective defined in ? is a special case of the optimization problem \ref{eq:general_MWS_obj} when $A_0=\emptyset$, i.e. $\subproblem(G,\emptyset)=A^*$. Similarly, \autoref{algo_code} is a special case of \autoref{algo_subproblems} when $A_0=\emptyset$.}
+
+
+% \subsubsection{Greedy-choice property}
+% We will now prove the greedy-choice property of the problem, i.e. show that by making locally optimal greedy choices, we can arrive to the globally optimal solution  
+\begin{theorem} \label{theo:greedy_choice}
+\textbf{Greedy-choice property.}
+Let us consider an initial active set $A_0$ and assume to have a non-trivial problem, so that the first feasible edge $g$ selected by algorithm \ref{algo_subproblems} and introduced in Equation \ref{eq:greedy_step} is well defined. Then, $g$ is always part of the optimal solution $\subproblem(\mathcal{G},A_0)$ defined in Equation \ref{eq:general_MWS_obj}.
+\end{theorem}
+
+\begin{proof}
+% We will prove the GCP for any arbitrary subproblem, including $A = \emptyset$. Let $A \subseteq E$ be arbitrary, fixed and cycle free ${C}_{0/1}(A) = \emptyset$. The fist edge added by the Mutex Watershed Algorithm is 
+% the feasible edge with the highest weight\footnote{We assume here that the subproblem defined by $A$ is non-trivial, such that there are feasible edges to select and $g$ is well-defined}.\\
+
+\noindent We will prove the theorem by contradiction by assuming that the first greedy choice is not part of the optimal solution, i.e. $g \notin \subproblem(\mathcal{G},A_0)$.\\
+% \noindent Assume $ S^*(A)$ is the optimal solution of (\ref{eq:sub_problem}) that does not contain $g \notin  S^*(A)$.
+Since $g$ is by definition the feasible edge selected by the algorithm with the highest weight, it follows that:
+\begin{equation}
+\nexists\, e \in (E \setminus A_0) \quad \text{s. t.} \quad w(e) > w(g), \quad \mathcal{C}_{0/1}(A_0 \cup \{e\}) = \emptyset.
+\end{equation}
+Therefore, if we sort the edges by their weight $w$, the sorting indices of the edges in the optimal solution fulfill the following strict inequality:
+\begin{equation} \label{eq:strict_index_ineq}
+\forall e \in \subproblem(\mathcal{G},A_0), \quad \intweight(g) > \intweight(e).
+\end{equation}
+
+ % there are no feasible edges $\nexists\, e \in (E \setminus A_0)$ with $w(e) > w(g)$, that is feasible. Since all edge weights are unique we get the \textit{strict} inequality $$ \forall e \in \subproblem(\mathcal{G},A_0) \quad w(g) > w(e)$$
+
+We now consider the alternative active set $A' = \{g\}$, that is a feasible solution. Since the energy contribution of an edge $e$ with index $\intweight(e)$ is always larger than the sum of all lower rank edges ${2^{\intweight(e)} > \sum_{n=0}^{\intweight(e)-1} 2^n}$, the energy of the active set $A'$ has the following property:
+\begin{equation}
+T(A') = 2^{\intweight(g)} > \sum_{n=1}^{\intweight(g)-1} 2^n \ge T\Big(\subproblem(\mathcal{G},A_0)\Big).
+\end{equation}
+This is then a contradiction to the optimality of $\subproblem(\mathcal{G},A_0)$.
+\end{proof}
+
+\begin{algorithm}[t]
+% \parbox[t]{.7\linewidth}{
+ \hrulefill \\
+   \textbf{Inputs: }
+    \begin{itemize}
+    \item  weighted graph $\mathcal{G}(V,  E^+\cup E^-, W^+\cup W^-)$\;
+    \item {\color{blue}initially activated set of edges $A_0$ fulfilling $\mathcal{C}_{0}(A_0) = \emptyset $ \\ and $\mathcal{C}_{1}(A_0) = \emptyset $} \;
+    \end{itemize}
+      \textbf{Output: }
+     final set of activated edges $A \subseteq {\color{blue} E \setminus A_0}$\;
+  \textbf{Initialization: }
+     $A \leftarrow \emptyset$\;
+ \For{$ {\color{blue}e \in E \setminus A_0} $ {\rm in descending order of weight}} 
+ {
+    \If{\rm $\mathcal{C}_{0}({\color{blue}A\cup A_0 \cup \{e\}}) = \emptyset$ \textbf{ and } $\mathcal{C}_{1}({\color{blue}A\cup A_0 \cup \{e\}}) = \emptyset$}{
+          $A \leftarrow A \cup e$\;
+    
+    }
+          % \Comment{\parbox[t]{.65\linewidth}{ merge $i$ and $j$ and inherit the mutex \\constraints of the parent clusters}}
+          % \Comment{merge $i$ and $j$}\\
+               % \Comment{and inherit the mutex constraints of the parent clusters}
+ }
+ % $A^* \leftarrow A$\;
+ % \textbf{Return: } $A$\\
+ \vspace{-6pt}\hrulefill
+ \vspace{6pt}
+ \caption{Subproblem of the mutex watershed algorithm defined in Algorithm \ref{algo_code}. An initial set $A_0$ of activated edges is given as additional input and the final active set $A$ is included in $E \setminus A_0$. Note that Algorithm \ref{algo_code} is a special case of this algorithm, when $A_0= \emptyset$. Differences with Algorithm \ref{algo_code} are highlighted in blue.}
+ \label{algo_subproblems}
+% }
+\end{algorithm}
+
+
+% \subsubsection{Optimal Substructure Property}
+% As defined in \cite{cormen2009introduction}:
+
+% \noindent A problem has the optimal substructure property if:
+% \begin{enumerate}[label=\Roman*]
+%     \item There exists a subproblem $\subproblem'$ of $\subproblem$ that remains after g (defined in (\ref{eq:greedy_step})) is included in the greedy solution.
+%     \item $\subproblem'$ is optimally solved in $S^*$. That is, the solution for $\subproblem'$ contained within $S^*$ is optimal for
+% $\subproblem'$. \footnote{To do this it is best to express the value of $S^*$ as some function that depends on the
+% value of the optimal solution S' for $\subproblem'$ and parameters of the problem. Then argue that $\subproblem'$
+% is optimally solved within S.\label{fn:OSP2}}
+% \end{enumerate}
+
+\begin{theorem}\label{theo:optm_sub_prop}
+\textbf{Optimal substructure property.}
+% \TODO{Feasible problem}
+Let us consider an initial active set $A_0$, the optimization problem defined in Equation \ref{eq:general_MWS_obj}, and assume to have a non-trivial problem, so that the first greedy choice $g$ of algorithm \ref{algo_subproblems} introduced in Equation \ref{eq:greedy_step} is well defined. Then it follows that:
+\begin{enumerate}
+\item After making the first greedy choice $g$, we are left with a subproblem that can be seen as a new optimization problem of the same type;
+\item The optimal solution $\subproblem(\mathcal{G},A_0)$ is always given by the combination of the first greedy choice and the optimal solution of the remaining subproblem.
+\end{enumerate}
+ 
+ % The optimization problem defined in \autoref{eq:general_MWS_obj} fulfills the optimal substructure property. In other words, given a problem and some of its subproblems, the optimal solutions of the subproblems are always included in the optimal solution of the initial problem. \TODO{but this is not what we are proving...}
+\end{theorem}
+
+\begin{proof}
+After making the first greedy choice and selecting the first feasible edge $g$ defined in Equation \ref{eq:greedy_step}, we are clearly left with a new optimization problem of the same type that has the following optimal solution: $\subproblem(\mathcal{G},A_0 \cup \{g\})$. \\
+In order to prove the second point of the theorem, we now show that:
+\begin{equation}\label{eq:optimal_sub}
+\subproblem(\mathcal{G},A_0) = \{g\} \cup \subproblem(\mathcal{G},A_0 \cup \{g\}).
+\end{equation}
+% Using the definition in equation (\ref{eq:sub_problem}) the remaining subproblem of $\subproblem(\mathcal{G},A_0)$ after adding $g$ is exactly $S^*(A \cup \{g\})$
+% Let us follow footnote \ref{fn:OSP2}.
+% First let us define restricted solutions that need to contain $g$:
+% \begin{align}
+% \begin{split}
+%   S^{*}_{\text{+g}}(A) = & \underset{S \subset (E \setminus A)}{\text{argmax}} \quad \sum_{e \in S} 2^{w(e)} \\
+%    \text{ s.t. }  \quad & \mathcal{C}_{0/1}(S \cup A) = \emptyset, \\
+%   & g \in S
+% \label{eq:sub_problem_with_g}
+% \end{split}
+% \end{align}
+% and can not contain $g$:
+% \begin{align}
+% \begin{split}
+%   S^{*}_{\text{-g}}(A) = & \underset{S \subset (E \setminus A)}{\text{argmax}} \quad \sum_{e \in S} 2^{w(e)} \\
+%    \text{ s.t. }  \quad & \mathcal{C}_{0/1}(S \cup A) = \emptyset, \\
+%   & g \notin S
+% \label{eq:sub_problem_without_g}
+% \end{split}
+% \end{align}
+
+% Using (\ref{eq:sub_problem_with_g}) and (\ref{eq:sub_problem_without_g}) we can divide the optimization into two subproblems and choose the solution with higher energy:
+% \begin{align}
+%     S^*(A) = \underset{S \in \{S^{*}_{\text{+g}}(A), S^{*}_{\text{-g}}(A)\}}{\text{argmax}} T(S)
+% \end{align}
+Since algorithm \ref{algo_subproblems} fulfills the greedy-choice property, ${g\in \subproblem(\mathcal{G},A_0)}$ and we can add the edge $g \in A$ as an additional constraint to the optimal solution:
+\begin{align}
+\begin{split}
+  \subproblem(\mathcal{G},A_0) = & \underset{A \subseteq (E \setminus A_0)}{\text{argmax}} \quad \sum_{e \in A} 2^{\intweight(e)} \\
+  & \; \text{s. th} \quad  \mathcal{C}_{0/1}(A \cup A_0) = \emptyset; \quad g \in A \label{eq:optimal subproblem}
+\end{split}
+\end{align}
+Then it follows that:
+\begin{align}
+\begin{split}
+  \subproblem(\mathcal{G},A_0) = &\; \{g\} \; \cup \underset{A \subseteq \; E \setminus (A_0 \cup \{g\})}{\text{argmax}} \quad \sum_{e \in A} 2^{\intweight(e)} \\
+   &\;\;\text{s. t.} \quad  \mathcal{C}_{0/1}\Big(A \cup \{g\} \cup A_0 \Big) = \emptyset,\label{eq:optimal subproblem}
+\end{split}
+\end{align}
+that is equivalent to Equation \ref{eq:optimal_sub}.
+% \begin{equation} \Longleftrightarrow \qquad
+%   \subproblem(\mathcal{G},A_0) = \{g\} \; + \subproblem(\mathcal{G},A_0 \cup \{g\})
+% \end{equation}
+% Therefore $\subproblem' = S^{*}(A \cup \{g\})$
+% is optimally solved within $S^{*}(A$).
+\end{proof}
+
+\Objective*
+\begin{proof}
+In Theorems \ref{theo:greedy_choice} and \ref{theo:optm_sub_prop} we proved that the optimization problem defined in \ref{eq:full_problem} has an optimal substructure property and a greedy choice property. 
+% These two properties are then sufficient to prove that the greedy \autoref{algo_subproblems} optimally solves the optimization problem \ref{eq:general_MWS_obj} and that the mutex watershed objective defined in \autoref{eq:full_problem} is solved by the mutex watershed algorithm. 
+These two properties are then sufficient to prove that the final active set $A^*$ found by the Mutex Watershed algorithm \ref{algo_code} is optimal \cite{cormen2009introduction}.
+\TODO{Better paraphrasing/explanation?}
+\end{proof}
+
+\subsection{Property of the optimal active set}
+In the previous section we have proved that the Mutex Watershed algorithm can be seen as an energy optimization problem. We now show that the optimal active set $A^*$ has the following property. %\TODO{Add comparison to the property of a MST?}
+\pathTheorem*
+\begin{proof}
+Let us consider the active set $A' = A^* \cup \{ \tilde{e}_{uv}\}$. According to the energy function defined in Equation \ref{eq:def_energy}, the set $A'$ has an higher energy than the optimal active set $A^*$ and has then to violate some cycle constraints:
+\begin{equation}
+C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \neq \emptyset,
+\end{equation}
+\begin{equation}
+\forall c \in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}), \quad \tilde{e}_{uv} \in c.
+\end{equation}
+
+
+% This shows that %$(V, A^*)$ is a connected subgraph of $\mathcal{G}$ and 
+% there always exists one path in the active set $A^*$ connecting the vertices $u$ and $v$.
+The set of weakest edges along each of these violating cycles is defined as:
+\begin{equation}
+\mathcal{W} := \left\{ m(c) \quad \Big| \quad c \in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\})  \right\}.
+\end{equation}
+\begin{equation}
+% \mathcal{W} \equiv \left\{ e \in E \quad \Big| \quad\exists \, c\in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \quad \mathrm{s.t.} \quad e = \argmin_{p\in c} w(p) \right\}.
+\mathrm{where}\quad  m(c) := \argmin_{e \in c} w(e) \qquad \forall c \in \text{cycles}(\mathcal{G}).
+\end{equation}
+We will now prove the theorem by contradiction by showing that $\tilde{e}_{uv}$ is the weakest edge of at least one of these violating cycles, i.e. $\tilde{e}_{uv} \in \mathcal{W}$. 
+% \begin{equation}
+% \exists c \in C_{0/1}(A'): \quad \intweight(\tilde{e}_{uv}) = \intweight(m(c)) <  \min_{p \in \pi(c)}  \intweight(p).
+% \end{equation}
+%(i.e. $\tilde{e}_{uv}$ is the weakest edge of at least one violating cycle). 
+% In this case, this violating cycle defines one path $\pi_{u \rightarrow v}$ in the active set $A^*$ connecting $u$ and $v$ fulfilling property \ref{eq:reduced_path_ineq_orig}:
+% \begin{equation}
+% w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p).
+% \end{equation}\
+
+Let us assume that $\tilde{e}_{uv} \notin \mathcal{W}$ and let $\intweight$ be the index sorting $E^+ \cup E^-$ by their weight $w$ in increasing order. Then:  
+\begin{equation}
+\intweight(\tilde{e}_{uv}) > \intweight(e), \quad \quad \forall \,e\in \mathcal{W} \label{eq:3_ineq_weakest_edges}
+\end{equation}
+and through the properties of the energy function $T$ defined in Equation \ref{eq:def_energy}:
+\begin{equation}
+T(\{\tilde{e}_{uv}\}) = 2^{\intweight(\tilde{e}_{uv})} \overset{(\ref{eq:3_ineq_weakest_edges})}{>} \sum_{e \in \mathcal{W}} 2^{\intweight(e)} = T( \mathcal{W} ). \label{eq:3_strict_energy_ineq}
+\end{equation}
+To derive the contradiction, let us construct a new active set $A^{''}=A^*\cup\{\tilde{e}_{uv}\} \setminus \mathcal{W}$, that does not violate any cycle constraint and has a higher energy than the optimal active set $A^*$:
+\begin{equation}
+T(A'') = T(A^*) + T(\{\tilde{e}_{uv}\}) - T( \mathcal{W} ) \overset{(\ref{eq:3_strict_energy_ineq})}{>}T(A^*).
+\end{equation}
+\end{proof}
+
+
+
+
+% (A minimum spanning tree has a somehow similar property)
+% \begin{theorem}
+% Let us consider the optimal active set $A^*$ found by the MWS algorithm on a graph $\mathcal{G} = (V, E^+ \cup E^-)$. Then, for every edge $\tilde{e}_{uv} \in E\setminus A^*$ not in the optimal active set, 
+% it exists a path $\pi_{u \rightarrow v}  \subseteq A^* $ from $u$ to $v$ such that the weight of its weakest edge is higher than the weight of $\tilde{e}_{uv}$:
+% % \begin{enumerate}
+% % \item the path is : $\pi_{u \rightarrow v}$,  \label{cond_1} 
+% % % \item the path includes exactly zero or one repulsive edges: $\left| \pi_{u \rightarrow v} \cap E^{-}  \right| \leq 1$, \label{cond_2} 
+% % \item the weight of the weakest edge along the path is higher than the weights of $\tilde{e}$: \label{cond_3}
+% \begin{equation}
+% \forall \tilde{e}_{uv} \in E\setminus A^*, \quad \exists \,\mathrm{path}\, \pi_{u \rightarrow v}  \subseteq A^* \quad \mathrm{s.t.} \quad w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p). \label{eq:reduced_path_ineq}
+% \end{equation} 
+% % \end{enumerate} 
+% \end{theorem}
+% \begin{proof}
+% Since the active set $A^*$ is optimal, it follows that the new active set $A' = A^* \cup \{ \tilde{e}_{uv}\}$ has to violate some cycle constraints:
+% \begin{equation}
+% C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \neq \emptyset.
+% \end{equation}
+% This shows that %$(V, A^*)$ is a connected subgraph of $\mathcal{G}$ and 
+% it always exists one path in the active set $A^*$ connecting the vertices $u$ and $v$.
+
+% We will now prove that there is at least one of these paths fulfilling the property in Eq. \ref{eq:reduced_path_ineq}. To do so, let us define the set of weakest edges along each of the violating cycles in $C_{0/1}(A')$:
+
+% \begin{equation}
+% \mathcal{W} \equiv \left\{ e \in E \quad \Big| \quad\exists \, c\in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \quad \mathrm{s.t.} \quad e = \argmin_{p\in c} w(p) \right\}.
+% \end{equation}
+% In order to prove the theorem, we need to show that $\tilde{e}_{uv} \in \mathcal{W}$, i.e. $\tilde{e}_{uv}$ is the weakest edge of at least one violating cycle. In this case, this violating cycle defines one path $\pi_{u \rightarrow v}$ in the active set $A^*$ connecting $u$ and $v$ fulfilling property \ref{eq:reduced_path_ineq}:
+% \begin{equation}
+% w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p).
+% \end{equation}
+
+% We prove now by contradiction that $\tilde{e}_{uv} \in \mathcal{W}$. If we assume that   $\tilde{e}_{uv} \notin \mathcal{W}$, it follows that:
+% \begin{equation}
+% w(\tilde{e}_{uv}) > w(e), \quad \quad \forall \,e\in \mathcal{W} \label{eq:ineq_weakest_edges}
+% \end{equation}
+% and from the properties of the energy function $T$ it follows that:
+% \begin{equation}
+% T(\{\tilde{e}_{uv}\}) = 2^{w(\tilde{e}_{uv})} \overset{(\ref{eq:ineq_weakest_edges})}{>} \sum_{e \in \mathcal{W}} 2^{w(e)} = T( \mathcal{W} ) \label{eq:strict_energy_ineq}
+% \end{equation}
+% If we now construct a new active set $A^{''}=A^*\cup\{\tilde{e}_{uv}\} \setminus \mathcal{W}$, we note that it does not violate any cycle constraint and it has a higher energy than the optimal active set $A^*$:
+% \begin{equation}
+% T(A'') = T(A^*) + T(\{\tilde{e}_{uv}\}) - T( \mathcal{W} ) \overset{(\ref{eq:strict_energy_ineq})}{>}T(A^*).
+% \end{equation}
+% We have then a contradiction.
+% \end{proof}
+
+
+
+
+
+

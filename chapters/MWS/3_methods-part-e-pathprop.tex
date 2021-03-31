@@ -1,0 +1,68 @@
+% !TEX root = ../main.tex
+
+\subsection{Property of the optimal active set}\label{subsec:property_active_set}
+
+\TODO{Remove this section??? I can not think of a better motivation than the relation to Minimal spanning trees}
+% In the previous section we have proven that the Mutex Watershed algorithm can be seen as an energy optimization problem. We now show that the optimal active set $A^*$ has the following property. %\TODO{Add comparison to the property of a MST?}
+Minimal spanning trees $T$ have the property that every edge $\tilde{e} \notin T$ induces a cycle $C$ of which $\tilde{e}$ is the edge with highest weight.
+In this section, we derive a similar property (Lemma \ref{lemma:pathTheorem}) for the Mutex Watershed using Theorem \ref{def:Objective}, showing that every edge $\tilde{e}_{uv} \in E\setminus A^*$ not in the final active set completes a cycle $\in \mathcal{C}_{0/1}$ with weakest edge $\tilde{e}_{uv}$.
+
+\noindent 
+% We can get a better intuition for this property by considering repulsive and attractive edges separately: Lemma \ref{lemma:pathTheorem} implies that for any repulsive edge $\tilde{e} \in  E^-\setminus A^*$ we can find a cycle $ \in \mathcal{C}_1(A^*)$ and therefore a stronger connecting path $\subseteq A^* \cap E^+$ overrules the mutual exclusion. Similarly, all attractive edges $\tilde{e}_{uv} \in  E^+\setminus A^*$ where $u$ and $v$ are not connected, create a cycle $ \in \mathcal{C}_1(A^*)$ and are therefore overruled by a stronger repulsive path $\pi \subseteq A^* \text{ with }|\pi \cap E^-| = 1.$}
+We can get a better intuition for this property by considering repulsive and attractive edges separately: Lemma \ref{lemma:pathTheorem} implies that for any repulsive edge $\tilde{e}_{uv} \in  E^-\setminus A^*$ not in the final active set, we can find a stronger attractive path $ \pi_{u \rightarrow v} \in A^* \cap E^+$ in the active set that overruled the mutual exclusion given by $\tilde{e}_{uv}$. Similarly, for any attractive edge $\tilde{e}_{uv} \in  E^+\setminus A^*$ connecting two vertices in different trees of the final forest $A^* \cap E^+$, there exists a stronger repulsive path $\pi_{u \rightarrow v} \subseteq A^*$ with $|\pi_{u \rightarrow v} \cap E^-| = 1$ representing the mutual exclusion relation that overruled the merging of vertices $u$ and $v$.
+
+\begin{restatable}{lemma}{pathTheorem}\label{lemma:pathTheorem}
+Let $A^*$ be the optimal active set of the Mutex Watershed Objective on a graph $\mathcal{G} = (V, E^+ \cup E^-, W^+\cup W^-)$. 
+% and $\intweight$ be the index that sorts $E^+ \cup E^-$ by their weight in increasing order. 
+If an additional edge $\tilde{e}_{uv} \in E\setminus A^*$ is added to the optimal active set, then $\tilde{e}_{uv}$ becomes the weakest edge of at least one violating cycle introduced in the active set:
+% Then adding an additional edge $\tilde{e}_{uv} \in E\setminus A^*$ to the optimal active set introduces at least one violating cycle such that $\tilde{e}_{uv}$ is its weakest edge:
+% For every edge $\tilde{e}_{uv} \in E\setminus A^*$ not in the optimal active set, there exists a path $\pi_{u \rightarrow v}  \subseteq A^* $ from $u$ to $v$ such that the weight of its weakest edge is higher than the weight of $\tilde{e}_{uv}$:
+\begin{align}
+\begin{split}
+\forall \tilde{e}_{uv} \in E\setminus A^*, \quad &\exists \,\mathrm{cycle}\,\, c \in \mathcal{C}_{0/1}(A^* \cup \{\tilde{e}_{uv}\})  \\ 
+& \mathrm{s.t.} \quad \tilde{e}_{uv} \in c  \quad \mathrm{and} \quad \tilde{e}_{uv} = \argmin_{e\in c}  w(e). \label{eq:reduced_path_ineq_orig}
+\end{split}
+\end{align} 
+% \end{enumerate} 
+\end{restatable}
+
+\begin{proof}
+Let us consider the active set $A' = A^* \cup \{ \tilde{e}_{uv}\}$. According to the energy function defined in Equation \ref{eq:def_energy}, the set $A'$ has an higher energy than the optimal active set $A^*$ and has then to violate some cycle constraints:
+\begin{equation}
+C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \neq \emptyset,
+\end{equation}
+\begin{equation}
+\forall c \in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}), \quad \tilde{e}_{uv} \in c.
+\end{equation}
+
+
+% This shows that %$(V, A^*)$ is a connected subgraph of $\mathcal{G}$ and 
+% there always exists one path in the active set $A^*$ connecting the vertices $u$ and $v$.
+The set of weakest edges along each of these violating cycles is defined as:
+\begin{equation}
+\mathcal{W} := \left\{ m(c) \quad \Big| \quad c \in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\})  \right\}.
+\end{equation}
+\begin{equation}
+% \mathcal{W} \equiv \left\{ e \in E \quad \Big| \quad\exists \, c\in C_{0/1}(A^* \cup \{ \tilde{e}_{uv}\}) \quad \mathrm{s.t.} \quad e = \argmin_{p\in c} w(p) \right\}.
+\mathrm{where}\quad  m(c) := \argmin_{e \in c} w(e) \qquad \forall c \in \text{cycles}(\mathcal{G}).
+\end{equation}
+We will now prove the theorem by contradiction by showing that $\tilde{e}_{uv}$ is the weakest edge of at least one of these violating cycles, i.e. $\tilde{e}_{uv} \in \mathcal{W}$. 
+% \begin{equation}
+% \exists c \in C_{0/1}(A'): \quad \intweight(\tilde{e}_{uv}) = \intweight(m(c)) <  \min_{p \in \pi(c)}  \intweight(p).
+% \end{equation}
+%(i.e. $\tilde{e}_{uv}$ is the weakest edge of at least one violating cycle). 
+% In this case, this violating cycle defines one path $\pi_{u \rightarrow v}$ in the active set $A^*$ connecting $u$ and $v$ fulfilling property \ref{eq:reduced_path_ineq_orig}:
+% \begin{equation}
+% w(\tilde{e}_{uv}) < \min_{p\in \pi_{u \rightarrow v}}  w(p).
+% \end{equation}\
+Let us assume that $\tilde{e}_{uv} \notin \mathcal{W}$, and therefore  
+\begin{gather}
+w_{\tilde{e}_{uv}} > w_t \quad \forall t \in \mathcal{W}\label{eq:3_ineq_weakest_edges}\\
+\Rightarrow \qquad T(\{\tilde{e}_{uv}\}) \overset{(\ref{eq:3_ineq_weakest_edges})}{>} T( \mathcal{W} ) \label{eq:3_strict_energy_ineq}
+\end{gather}
+and construct a new active set $A^{''}=A^*\cup\{\tilde{e}_{uv}\} \setminus \mathcal{W}$, that does not violate any cycle constraints. Then $A^{''}$ has a lower energy than optimal set $A^*$
+\begin{equation}
+T(A'') = T(A^*) + T(\{\tilde{e}_{uv}\}) - T( \mathcal{W} ) \overset{(\ref{eq:3_strict_energy_ineq})}{>}T(A^*)
+\end{equation}
+% which contradicts the optimality of $A^*$.
+\end{proof}

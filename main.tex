@@ -10,6 +10,7 @@
 ]{hdphdthesis}
 
 
+
 % Headings setup (sectsty)
 \usepackage{sectsty}
 \allsectionsfont{\sffamily}
@@ -21,13 +22,16 @@
 
 \usepackage[linktocpage]{hyperref,xcolor}
 \definecolor{bluish}{rgb}{0,0.4,0.65}
+\definecolor{greenish}{rgb}{0.01,0.5,0.}
 \hypersetup{
     colorlinks,
-    citecolor=bluish,
+    citecolor=greenish,
     filecolor=bluish,
     linkcolor=bluish,
     urlcolor=bluish
 }
+
+\input{preamble_additions}
 
 %------------- Setting the license of thesis --------------
 \usepackage[
@@ -72,13 +76,41 @@
 \cleardoublepage
 \pagenumbering{arabic}
 \include{chapters/chapter1}
-\include{chapters/chapter2}
-\include{chapters/chapter3}
+
+%--------------------- Mutex Watershed ----------------------
+\input{chapters/MWS/1_introduction.tex}
+\input{chapters/MWS/2_related_work.tex}
+\input{chapters/MWS/3_methods-part-a.tex}
+% \input{chapters/MWS/3_methods-part-b.tex}
+\input{chapters/MWS/3_methods-part-d-energy-objective.tex}
+\input{chapters/MWS/4_results_v2.tex}
+\input{chapters/MWS/5_conclusion.tex}
+% \input{chapters/MWS/suppl_bound_sequence.tex}
+
+
+%--------------------- GASP ----------------------
+\input{chapters/GASP/1_intro.tex}
+\input{chapters/GASP/2_rel_work}
+\input{chapters/GASP/3_algorithm}
+\input{chapters/GASP/5_experiments_intro}
+% % \input{chapters/GASP/5_experiments_cityscapes}
+\input{chapters/GASP/6_conclusions}
+\input{chapters/GASP/supplementary}
+
+%--------------------- LSI-Masks ----------------------
+\input{chapters/LSIMasks/intro}
+\input{chapters/LSIMasks/rel_work}
+\input{chapters/LSIMasks/methods_0.tex}
+\input{chapters/LSIMasks/methods_1.tex}
+\input{chapters/LSIMasks/experiments.tex}
+\input{chapters/LSIMasks/conclusions.tex}
+\input{chapters/LSIMasks/supplementary.tex}
+
 
 %---------------------- Bibliography ----------------------
 \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\bibname}
 \bibliography{bibliography}
-\bibliographystyle{unsrt}
+\bibliographystyle{abbrv}
 
 
 \end{document}

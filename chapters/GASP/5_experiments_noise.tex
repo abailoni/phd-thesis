@@ -1,0 +1,30 @@
+% !TEX root = ../agglo_clust_review.tex
+
+% \subsection{Results and discussion}\label{sec:results}
+% \textbf{Comparison of linkage criteria} Table \ref{tab:results_cremi_train} shows how the agglomerative algorithms derived from our framework compare to each other. For a simple baseline, we also include a segmentation produced by thresholding the affinity predictions (THRESH).
+% \algname{} with \emph{Average} linkage, representing one of the new algorithms derived from our generalized framework, significantly outperformed all other previously proposed agglomerative methods like GAEC \cite{keuper2015efficient} (\algname{} Sum), Greedy Fixation \cite{levinkov2017comparative} (\algname{} Sum + Constraints) or Mutex Watershed \cite{wolf2018mutex} (\algname{} Abs. Max.). 
+
+
+% The competitive performance of this simple parameter-free algorithm is also reported in Table \ref{tab:results_cremi_test}, showing the current leader-board of the challenge: all entries, apart from \algname{}, employ superpixel-based post-processing pipelines, several of which rely on the lifted multicut formulation of \cite{beier2017multicut} that uses several random forests to predict graph edge weights, relying not only on information derived from affinity maps but also raw data and superpixel shape information.
+% Note that the test volumes contain several imaging artifacts that make segmentation particularly challenging and might profit from more robust edge statistics of super-pixel based approaches.
+% On the other hand, the fact that our algorithm can operate on pixels directly removes the parameter tuning necessary to obtain good super-pixels and can also avoid errors that result from wrong superpixels that cannot be fixed during later agglomeration.
+% In Appendix \ref{sec:appendix_exps_full_cremi}, we provide more details about how we scaled up \algname{} to the full datasets. Appendix Table \ref{tab:extended_results_cremi} lists the performances and the run-times for all tested \algname{} linkage criteria.\\
+
+
+
+
+
+% \textbf{Noise experiments }  Additionally, we conduct a set of experiments where the CNN predictions are perturbed by structured noise, in order to highlight the properties of each \algname{} variant and perform an in-depth comparison that is as quantitative as possible. Appendix \ref{sec:appendix_noise_gen} introduces the type of spatially correlated noise that allowed us to perturb the CNN outputs by introducing simulated additional artifacts like missing or false positive boundary evidence. 
+% Fig.~\ref{fig:noise_plots} summarizes our 12000 noise experiments: we focus on the best performing linkage criteria, i.e. \emph{Average}, \emph{Sum} and \emph{Abs Max}, and test them with different amount of noise. 
+% In these experiments, we also want to assess how beneficial it is to use long-range CNN predictions in the agglomeration. Thus, we perform a set of simulations without adding long-range connections to the grid-graph and another set where we introduce them with a 10\% probability\footnote{We also performed experiments adding all the long-range predictions given by the CNN model, but we did not note major differences when using only 10\% of them. Adding this fraction is usually sufficient to improve the scores.}.\\
+
+% \textbf{Average and Abs Max linkage } Our findings confirm that \algname{} with \emph{Average} linkage criterion represents the most robust algorithm tested and the one that benefits the most from using the long-range CNN predictions. On the other hand, it is not a surprise that the \emph{Abs Max} statistic proposed by \cite{wolf2018mutex} is less robust to noise than the \emph{Average} linkage, but, as we show in the Appendix Table \ref{tab:extended_results_cremi}, \emph{Abs Max} represents a valid and considerably faster option. 
+% Adding long-range connections to the graph is generally helpful, but when many of them carry repulsive weights, then \algname{} with cannot-link constraints shows a clear tendency to over-cluster. \\
+
+% \textbf{Sum linkage } 
+% All our experiments show that \algname{} with \emph{Sum} linkage is the algorithm with the highest tendency to under-cluster and incorrectly merge segments (see Fig.\ \ref{fig:cremi_comparison} for an example). This property is related to the empirical observation that a \emph{Sum} statistic tends to grow clusters one after the other, as shown in Fig.\ \ref{fig:intro_figure} by the quite unique agglomeration order of the \emph{Sum} statistic. An intuitive explanation of this fact is the following: initially, most of the intra-cluster nodes present similar attractive interactions between each others; when the two nodes sharing the most attractive interaction are merged, there is a high chance that they both share an attractive interaction with a common neighboring node, so the new interaction with this common neighbor will be immediately assigned to a high priority in the agglomeration, given by the sum of two high weights; this usually starts a ``chain reaction'', where only a single cluster is agglomerated at the beginning. On the other hand, as we also see in Fig.\ \ref{fig:intro_figure}, other linkage criteria like \emph{Average} or \emph{Abs Max} grow clusters of similar sizes in parallel and accumulate in this way much more reliable inter-cluster statistics.
+
+
+
+
+

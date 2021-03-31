@@ -1,0 +1,141 @@
+%!TEX root = ../main.tex
+
+\subsection{Study on natural image segmentation}
+
+% R1,2,3 requested experiments on natural images. We agree that such experiments, as we have conducted and present below, provide for additional insight into the Mutex Watershed performance. Still, we would like to stress that on natural images, a semantically agnostic closed-contour segmentation will have fewer applications than semantic instance segmentation of a particular important class such as pedestrians or cars \cite{Cordts2016Cityscapes}. That said, we have conducted experiments on the entire BSD500 dataset. Please note that while BSD is the Berkeley {\it segmentation} dataset, the great majority of work on this collection is on boundary detection, not on the problem of (closed contour) segmentation we are tackling. 
+
+To study the Mutex Watershed on natural images we test on the Berkeley segmentation dataset BSD500\cite{bsd}. 
+It is important to note that, any segmentation metric would not only measure the quality of the MWS segmentation given the underlying edge affinities, but also that of the affinities themselves. 
+% Still, we would like to stress that on natural images, a semantically agnostic closed-contour segmentation will have fewer applications than semantic instance segmentation of a particular important class such as pedestrians or cars \cite{Cordts2016Cityscapes}.
+In order to isolate the influence of the quality of the underlying affinities, we run a battery of ablation experiments where we interpolate between affinities as predicted by a neural network, those obtained from the ground-truth and uniform noise. By studying this ``phase transition diagram'' (Fig.~\ref{fig:simplex0}), we simultaneously measure the susceptibility of our algorithm to noise and gain insight on the required quality of the affinities as predicted by a neural network.\\
+
+\begin{figure}
+\centering
+\includegraphics[width=0.35\textwidth,trim=0.in 0.in 0.in 0.in,clip]{images/simplex-edgelabels-ri.png}
+\caption{\small 
+%The edge-affinities underlying the MWS algorithm are interpolated (weighted sum) on a simplex between ground-truth affinities (upper vertex), predictions from a neural network (right vertex), and uniform noise (left vertex). The rand index is computed from the resulting MWS segmentation (colorbar) evaluated on the entire BSD500 dataset. 
+BSD500 segmentation quality of MWS algorithm, given affinities from ground truth (top corner), from a neural network (right corner) or pure noise (left corner); plus hundreds of experiments on weighted combinations of the above. MWS segmentation quality (evaluated with Rand index) degrades only once a large amount of noise is added to the affinities.
+\label{fig:simplex0}}
+\end{figure}
+
+\begin{figure}[h!] 
+\begin{center}
+\setlength\tabcolsep{1.pt}
+\begin{tabular}[t]{ccc}
+
+    \includegraphics[width=0.33\linewidth]{images/lux/raw_gt.png}&
+    \includegraphics[width=0.33\linewidth]{images/lux_color/seg_aff_red_m3_52_81nn_19gt_17.png} &
+    \includegraphics[width=0.33\linewidth]{images/lux_color/seg_aff_red_m3_52_100nn.png}  \\
+    \tiny{ground truth} & \tiny{NN = 80\%; GT=20\%; Noise = 0\%} &\tiny{NN = 100\%; GT=0\%; Noise = 0\%}\\
+    \includegraphics[width=0.33\linewidth]{images/lux_color/seg_aff_red_m3_52_38gt_62noise.png} &
+    \includegraphics[width=0.33\linewidth]{images/lux_color/seg_aff_red_m3_52_43nn_14gt_43noise_9.png} & 
+    \includegraphics[width=0.33\linewidth]{images/lux_color/seg_aff_red_m3_52_43nn_14gt_43noise_9.png}  \\
+    \tiny{NN = 0\%; GT=38\%; Noise = 62\%} & \tiny{NN = 43\%; GT=14\%; Noise = 43\%} &\tiny{NN = 43\%; GT=0\%; Noise = 57\%}\\
+%     &  \tiny{false split due to noisy repulsive edge predictions(green)} & \\
+            
+\end{tabular}
+
+\end{center}
+   \caption{\small 
+   %Top Left: Image from the BSD test set with ground truth segmentation. 
+   MWS segmentations (red lines and color fill) of one arbitrary BSD500 image, given affinities (gray values) interpolated between neural net predictions (NN), ground-truth (GT) and uniform noise. The algorithm proved to be reasonably robust against noise in the affinities.
+%    \tetxbf{Change random coloring. Omit some of the subfigures? E.g. show only GT, the one that is 100pc NN, and one that is NN plus noise. }
+   %Other: Downward facing long-range affinities (gray value) with MWS segmentation overlayed (red lines and color fill). 
+   %Affinities are interpolated between neural net predictions (NN), ground-truth (GT) and uniform noise with the respective percentages specified below each image. 
+   }\label{fig:mwsegs}
+% \label{fig:BSD}
+\end{figure}
+
+\begin{figure}
+\centering
+\input{chapters/bsd_table2}
+\makeatletter\def\@captype{table}\makeatother% "Change float to table"
+\caption{\small BSD500 scores at various interpolations between the neural network predictions (NN), ground-truth (GT) and noise. \label{tab:bsdtable}}
+\end{figure}
+
+%\subsubsection*{Experimental Setup and Results}
+Our experimental setup is as follows. MWS segmentations are computed on affinities generated by interpolating (via weighted average) on a simplex between (a) ground-truth affinities, (b) those predicted by a neural network
+% UK: Now you don't say that this is a suboptimal neural net (used to be "undertrained") -- the present formulation might suggest that a network cannot perform close to the truth.
+and (c) uniform noise. Observe that the vertices corresponding to (b) and (c) can be interpreted as structured and unstructured noise on the ground-truth affinities (respectively). Moreover, to bootstrap the training of our (long-range) affinity model, we feed it predictions from a pretrained edge probability model from \cite{xie2015holistically} as additional inputs. The resulting segmentations from the interpolated affinities are size-filtered (as the only post-processing step) and evaluated with the Rand index (see figure \ref{fig:simplex0}). Finally in Figure \ref{fig:mwsegs}, we visualize the segmentations obtained at various points on the simplex for one arbitrary image.
+% In table \ref{tab:bsdtable}, we show the segmentation-relevant BSD metrics \cite{martin2004learning} for different points on the simplex and include a comparison with the most recent related work exploiting long-range connectivity \cite{keuper2015efficient}. 
+% INCLUDE ME IF SPACE PERMITS:
+% closed contour segmentation that was also obtained using long-range connectivity via solving a lifted Multicut problem \cite{keuper2015efficient} .
+% In particular, we obtain optimal results w.r.t. the ground-truth (given a randomly selected labeler)
+% \subsubsection*{Conclusion and Future Work}
+Despite the greedy nature of the MWS algorithm, we find it to be reasonably robust against noise in the affinities.
+%Despite the greedy nature of the MWS algorithm, we find that it is reasonably robust against both structured and unstructured noise {\bf I don't find this statement so convincing. What really matters is the NN corner of the simplex. Describing it as "structured noise" is awkward to me. I suggest deleting this entire paragraph and replacing it with a paraphrasing of the last sentence of the new caption. }. In particular, we obtain almost optimal results w.r.t the ground-truth (given a randomly selected labeler) even when unstructured noise dominates the signal 60-40, and when the neural network predictions (i.e. structured noise) dominates 70-30. Nevertheless, we consider augmenting the MWS with semantic class labels as an interesting avenue of future research. Furthermore, we believe incorporating the MWS in the end-to-end learning process can help with learning robust affinities. 
+%Using the predictions from our under-trained neural network, we perform better than a comparable
+%closed contour segmentation approach. Our results are not quite competetive with state-of-the-art  predictions (F-Score 0.79). We believe that this is due to the fact that our network was not sufficiently (pre-)trained and that the F-Score metrics favors boundary predictions over closed contour segmentations.
+% In future work, we want to focus on (semantic) instance segmentation on natural images, where we augment the MWS with semantic class labels. Additionally we want to incorporate the MWS in the end-to-end learning process to learn robust affinities.
+% * <nasim.rahaman.42@gmail.com> 2018-05-28T18:28:13.583Z:
+% 
+% > Using the predictions from our under-trained neural network, we perform better than a comparable
+% > closed contour segmentation approach. Our results are not quite competetive with state-of-the-art  predictions (F-Score 0.79). We believe that this is due to the fact that our network was not sufficiently (pre-trained) and that the F-Score metrics favors boundary predictions over closed contour segmentations
+% 
+% I think we should tone this down a bit. Our network receives the prediction from HED as an input, which has an F-Score of around 0.78. - there's no easy (space efficient) way to justify why the score drops to 0.73.
+% 
+% ^.
+% \newpage
+
+% itemize}
+% }
+
+
+% To investigate the point raised by reviewer 1 about the MWS algorithm being sensitive to noise, we include an experiment where we noise ground-truth affinity maps and evaluate how the performance of the MWS degrades with increasing noise (figure ?). Finally, we combine both experiments by varying both the amount of noise and the quality of segmentation simultaneously. This yields a 
+% Nonetheless, we consider incorporating semantic labels (pertaining to natural images) in the MWS algorithm itself as an interesting avenue of future research.  
+
+% Describe future work
+% {\bf Fig: 3 caption: 
+% %Don't waste the important first sentence of the caption to say that we see ground truth (it's obvious from the words under the subfigure). Close caption by saying what interpretation we should walk away with. 
+% }
+
+% As reviewer 2 pointed out, long-range edges should be shorter if the image is full of small
+% segments. An upper limit for the Repulsive edge range is twice the expected object width, since repulsive edges can only separate neighboring clusters. 
+
+% \textbf{Pattern: } use symetries in the data in order to do TDA.  
+
+% Caption for the simplex: The edge-affinities underlying the MWS algorithm are interpolated on a simplex between ground-truth (long-range) affinities (upper vertex), predictions from an under-trained neural network (right vertex), and uniform noise (left vertex). The adjusted rand index (ARI) is computed from the resulting MWS segmentation (colorbar). 
+
+% Caption for line: The adjusted rand index (ARI) along the edges of the simplex. While interpolating from ground-truth to network predictions (NN), the performance only drops when the network prediction dominates the ground-truth by 7:3. Similarly for uniform noise, the performance remains stable up until the point where the noise dominates the ground-truth by 6:4. 
+
+
+% \begin{figure}[hb!]
+
+% %\setlength\tabcolsep{1.pt}
+% \centering
+%     \begin{subfigure}[t]{0.45\textwidth} 
+%         \centering
+%         \includegraphics[width=0.75\linewidth]{images/simplex.png}
+%         \caption{The edge-affinities underlying the MWS algorithm are interpolated (weighted sum) on a simplex between ground-truth affinities (upper vertex), predictions from an under-trained neural network (right vertex), and uniform noise (left vertex). The adjusted rand index (ARI) is computed from the resulting MWS segmentation (colorbar) evaluated on the entire BSD500 dataset.}\label{fig:simplex}
+%     \end{subfigure}%
+%     % \hfill
+%     % \begin{subfigure}[t]{0.45\textwidth} 
+%     %     \centering
+%     %     \includegraphics[width=0.95\linewidth]{images/better-line.png}
+%     %     \caption{The adjusted rand index (ARI) along the edges of the simplex. While interpolating from ground-truth to network predictions (NN), the performance only drops when the network prediction dominates the ground-truth by 7:3. Similarly for uniform noise, the performance remains stable up until the point where the noise dominates the ground-truth by 6:4.}\label{fig:lineplots}
+%     % \end{subfigure}%
+%     $\quad$
+%          \begin{subfigure}[t]{0.45\textwidth} 
+%      \centering
+%     \input{bsd_table}
+%          \caption{}\label{tab:bsdtable}
+%      \end{subfigure}
+    
+%    \caption{}
+% \label{fig:BSD}
+% \end{figure}
+
+
+
+%\begin{table}[h]
+%    \centering
+%    \input{bsd_table}
+%\end{table}
+
+ 
+%{\color{red}\st{This is further compounded by the fact that learning edge probabilities is an ill-posed problem, which is shown by the fact that even human annotators fail to agree on a consistent segmentation. Note that for the dataset considered in the paper, the edges correspond to a physical entity (i.e. cell membranes) and are not ambiguous. Furthermore, if we take the edge probabilities as given, we show that the segmentations proposed by our algorithm are indeed quite reasonable (see figures ?), especially given the fact that it does not rely on seeds. }  \tiny{(this is too strong I'd prefer agreeing with R1, that MWS is indeed very susceptible to noise, especially in the repulsive edges. We can not train a noiseless network in the time of rebuttal and can not use other methods, since they only give us short range affinities. We share our preliminary experiments here, but expect that MWS can )}}
+%     \thead{\includegraphics[width=0.33\linewidth]{images/seg_887_31_0.png}} & 
+%     \thead{\includegraphics[width=0.33\linewidth]{images/seg_887_31_0.png} \\[-0.18cm] \tiny mutex watershed \\             \includegraphics[width=0.33\linewidth]{images/seg_887_31_0.png} \\[-0.18cm] \tiny predicted edge costs (1, 0)} &
+%     \thead{\includegraphics[width=0.33\linewidth]{./images/seg_887_31_0.png}     \\[-0.18cm] \tiny averaged ground truth edge costs (9, 0) \\ \includegraphics[width=0.33\linewidth]{images/seg_887_31_0.png} \\[-0.18cm] \tiny predicted edge costs (9, 0)} \\
+%      \includegraphics[width=0.145\linewidth]{images/seg_808_59_0.png} %
+%      \hfill \includegraphics[width=0.145\linewidth]{images/seg_861_137_0.png}

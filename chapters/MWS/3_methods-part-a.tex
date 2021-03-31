@@ -1,0 +1,210 @@
+%!TEX root = ../../main.tex
+
+% \cleardoublepage
+
+
+
+
+\section{The Mutex Watershed Algorithm as an Extension of Seeded Watershed} \label{3_methods}
+In this section we introduce the Mutex Watershed Algorithm, an efficient graph clustering algorithm that can ingest both attractive and repulsive cues. We first reformulate seeded watershed as a graph partitioning with infinitely repulsive edges and then derive the generalized algorithm for finitely repulsive edges, which obviates the need for seeds.
+
+
+\subsection{Definitions and notation}\label{sec:notation}
+Let $\mathcal{G}=(V, E, w)$ be a weighted graph. 
+% \TODO{Why do we need this here? (also $\Pi$ is used for paths and partitions)\\
+% We call a partition $\Pi$ of
+% $V$ a clustering if every $S \in \Pi$ induces a connected subgraph
+% (cluster) of $G .$ For any clustering $\Pi$ of $G,$ we denote by $E_{\Pi}^{0}$
+% the set of those edges whose nodes are in the same cluster,
+% and by $E_{\Pi}^{1}$ the (complementary) set of those edges whose nodes are in distinct clusters:
+% \begin{align}
+% E_{\Pi}^{0} &=\{u v \in E | \exists S \in \Pi : u \in S \text { and } v \in S\} \\
+% E_{\Pi}^{1} &=E \backslash E_{\Pi}^{0}
+% \end{align}
+% The set of edges $E_{\Pi}^{1}$ is known as the multicut of $G$ that corresponds to the clustering $\Pi$.}
+The scalar attribute $w : E \rightarrow \mathbb{R}$ associated with each edge is a merge affinity: the higher this number, the higher the inclination of the two incident vertices to be assigned to the same cluster. Conversely, large negative affinity indicates a greater desire of the incident vertices to be in different clusters. In our application, each vertex corresponds to one pixel in the image to be segmented. 
+We call an edge $e \in E$ repulsive if $w_{e}<0$ and we call it attractive if $w_{e}>0$ 
+% Note that we may w.l.o.g. remove all edges $e \in E$ with $w_{e}=0,$ since the choice of $x_{e}$ is irrelevant to the objective. 
+and collect them in $E^{-} = \{  e \in E \,|\, w_e < 0 \}$ and $E^{+} = \{ e \in E \; | \; w_e > 0 \}$ respectively.
+
+In our application, each vertex corresponds to one pixel in the image to be segmented. 
+% \REVIEW{\sout{Edges can be either {\it local/short-range} (when connecting two pixels that are immediately adjacent in the image) or {\it long-range}.}}
+% Our algorithm ``activates'' attractive edges to merge and introduces mutual exclusion relations by ``activating'' repulsive edges. Given the ``active'' subset $A^+ \subseteq E^+$ of attractive edges, clusters are defined via the ``connected'' predicate: 
+The Mutex Watershed algorithm, defined in \autoref{3_3_MWS}, maintains disjunct active sets $A^+ \subseteq E^+$, $A^- \subseteq E^-$, $A^+ \cap A^- = \emptyset$ that encode merges and mutual exclusion constraints, respectively. Clusters are defined via the ``connected'' predicate: %
+\begin{eqnarray*}
+\forall i,j\in V:\\
+\Pi_{i \rightarrow j} & = & \{ \text{paths } \pi\text{ from }i\text{ to }j\text{ with }\pi\subseteq E^+\}\\
+\operator{connected}(i, j; A^+)&\Leftrightarrow& \exists \text{ path } \pi \in \Pi_{i \rightarrow j} \text{ with }\pi \subseteq A^+ \\
+\operator{cluster}(i; A^+) & = & \{i\} \cup \{j: \operator{connected}(i,j; A^+) \}
+\end{eqnarray*}
+Conversely, the active subset $A^-\subseteq E^-$ of repulsive edges defines mutual exclusion relations by using the following predicate: % is defined in terms of active repulsive edges $A^-$ as
+\begin{eqnarray*}
+\operator{mutex}(i, j; A^+, A^-)&\Leftrightarrow& \exists \, e=(k,l)\in A^- \text{ with } \\ && k \in \operator{cluster}(i; A^+) \text{ and}\\
+& & l \in \operator{cluster}(j; A^+) \text{ and} \\
+&&\operator{cluster}(i; A^+) \neq \operator{cluster}(j; A^+)
+\end{eqnarray*}
+Admissible active edge sets $A^+$ and $A^-$ must be chosen such that the resulting clustering is consistent, i.e.\ nodes engaged in a mutual exclusion constraint cannot be in the same cluster:
+$\operator{mutex}(i,j; A^+, A^-) \Rightarrow \operator{not} \:\: \operator{connected}(i, j; A^+)$.
+The ``connected'' and ``mutex'' predicates can be efficiently evaluated using a union find data structure.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/MWS/images/seeded-WS.pdf}%
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{Two equivalent representations of the seeded watershed clustering obtained using (a) a maximum spanning tree computation or (b) Algorithm \ref{WS_algo_code}. Both graphs share the weighted attractive~(green) edges and seeds (hatched nodes). The infinitely attractive connections to the auxiliary node (gray) in (a) are replaced by infinitely repulsive~(red) edges between each pair of seeds in (b). The two final clusterings are defined by the active sets (bold edges) and are identical. Node colors indicate the clustering result, but are arbitrary.}
+\label{fig:WS_compare}
+\end{figure}
+
+\TODO{Convert algorithm}
+% \begin{algorithm}[b]
+%  \hrulefill \\
+% \textbf{Seeded Watershed:}\\
+% \SetKwProg{WS}{WS}{$\big(\mathcal{G}(V,E),$ \text{\rm pos.\ weights} $w:E\rightarrow \mathbb{R}^+$, \text{\rm seeds} $S\subseteq V\big)$:}{}
+% \WS{}{
+% $A^+ \leftarrow \emptyset$\; 
+% $A^- \leftarrow \{ (s,t) \in S \times S \,|\, s \neq t \} $\;
+% \Comment{\parbox[t]{.77\linewidth}{Equivalent to introducing infinitely \\repulsive edges between seeds}}\\
+%  %  \textbf{Input: }
+%  %     weighted graph $\mathcal{G}(V,  E, w)$ and seeds $S \subseteq V$, where only seeds are connected by repulsive edges $w_{uv} < 0 \Leftrightarrow u \in S \text{ and } v \in S$ and $\; w_{st} = -\infty \;\forall (s,t) \in S \times S; s \neq t$.\\
+%  %         % $\{(s_i, s_j) | i,j \in 1, \ldots, |S|; i \neq j \}$ is the set of infinitely repulsive edges between all pairs of seeds\;
+%  %      \textbf{Output: }
+%  %     clusters defined by activated edges $A^+$\;
+%  % \textbf{Initialization: }
+%  %     $A^+ = \emptyset $;
+%  %     $A^- = \{e \;|\; w_e = - \infty \;\forall e \in E\}$\;
+%  \For{$(i,j) = e \in E $ {\rm in descending order of } $w_e$} 
+%  {
+%     \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{and not} $\operator{mutex}$($i,j;A^+,A^-$) }  
+%     {
+%           $A^+ \leftarrow A^+ \cup e$ \;
+%           \Comment{\parbox[t]{.65\linewidth}{merge $i$ and $j$ and inherit the mutex\\ constraints of the parent clusters}}
+%     }
+%     }
+%     \textbf{return} $A^+ \cup A^-$
+%   } \vspace{5pt}\hrulefill
+%   \vspace{5pt}
+%  \caption{Mutex version of seeded watershed algorithm. The output clustering is defined by the connected components of the final attractive active set $A^+$.}
+%  \label{WS_algo_code}
+% \end{algorithm}
+
+
+\subsection{Seeded watershed from a mutex perspective}
+\noindent One interpretation of the proposed method is in terms of a generalization of the edge-based watershed algorithm \cite{Meyer1994,Meyer1994minimum,meyer1999morphological}
+ or image foresting transform \cite{falcao2004image}.
+This algorithm can only ingest a graph with purely attractive interactions, $E^{-} = \emptyset$. Without  further constraints, the algorithm would yield only the trivial result of a single cluster comprising all vertices. To obtain more interesting output, an oracle needs to provide seeds~(e.g.\ one node per cluster). These seed vertices are all connected to an auxiliary node (see Fig.~\ref{fig:WS_compare} (a)) by auxiliary edges with infinite merge affinity. A maximum spanning tree (MST) on this augmented graph can be found in linearithmic time; and the maximum spanning tree (or in the case of degeneracy: at least one of the maximum spanning trees) will include the auxiliary edges. When the auxiliary edges are deleted from the MST, a forest results, with each tree representing one cluster \cite{meyer1999morphological,Meyer1994,falcao2004image}.
+
+We now reformulate this well-known algorithm in a way that will later emerge as a special case of the proposed Mutex Watershed: 
+we eliminate the auxiliary node and edges, and replace them by a set of infinitely repulsive edges, one for each pair of seeds (Fig.~\ref{fig:WS_compare} (b)).
+Algorithm \ref{WS_algo_code} is a variation of Kruskal's MST algorithm operating on the seed mutex graph just defined, and gives results identical to seeded watershed on the original graph. 
+
+
+This algorithm differs from Kruskal's only by the check for mutual exclusion in the if-statement. Obviously, the modified algorithm has the same effect as the original algorithm, because the final set $A^+$ is exactly the maximum spanning forest obtained after removing the auxiliary edges from the original solution. 
+
+In the sequel, we generalize this construction by admitting less-than-infinitely repulsive edges. Importantly, these can be dense and are hence much easier to estimate automatically than seeds with their strict requirement of only-one-per-cluster.
+
+
+\TODO{Convert algorithm}
+% \begin{algorithm}[t]
+%  \hrulefill \\
+% % \Fn{afunc(i: int) : int}{return 0\;}
+% \textbf{Mutex Watershed:}\\
+% \SetKwProg{MWS}{MWS}{$\big(\mathcal{G}(V,E)$, $w:E\rightarrow \mathbb{R}$, \text{\rm boolean $\operator{connect\_all}\big)$}:}{}
+% \MWS{}{
+%    % \textbf{MWS-Clustering}($G$, $w$, \text{connect\_all}):\;
+%      % weighted graph $\mathcal{G}(V, E, w)$\;
+%       % \textbf{Output: }
+%      % clusters defined by active set $A^+$\;
+%   % \textbf{Initialization: }
+%      $A^+ \leftarrow \emptyset; \quad A^- \leftarrow \emptyset $\;
+%  \For{$(i,j) = e \in E $ {\rm in descending order of } $|w_e|$} 
+%  {
+%    \eIf{$e \in E^+$}
+%    {
+%    \If{\rm \textbf{not} $\operator{mutex}$($i,j; A^+, A^-$) }  
+%     {
+%         \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{or}
+%             \rm $\operator{connect\_all}$}{
+%           $\operator{merge}(i, j)$: $A^+ \leftarrow A^+ \cup e$\;
+%           \Comment{\parbox[t]{.55\linewidth}{ merge $i$ and $j$ and inherit the mutex \\constraints of the parent clusters}}
+%         }
+%     }
+%    }{
+%     \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$)}
+%       {
+%           $\operator{addmutex}(i, j)$: $A^- \leftarrow A^- \cup e$\;
+%           \Comment{\parbox[t]{.60\linewidth}{add mutex constraint between $i$ and $j$}}
+%       }
+%    }
+
+%  }
+%  \textbf{return} $A^+ \cup A^-$
+%  } \vspace{3pt}\hrulefill
+%  \vspace{6pt}
+%  \caption{Mutex Watershed Algorithm. \REVIEW{The output clustering is defined by the connected components of the final attractive active set $A^+$. The $\operator{connect\_all}$ parameter changes the internal cluster connectedness from trees to fully connected, but does not change the output clustering.} The $\operator{connected}$ predicate can be efficiently evaluated using union find data structures.}
+%  \label{algo_code_efficient}
+% % }
+% \end{algorithm}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/MWS/images/new-diagram-MWS-2.pdf}
+% \includegraphics[width=\linewidth]{images/exampleg1.png}
+% \includegraphics[width=\linewidth]{images/exampleg2.png}
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{Some iterations of the Mutex Watershed Algorithm \ref{algo_code_efficient} applied to a graph with weighted attractive (green) and repulsive (red) edges. Edges accumulated in the active set $A$ after a given number of iterations are shown in bold. \REVIEW{The $\operator{connect\_all}$ parameter of the algorithm is set to $\operator{False}$, so that only the positive edges belonging to the maximum spanning tree of each cluster are added to the active set.} Once the algorithm terminates, the final active set (f) defines the final clustering (indicated using arbitrary node colors). Some edges are not added to the active set because they are mutex constrained~(yellow highlight) or because the associated nodes are already connected and in the same cluster~(blue highlight).}
+   %Some edges that are not added to the active set because they would violate constraints $\mathcal{C}_{0}$ or $\mathcal{C}_{1}$ are highlighted in blue and yellow, respectively. \TODO{Update}}
+\label{fig:MWS_algorithm}
+\end{figure}
+
+\subsection{Mutex Watersheds}\label{3_3_MWS}
+
+\noindent 
+We now introduce our core contribution: an algorithm that is empirically no more expensive than a MST computation; but that can ingest both attractive and repulsive cues and partition a graph into a number of clusters that does not need to be specified beforehand. \REVIEW{Neither seeds nor hyperparameters that implicitly determine the number of resulting clusters are required.}
+
+The Mutex Watershed, Algorithm \ref{algo_code_efficient}, proceeds as follows. Given a graph $\mathcal{G}=(V, E)$ with signed weights $w: E \rightarrow \mathbb{R}$, do the following: sort all edges $E$, attractive or repulsive, by their absolute weight in descending order into a priority queue. Iteratively pop all edges from the queue and add them to the active set one by one, provided that a set of conditions are satisfied.
+More specifically, assuming $\operator{connect\_all}$ is $\operator{False}$, if the next edge popped from the priority queue is attractive and its incident vertices are not yet in the same tree, then connect the respective trees provided this is not ruled out by a mutual exclusion constraint. If on the other hand the edge popped is repulsive, and if its incident vertices are not yet in the same tree, then add a mutual exclusion constraint between the two trees. 
+The output clustering is defined by the connected components of the final attractive active set $A^+$.
+
+ The crucial difference to Algorithm \ref{WS_algo_code} is that mutex constraints are no longer pre-defined, but created dynamically whenever a repulsive edge is found. However, new exclusion constraints can never override earlier, high-priority merge decisions. In this case, the repulsive edge in question is simply ignored. Similarly, an attractive edge must never override earlier and thus higher-priority must-not-link decisions. 
+
+\REVIEW{The boolean value of the $\operator{connect\_all}$ input parameter of the algorithm does not influence the final output clustering, but defines the internal cluster connectedness: when it is set to $\operator{True}$, the algorithm adds all attractive intra-cluster edges to the active set $A^+$. When it is set to $\operator{False}$, then a maximum spanning tree is built for each cluster similarly to the seeded watershed. This variant of the algorithm will be helpful in the next section \ref{sec:MWS_objective} to highlight the relation between the Mutex Watershed and the multicut problem.}
+% \TODO{Mention correctness, guaranteed termination?}
+
+Fig. \ref{fig:MWS_algorithm} illustrates the proposed algorithm: Fig. \ref{fig:MWS_algorithm}a and Fig. \ref{fig:MWS_algorithm}b show examples of an unconstrained merge and an added mutex constraint, respectively; Fig. \ref{fig:MWS_algorithm}c and Fig. \ref{fig:MWS_algorithm}d show, respectively, an example of an attractive edge ($w_e=14$) and repulsive edge ($w_e=-13$) that are not added to the active set because their incident vertices  are already ``connected'' and belong to the same tree of the forest $A^+$; finally, Fig. \ref{fig:MWS_algorithm}e shows an attractive edge ($w_e=12$) that is ruled out by a previously introduced mutual exclusion relation.
+
+
+\subsection{Time Complexity Analysis}
+
+
+Before analyzing the time complexity of algorithm \ref{algo_code_efficient} we first review the complexity of Kruskal's algorithm. Using a union-find data structure~(with path compression and union by rank) the time complexity of $\operator{merge}(i,~j)$ and $\operator{connected}(i,~j)$ is $\mathcal{O}(\alpha(V))$, where $\alpha$ is the slowly growing inverse Ackerman function, and the total runtime complexity is dominated by the initial sorting of the edges $\mathcal{O}(E \log E)$\cite{cormen2009introduction}.
+
+\noindent To check for mutex constraints efficiently, we maintain a set of all active mutex edges $$ M[C_i] = \{(u,~v) \in A^- | u \in C_i \lor v \in C_i\} $$ for every $C_i = \operator{cluster}(i)$ using hash tables, where insertion of new mutex edges~(i.e. $\operator{addmutex}$) and search have an average complexity of $\mathcal{O}(1)$. Note that every cluster can be efficiently identified by its union-find root node.
+For $\operator{mutex}(i,~j)$ we check if $M[C_i] \cap M[C_j] = \emptyset$ by searching for all elements of the smaller hash table in the larger hash table. Therefore $\operator{mutex}(i,~j)$ has an average complexity of $\mathcal{O}(\min (|M[C_i]|, |M[C_j]|)$. % and a worst case complexity of $\mathcal{O}(|M[C_i]|\cdot|M[C_j]|)$.
+Similarly, during $\operator{merge}(i,~j)$, mutex constraints are inherited  by merging two hash tables, which also has an average complexity $\mathcal{O}(\min (|M[C_i]|, |M[C_j]|)$. 
+
+\noindent In conclusion, the average runtime contribution of attractive edges $\mathcal{O}(\max(|E^{+}| \cdot\alpha(V), |E^{+}| \cdot M))$ (checking mutex constraints and possibly merging) and repulsive edges
+ $\mathcal{O}(\max(|E^{-}| \cdot \alpha(V), |E^{-}|)) $ (insertion of one mutex edge) result in a total average runtime complexity of algorithm \ref{algo_code_efficient}:
+ \vspace{-0.1cm}
+    % \begin{equation}
+    %     \mathcal{O}(E \log E + E  \cdot  \alpha(V) + EM).
+    % \end{equation}
+    \begin{equation}
+         \mathcal{O}(\max(E \log E \;,\; EM)).
+    \end{equation}
+where $M$ is the expected value of $\min (|M[C_i]|, |M[C_j]|)$ and $\alpha(V) \in \mathcal{O}(\log V) \in \mathcal{O}(\log E) $ \footnote{In the worst case $G$ is a fully connected graph, with $|E|=|V|^2$, hence $\log |V| = \frac{1}{2} \log |E|$.}.
+
+
+\noindent In the worst case $\mathcal{O}(M) \in \mathcal{O}(E)$, the Mutex Watershed Algorithm has a runtime complexity of  $\mathcal{O}(E^2)$. Empirically, we find that $\mathcal{O}(EM) \approx \mathcal{O}(E\log E)$ by measuring the runtime of Mutex Watershed for different sub-volumes of the ISBI challenge~(see Figure \ref{fig:scalingM}), leading to a 
+\begin{equation}
+    \text{Empirical Mutex Watershed Complexity: }\mathcal{O}(E \log E)
+\end{equation}
+
+
+\begin{figure}
+   \centering
+\adjustbox{width=0.98\linewidth}{
+       \input{figures/MWS/fig/runtime/runtime.pgf}}
+   \caption{Runtime $T$ of Mutex Watershed (without sorting of edges) measured on sub-volumes of the ISBI challenge of different sizes~(thereby varying the total number of edges $E$). We plot $\frac{T}{|E|}$ over $|E|$ in a logarithmic plot, which makes $T \sim |E| log(|E|)$ appear as straight line. A logarithmic function (blue line) is fitted to the measured $\frac{T}{|E|}$ (blue circles) with ($R^2 = 0.9896$). The good fit suggests that empirically $T \approx \mathcal{O}(E \log E)$.}
+\label{fig:scalingM}
+\end{figure}
+

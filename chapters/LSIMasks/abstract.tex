@@ -1,0 +1,12 @@
+% !TEX root = ../patchEmbeddings_review.tex
+
+\begin{abstract}
+This work introduces a new proposal-free instance segmentation method that builds on single-instance segmentation masks predicted across the entire image in a sliding window style.
+In contrast to related approaches, our method concurrently predicts all masks, one for each pixel, and thus resolves any conflict jointly across the entire image.
+Specifically, predictions from overlapping masks are combined into edge weights of a signed graph that is subsequently partitioned to obtain all final instances concurrently.
+The result is a parameter-free method that is strongly robust to noise and prioritizes predictions with the highest consensus across overlapping masks. 
+All masks are decoded from a low dimensional latent representation, which results in great memory savings strictly required for applications to large volumetric images. 
+We test our method on the challenging CREMI 2016 neuron segmentation benchmark where it achieves competitive scores. 
+% In our extensive set of comparison experiments, we show how predicting encoded masks performs favorably compared to other competitive proposal-free methods predicting pixel-pair affinities.
+% \keywords{Proposal-Free Instance Segmentation; Latent Single-Instance Masks; Large Volumetric Biological Images; Neuron Segmentation}
+\end{abstract}

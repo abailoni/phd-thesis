@@ -1,0 +1,85 @@
+%!TEX root = ../main.tex
+
+%\cleardoublepage
+
+\section{Efficient implementation of the Mutex Watershed Algorithm}
+
+% In our application, each vertex corresponds to one pixel in the image to be segmented. Two vertices may have no edge connecting them; or an attractive edge $e\in  E^+$; or a repulsive edge  $e\in  E^-$; or two edges at the same time, one attractive and one repulsive. Edges can be either {\it local/short-range} (when connecting two pixels that are immediately adjacent in the image) or {\it long-range}. 
+% Our algorithm ``activates'' attractive edges to merge and introduces mutual exclusion relations by ``activating'' repulsive edges. Given the ``active'' subset $A^+ \subseteq E^+$ of attractive edges, clusters are defined via the ``connected'' predicate: 
+% The mutex watershed algorithm, defined in \autoref{3_3_MWS}, maintains disjunct active sets $A^+ \subseteq E^+$, $A^- \subseteq E^-$, $A^+ \cap A^- = \emptyset$, that encode merges and mutual exclusion constraints, respectively. 
+
+In this section we propose an efficient implementation of the MWS, derive its theoretical average runtime complexity and show that in practice the MWS scales with $\mathcal{O}(E \log E)$.
+
+\subsection*{Notation:}
+Let us explicitly define clusters using the ``connected'' predicate $\forall i,j \in V$: 
+% \begin{equation}
+% \forall i,j\in V: \,\,
+% \Pi_{i \rightarrow j}  =  \{ \mathrm{path\,} \pi\,\mathrm{from}\,i\,\mathrm{to}\,j\,\,\mathrm{s.t.}\,\pi\subseteq E\}
+% \end{equation}
+\begin{align*}
+\mathrm{connected}(i, j | A)\,\,:= \,\, & \mathbbm{I}\{\exists \textrm{ path } \pi \subseteq A^+ \textrm{ from }i\textrm{ to }j\}\\ %&\textrm{ s.t. }\pi \subseteq A^+ \subseteq E^+ 
+% & \forall i,j \in V\\
+\mathrm{cluster}(i | A) = \,\, &  \{i\} \cup \{j: \mathrm{connected}(i,j | A) \}
+\end{align*}
+Conversely, the active subset $A^-\subseteq E^-$ of repulsive edges defines mutual exclusion relations by using the following predicate:
+\begin{align*}
+\mathrm{mutex}(i, j | A) \,\,:= \,\, & \mathbbm{I}\{ \exists \textrm{ path } \pi \subseteq A \textrm{ from }i\textrm{ to }j \textrm{ s.t.  }|\pi \cap A^-| = 1\} \nonumber
+\end{align*}
+To implement the MWS efficiently we reformulate the algorithm in terms of the predicates $\mathrm{connected}$ and $\mathrm{mutex}$ using the following equalities (for an arbitrary set 
+% $A \in \{\tilde{A} \subseteq E \;|\; {C}_{0/1}(\tilde{A}) =  \emptyset\}$)
+$A \subseteq E$ with ${C}_{0/1}(A) =  \emptyset$)
+\begin{align*}
+% \begin{split}
+\forall (i, j) \in E^+\setminus A:\quad &
+\!\!\!\mathrm{connected}(i, j | A)\!\!\!\!\!& \Leftrightarrow & \,\, {C}_{0}(A\cup \{(i, j)\}) \neq \emptyset\\
+&\!\!\!\mathrm{mutex}(i, j | A)\!\!\!\!\!&\Leftrightarrow & \,\, {C}_{1}(A\cup \{(i, j)\}) \neq \emptyset\\
+% \intertext{and}
+% \end{split}
+% \end{align}
+% \begin{align}
+\forall (i, j) \in E^-\setminus A:\quad&
+\!\!\!\mathrm{connected}(i, j | A)\!\!\!\!\!&\Leftrightarrow & \,\, {C}_{1}(A\cup \{(i, j)\}) \neq \emptyset
+\end{align*} to rewrite the Mutex Watershed Algorithm as Algorithm \ref{algo_code_efficient}. In the following analysis we omit the dependence on $A$ in all predicates to improve readability.
+
+% \begin{minipage}[t]{0.35\linewidth}
+% algorithm 1 here ??????
+% \end{minipage}%
+% \begin{minipage}[t]{0.65\linewidth}
+\begin{algorithm}[h]
+% \centering
+% \parbox[t]{.7\linewidth}{
+ \hrulefill \\
+   \textbf{Input: }
+     weighted graph $\mathcal{G}(V,  E^+\cup E^-, W^+\cup W^-)$\;
+      \textbf{Output: }
+     clusters defined by active set $A^+$\;
+  \textbf{Initialization: }
+     $A^+ = \emptyset $; \quad
+     $A^- = \emptyset $\;
+ \For{$(i,j) = e \in (E^+\cup \! E^-) $ {\rm in descending order of } $W^+ \cup W^-$} 
+ {
+   \eIf{$e \in E^+$}
+   {
+   \If{\rm {\bf not} $\mathrm{connected}$($i, j$) \textbf{and not} $\mathrm{mutex}$($i,j$) }  
+    {
+          $\mathrm{merge}(i, j)$: $A^+ \leftarrow A^+ \cup e$\;
+          \Comment{\parbox[t]{.65\linewidth}{ merge $i$ and $j$ and inherit the mutex \\constraints of the parent clusters}}
+          % \Comment{merge $i$ and $j$}\\
+               % \Comment{and inherit the mutex constraints of the parent clusters}
+    }
+   }{
+    \If{\rm {\bf not} $\mathrm{connected}$($i, j$)}
+      {
+          $\mathrm{addmutex}(i, j)$: $A^- \leftarrow A^- \cup e$\;
+          \Comment{\parbox[t]{.65\linewidth}{add mutex constraint between $i$ and $j$}}
+      }
+   }
+ } \vspace{-6pt}\hrulefill
+ \vspace{6pt}
+ \caption{Efficient implementation of Mutex Watershed. The $\mathrm{connected}$ predicate can be efficiently evaluated.}
+ \label{algo_code_efficient}
+% }
+\end{algorithm}
+% \end{minipage}
+
+% Observe, that two nodes that are already connected via a path with one repulsive edge are mutually exclusive and can not be merged, since this would create a cycle $\in \mathcal{C}_1$.

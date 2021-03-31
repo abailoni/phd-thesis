@@ -1,0 +1,191 @@
+%!TEX root = ../main.tex
+
+\cleardoublepage
+
+
+\section{The Mutex Watershed Algorithm} \label{3_methods}
+
+\noindent We consider the problem of graph clustering. Given a graph $G$ with vertex set $V$ and edge set $E\subseteq V\times V$, we seek a node labeling $L: V \rightarrow \mathbb{N}$ that groups nodes into connected regions. The quality of a predicted labeling $\hat L$ is judged against a ground truth labeling $L^*$ by an application-defined loss function $\mathcal{L}(\hat L, L^*)$. The labeling algorithm bases its decisions on input data $I$, consisting of application-dependent feature values for the graph's nodes and/or edges.
+
+In the present paper, the vertices will be the pixels of a 2- or 3-dimensional image. The edges connect each pixel to its direct neighbors (4- resp.\ 6-neighborhood) and to a sparse set of more distant pixels. The data $I$ are the input image's pixel values, and we want to segment the image into regions corresponding to object instances. 
+
+On an abstract level, our method consists of two stages:
+\begin{enumerate}
+\item Transform the input $I$ into edge weights $w\in \mathbb{R}$ by means of a mapping with adjustable parameters $\theta$:
+\begin{equation}
+w(e\in E) = w(e | I; \theta)
+\end{equation}
+\item Cluster the graph in terms of the weights
+\begin{equation}
+\hat L \leftarrow \mathrm{cluster}(G, w)
+\end{equation}
+\end{enumerate}
+Given the power of modern convolutional neural networks (CNNs), it is beneficial to {\em learn} the mapping from $I$ to $w$. 
+Moreover, we distinguish between attractive {\em and} repulsive interactions (encoded, for example, by $w$ having positive resp.\ negative sign) and propose learning and clustering algorithms that take these roles into account.
+
+\subsection{Seeded Watersheds}
+
+\noindent Many existing segmentation algorithms can be cast in the general form outlined above. We specifically mention the minimum-cost path variant of the seeded watershed algorithm \cite{falcao2004image}, because our method is best understood as its direct generalization. Here, the graph consists of the 4-connected pixel grid plus one auxiliary node, which is connected to pre-defined seed pixels (see \autoref{fig:WS_compare}a). The function $w$ acts as an edge detector (e.g.\ a gradient filter or a neural network) that assigns a positive boundary strength to each grid edge, and $w=0$ to each auxiliary edge. Finally, the labeling is defined by the minimum spanning tree (mST with lower-case m) over $G$ and $w$: two pixels belong to the same region iff their mST-paths to the auxiliary node pass through the same seed.\footnote{It is well known that this variant of the watershed is equivalent to the more popular flooding approach \cite{watershedcuts, Meyer1994}.} Equivalently, one can remove the auxiliary edges from the finished mST and form the connected components of the remaining forest. Separation between all seed regions is guaranteed because auxiliary edges are least costly and thus always part of the mST.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=1\linewidth]{fig/seed_nl_eq-crop.pdf}
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{Equivalent illustration of seeded watershed (a) as a graph plus meta node (b) as an attractive graph with pairwise mutex constraints between all seedpoints. Thick lines show segmentation MST.}
+\label{fig:WS_compare}
+\end{figure}
+
+Unfortunately, this only works if seeds have been defined beforehand, which is a very challenging problem that requires non-local detection of full objects. To lift this restriction, we first reformulate the seeded watershed algorithm in terms of mutual exclusion (mutex) constraints: Instead of adding an auxiliary node, we connect each pair of seeds with a mutex edge indicating that two points should belong to distinct regions~(see \autoref{fig:WS_compare}b). We then modify Kruskal's mST algorithm to respect these constraints:
+\begin{algorithm}[h]
+ \hrulefill \\
+ \textbf{Initialization:}\\
+     each node forms a one-element cluster\;
+ \For{$(i,j) = e \in E$ {\rm in descending order of weights} $w$} 
+ {
+    \If{\rm cluster($i$) $\neq$ cluster($j$) \textbf{and}\\
+        \hspace{0.25cm} no mutex(cluster($i$), cluster($j$)) }  
+    {
+          merge cluster($i$) and cluster($j$)\;
+          (the merged cluster inherits the mutex constraints of its parents)\;
+    }
+  } \vspace{-6pt}\hrulefill
+ \caption{Repulsive version of seeded watershed}
+ \label{WS_algo_code}
+\end{algorithm}
+
+\noindent This algorithm differs from Kruskal's only by the check for mutual exclusion in the if-statement: mutex(cluster($i$), cluster($j$)) tests if $i$'s cluster contains any node that is connected to some node in $j$'s cluster by a mutex edge. Obviously, the modified algorithm has the same effect as the original algorithm with auxiliary node and edges. In the sequel, we generalize this construction such that the constraint set is created on the fly rather than pre-defined.
+
+%Watershed segmentation and similar methods require boundary and seed detection.
+%Usually, boundaries rely on local evidence, whereas seed points require the knowledge about full objects.
+% For this reason, many object segmentation algorithms combine specialized detectors and boundary estimators \cite{he2017mask}. 
+% However, training these methods jointly and end-to-end poses a challenge.
+
+
+% We propose a watershed like algorithm that requires no seeds
+%  split clusters by introducing auxiliary graph edges $E^-$, that represent mutual exclusivity constraints
+
+%\noindent Before we discuss the general clustering algorithm, we want to review the special case of {\em Seeded Watershed segmentation}.
+%
+%
+%Seeded watershed segmentation can be understood as a a minimum-cost path forest \cite{falcao2004image} or a minimal spanning tree by introducing a meta node, that is connected to all seed nodes \cite{watershedcuts, Meyer1994}. In any case seeds enforce a split between regions.
+%We propose an equivalent formulation of regions splits, by introducing mutual exclusion constraints~(mutex) between all pairs of seed nodes.
+%One can easily see, that the minimum spanning tree under these constrains is equal to the seeded minimum-cost path forest.
+%
+%One possible construction of seeded watershed can then be performed as follows:
+%\begin{enumerate}
+%    \item Build a set of mutex constraints $M$ of all pairs of seeds
+%    \item Compute the MST w.r.t. $M$ using Kruskal's algorithm
+%\end{enumerate}
+
+\subsection{Mutex Watersheds}
+
+\noindent Consider an undirected graph $G=(V, E)$ with edge weights $w: E \mapsto \mathbb{R}$. It is convenient to interpret large positive weights as strong attraction, and large negative weights as strong repulsion, encouraging an edge's end points to be in the same resp.\ different clusters. This is the converse of standard watersheds, where large weights indicate a strong boundary (i.e\ repulsion), but just causes a trivial change in Kruskal's algorithm: We must now process edges in {\em descending} order of weights, i.e.\ compute the {\em maximum} spanning tree (MST with capital M). 
+
+According to the weight's sign, we split $E$ into its attractive and repulsive subsets $E^+$ and $E^-$. We now modify algorithm \ref{WS_algo_code} to treat both types of edges differently:
+\begin{algorithm}
+ \hrulefill \\
+ \textbf{Initialization:}\\
+     each node forms a one-element cluster\;
+     let $M = \emptyset$ be the empty set of mutex constraints\;
+ \For{$(i,j) = e \in E$ {\rm in descending order of \\  \hspace{2.5cm} weight magnitude} $|w|$} 
+ {
+   \eIf{$e \in E^+$}
+   {
+      \If{\rm cluster($i$) $\neq$ cluster($j$) \textbf{and}\\
+        \hspace{0.25cm} no mutex(cluster($i$), cluster($j$)) $\in M$ } 
+      {
+        merge cluster($i$) and cluster($j$)\;
+      }
+   }{
+      \If{\rm cluster($i$) $\neq$ cluster($j$)}
+      {
+        set $M \leftarrow M \cup \mathrm{mutex}(i, j)$\;
+      }
+   }
+ } \vspace{-6pt}\hrulefill
+ \caption{Mutex Watershed}
+ \label{algo_code}
+\end{algorithm}
+
+\noindent The crucial difference to algorithm \ref{WS_algo_code} is that mutex constraints are no longer pre-defined, but created dynamically whenever a respulsive edge is found. However, new constraints can never override earlier merge decisions, which -- due to ordered processing  -- necessarily arose from stronger and therefore superior attractive edges. In this case, the repulsive edge in question is simply ignored. 
+
+This algorithm does indeed produce a consistent clustering: It is reflexive (since each node is connected to itself), symmetric (since the graph is undirected), and transitive. To prove the latter, we define the {\em mutex graph}, which consists of all attractive and repulsive edges selected in algorithm \ref{algo_code}. The mutex graph cannot contain any cycle of only attractive edges. If such a cycle existed, its weakest link would have its end points in the same cluster, contradicting the condition in the code. Therefore, all clusters in the mutex graph are trees, implying that if $i$ is connected to $j$ and $j$ is connected to $k$, $i$ is also connected to $k$. Similarly, the mutex graph cannot contain any cycle that consists of one or more attractive edges and a single repulsive edge. If the weakest link of such a cycle was attractive, its insertion would have contradicted the mutex test in the code. If it was repulsive, it would have overridden an already finalized merge decision, which is also impossible. Thus, no pair of nodes is simultaneously connected by an attractive path and a repulsive edge, proving consistency of the clustering.
+
+To recover the seeded watershed algorithm, we simply arrange for the repulsive edges between seeds to have higher weight magnitude than any attractive edge, and for all other repulsive edges to have zero weight. Then, $M$ gets filled with all constraints before any attractive edge is considered, exactly as in algorithm \ref{WS_algo_code}.
+
+The Mutex Watershed algorithm is efficient, because it greedily considers each edge only once and never backtracks any of its decisions. For this to produce good segmentations, weight magnitudes must be carefully balanced between attractive and repulsive edges, so that merge decisions and constraint creation occur in a sensible order. We demonstrate next that this can be achieved by learning these weights.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.3\linewidth, valign=t]{images/MWS_a.pdf}
+\includegraphics[width=0.6\linewidth, valign=t]{images/MWS_b2.pdf}
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{Mutex Watershed MST marked in bold}
+\label{fig:WS_compare}
+\end{figure}
+
+% \cleardoublepage
+
+% \subsection{Structured Loss function} 
+
+% % \begin{figure}[t]
+% % \centering
+% % \includegraphics[width=0.7\linewidth]{images/loss_00.png}
+% %    %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+% %    \caption{The loss function is defined by a set of inequalities, that prevent incorrect merges and split.}
+% % \label{fig:loss}
+% % \end{figure}
+
+% \begin{itemize}
+%     \item Learning Segmentation from ground truth
+%     \begin{itemize}
+%         \item Define Segmentation by label $S: V \rightarrow \mathbb{N}$
+%         \item Define Cut of segmentation by 
+%         \begin{equation}
+%             \partial S = \{\; (i, j) \in E \cup \! D \;\;|\;\; S(i) \neq S(j)\; \}
+%         \end{equation}
+%         \item indicate ground truth by $S^*$
+%     \end{itemize}
+% \end{itemize}
+
+% \begin{itemize}
+%     \item we define measure for attractiveness and repulsiveness (IMPORATNT THIS WORKS BECAUSE WE CONSTRAIN ALL PATHS TO THE GROUNDTRUTH REGION).
+%     \begin{itemize}
+%         \item {\em Within each ground truth region} we define $A(i,j)$ as the set of all attractive paths from $i$ to $j$. 
+%         \item The {\em attractiveness} $\alpha(i,j)$ between the nodes is defined by the maximin attractive path: 
+%             \begin{equation}
+%                 \alpha(i, j) = \begin{cases} \max_{a \in A(i,j)}\, \min_{e \in a} w(e) & \textrm{if } A(i,j) \ne \emptyset \\
+%                      0 & \textrm{otherwise }
+%             \end{cases}
+%             \end{equation}
+%         \item Similarly, we define a repulsive path $r(i,j)$, as two attractive paths linked by exactly one repulsive edge. Their set is called $R(i,j)$. The {\em repulsiveness} $\rho(i,j)$ is now defined as: 
+%     \begin{equation}
+%     \rho(i, j) = \begin{cases} \max_{r \in R(i,j)}\, \min_{e \in r} |w(e)| & \textrm{if } R(i,j) \ne \emptyset \\
+%                                              0 & \textrm{otherwise }
+%                         \end{cases}
+%     \end{equation}
+%     \end{itemize}
+%     \item we use the attractiveness and repulsiveness to define a set of constraints, that are necessary to make the Repulsive-WS segmentation defined by the graph weights equivalent to a given ground truth segmentation. 
+%     \begin{itemize}
+%         \item For the repulsive watershed to be correct , there can not be an active mutual exclusion constraint within a ground truth segment. Therefore for all internal repulsive edges $(i,j) = d \in E^- \setminus \partial S^*$, there needs to be a cheaper path $\alpha(i,j)$ such that $i$ and $j$ are merged into the same cluster before $d$ is considered. In other words, the repulsive watershed segmentation has no incorrect cuts/over-segmentation if 
+%         \begin{equation}
+%             \alpha(i,j) < w(d) \quad \quad \forall d \in E^- \setminus \partial S^*
+%         \end{equation}
+%         \item Similarly, all ground truth cluster connecting edges $t \in E^+ \cap  \partial S^*$ need to be prevented by an earlier mutex constraint by
+%                 \begin{equation}
+%             \rho(i,j) > w(t) \quad \quad \forall t \in E^+ \cap  \partial S^*
+%         \end{equation}
+%     \end{itemize}
+
+
+%     \item We will soften these constraints with a monotonous function $\sigma$ (e.g. tanh$(\cdot)$) to derive a differentiable loss function, that can be used to learn $w$ from $\partial S^*$
+
+%     \begin{align}
+%         \mathcal{L} = & \sum_{(i, j) \in E^- \setminus \partial S^*} \sigma(w((i, j)) - \alpha(i, j)) \\
+%                       & + \sum_{(k, l) \in E^+ \cap \partial S^*} \sigma(w((k, l)) - \rho(k, l))
+%     \end{align}
+% \end{itemize}
+
+
+
+% \cleardoublepage

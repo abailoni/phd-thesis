@@ -1,0 +1,75 @@
+%!TEX root = ../main.tex
+\clearpage
+
+\section{Objective and Path Inequalities\label{subsec:Clustering-path}}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{./images/path_examples2.pdf}
+\label{fig:path_examples}
+\end{figure}
+
+% In this section we want to define an objective function that is optimized by the Mutex Watershed algorithm. 
+
+Many clustering schemes~(e.g. agglomerative clustering) define a measure of attraction and merge clusters until an attraction threshold is reached.
+% Therefore, clusters have a high within clusters and minimized between clusters.
+We eliminate the need for such a threshold by introducing a second measure of repulsion. Thereby, a natural clustering definition emerges, where the attraction within clusters is higher than the repulsion, and the repulsion between clusters is higher than the attraction.
+
+\noindent To formalize this in the spirit of the watershed algorithm we first define attraction and repulsion between clusters, utilizing specialized maximin paths. 
+\begin{definition} For a graph $\mathcal{G}(V,E^{+}\cup E^{-})$ and cut $\partial S$, the \textbf{set of attractive paths }$\Pi_{v_{i}\rightarrow v_{j}}^{+}$ (\textbf{connecting $v_{i} \in V$ and $v_{j} \in V$}) is the set of all paths, such that $\pi^+ \in \Pi_{v_{i}\rightarrow v_{j}}^{+}$ comprises \textit{only attractive edges} $\pi^+ \subseteq E^{+}$ and crosses the cut up to one time 
+\begin{equation}
+|\pi^+ \cap \partial S| \le 1\label{eq:attr_def_1}
+\end{equation}
+\end{definition}
+Attractive paths can connect nodes within a cluster($|\pi^+ \cap \partial S| = 0$) and nodes of neighboring clusters($|\pi^+ \cap \partial S| = 1$), but there are no attractive paths between non-neighboring clusters.
+\begin{definition} For a graph $\mathcal{G}(V,E^{+}\cup E^{-})$ and cut $\partial S$, the \textbf{set of repulsive paths }$\Pi_{v_{i}\rightarrow v_{j}}^{-}$ (\textbf{connecting $v_{i} \in V$ and $v_{j} \in V$}) is the set of all paths in $\mathcal{G}$, such that every path $\pi^- \in \Pi_{v_{i}\rightarrow v_{j}}^{-}$ contains \textit{exactly one repulsive edge} \begin{equation}\left|\pi^-\cap E^{-}\right|=1\label{eq:rep_def_2}\end{equation} that crosses the cut \begin{equation}\left|\pi^-\cap (\partial S \cap E^{-})\right|=1\label{eq:rep_def_2}\end{equation} and does not cross the cut otherwise \begin{equation}
+|\pi^- \cap (\partial S \cap E^{+})| = 0\label{eq:attr_def_2}
+\end{equation}
+\end{definition}
+
+Repulsive paths connect nodes of neighboring clusters and cross the cut using a repulsive edge $\in E^-$.
+Utilizing these paths, we can now define measures of  attraction and repulsion:
+\begin{definition}[Attraction] The attraction $w_{v_{i}\rightarrow v_{j}}^{+}$ between $v_i\in V$ and $v_j \in V$ is defined by the maximin attractive path:
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{+}\equiv\begin{cases}
+\underset{\pi \in \Pi_{v_{i}\rightarrow v_{j}}^{+}}{\max} \underset{e \in \pi}{\min} \quad w(e) & \operator{if}\quad\Pi_{v_{i}\rightarrow v_{j}}^{+}\neq\emptyset\\
+\quad\quad\quad-\epsilon & \operator{else}
+\end{cases}\label{eq:maximin_weight_a}
+\end{equation}, with $\epsilon > 0$.
+\end{definition}
+
+
+\begin{definition}[Repulsion] The repulsion $w_{v_{i}\rightarrow v_{j}}^{-}$ between $v_i\in V$ and $v_j \in V$ is defined by the maximin repulsive path:
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{-}\equiv\begin{cases}
+\underset{\pi \in \Pi_{v_{i}\rightarrow v_{j}}^{-}}{\max} \underset{e \in \pi}{\min} \quad w(e) & \operator{if}\quad\Pi_{v_{i}\rightarrow v_{j}}^{-}\neq\emptyset\\
+\quad\quad\quad 0 & \operator{else}
+\end{cases}\label{eq:maximin_weight_b}
+\end{equation}
+\end{definition}
+\noindent Note, that if clusters are not connected~(no attractive nor repulsive paths exist), $w^+=-\epsilon < 0 = w^-$ breaks the tie in favor of repulsion/splitting the clusters.
+
+\noindent With these measures, we can define the Mutex Watershed Cut properties.
+
+\begin{definition} [Mutex Watershed Cut / Path inequalities] \label{def:path_ineq}\\
+For a weighted graph ${\mathcal{G}=(V,E^{+}\cup E^{-}, W)}$ we say that a cut $\partial S$ of $\mathcal{G}$ is a Mutex Watershed Cut if , % with corresponding partition $S\equiv\left\{ C_{1},...,C_{K}\right\}$ into $K$  connected subsets
+ the following set of path inequalities are fulfilled: \\
+ For all repulsive edges $e^-$ inside a cluster the attraction is higher than the repulsive edge weight.
+\begin{equation}
+\forall(v_{i},v_{j})=e^{-}\in E^{-}\setminus \partial S: \quad \quad w_{v_{i}\rightarrow v_{j}}^{+} > w(e^{-}),\label{eq:path_rel_1}
+\end{equation}
+ For all attractive edges $e^+$ connecting two cluster the repulsion %of the incident vertices 
+ is higher than the attractive edge weight.
+\begin{equation}
+\forall(v_{i},v_{j})=e^{+}\in E^{+}\cap \partial S \quad \quad w_{v_{i}\rightarrow v_{j}}^{-}>w(e^{+}).\label{eq:path_rel_2}
+\end{equation}
+\end{definition}
+
+
+\noindent Finally, we propose
+
+\noindent \textbf{Theorem 1 (Mutex Watershed Algorithm finds Mutex Watershed Cut)}
+\emph{On a weighted graph ${\mathcal{G}=(V,E^{+}\cup E^{-}, W)}$ with unique weights, the Mutex Watershed Cut is unique and found by \autoref{WS_algo_code}.}
+
+For a detailed proof we of Theorem 1, we refer the reader to the supplementary material.
+

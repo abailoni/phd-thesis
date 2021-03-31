@@ -1,0 +1,71 @@
+%!TEX root = ../main.tex
+
+\subsection{Time Complexity Analysis}
+
+
+
+Before analyzing the time complexity of \autoref{algo_code} we first review the complexity of Kruskal's algorithm. Using a union-find data structure the time complexity of $\operator{merge(i,~j)}$ and $\operator{connected(i,~j)}$ is $\mathcal{O}(\alpha(V))$, where $\alpha$ is the slowly growing inverse Ackerman function, and the total runtime complexity is dominated by the initial sorting of the edges $\mathcal{O}(E \log E)$\cite{cormen2009introduction}.
+
+
+\noindent To check for mutex constraints efficiently, we keep a set of all active mutex edges $$ M[C_i] = \{(u,~v) \in A^- | u \in C_i \lor v \in C_i\} $$ for every $C_i = \operator{cluster}(i)$ using hash tables, where insertion of new mutex edges~(i.e. $\operator{addmutex}$) and search have an average complexity of $\mathcal{O}(1)$. Note, that every cluster can be efficiently identified by its union-find root node.
+For $\operator{mutex(i,~j)}$ we check if $M[C_i] \cap M[C_j] = \emptyset$ by searching for all elements of the smaller hash table in the larger hash table. Therefore $\operator{mutex(i,~j)}$ has an average complexity of $\mathcal{O}(\min (|M[C_i]|, |M[C_j]|)$. % and a worst case complexity of $\mathcal{O}(|M[C_i]|\cdot|M[C_j]|)$.
+Similarly, during $\operator{merge(i,~j)}$, mutex constraints are inherited  by merging two hash tables, which also has an average complexity $\mathcal{O}(\min (|M[C_i]|, |M[C_j]|)$.
+
+\noindent In conclusion, the average runtime contribution of attractive edges $|E^{+}| \cdot (\mathcal{O}(\alpha(V) + \mathcal{O}(M))$ (checking mutex constraints and possibly merging) and repulsive edges
+ $|E^{-}| \cdot (\mathcal{O}(\alpha(V) + \mathcal{O}(1)) $ (insertion of one mutex edge) result in an total average runtime complexity of \autoref{algo_code}:
+ \vspace{-0.1cm}
+    \begin{equation}
+        \mathcal{O}(E \log E) + E \cdot (\mathcal{O}(\alpha(V)) + \mathcal{O}(M)).
+    \end{equation}
+where $M$ is the average number of $\min (|M[C_i]|, |M[C_j]|)$. Using $\alpha(V) \in \mathcal{O}(\log V) \in \mathcal{O}(\log E) $ this simplifies into 
+    \begin{equation}
+         \mathcal{O}(E \log E + EM).
+    \end{equation}
+
+
+% On a grid graph, with regularly structured repulsive edges, the number of edges and nodes are of the same order $\mathcal{O}(V) = \mathcal{O}(E)$, leading to an average runtime complexity of $\mathcal{O}(V \log V) + \mathcal{O}(VM).$
+% On a sparse graph $\mathcal{O}(V) = \mathcal{O}(E)$, like the graph we use in our experiments 
+\noindent In the worst case $\mathcal{O}(M) \in \mathcal{O}(E)$, the Mutex Watershed algorithm has a runtime complexity of  $\mathcal{O}(E^2)$. Empirically, we find that $\mathcal{O}(EM) \approx \mathcal{O}(E\log E)$ by measuring the runtime of Mutex watershed for different sub-volumes of the ISBI challenge~(see \autoref{fig:scalingM}), leading to a 
+\begin{equation}
+    \text{empirical Mutex Watershed Complexity: }\mathcal{O}(E \log E)
+\end{equation}
+
+
+\begin{figure}
+   % \includegraphics[width=0.8\linewidth]{fig/isbi_M_scaling.png}
+   \centering
+   \includegraphics[width=0.65\linewidth]{fig/runtime_scaling.eps}
+   \caption{Runtime $T$ of Mutex Watershed (without sorting of edges) measured on sub-volumes of the ISBI challenge of different sizes~(thereby varying the total number of edges $E$). We plot $\frac{T}{E}$ over $E$ and fit a logarithmic function~($R^2 = 0.9896$) to conclude, that $R \approx \mathcal{O}(E \log E)$.}
+\label{fig:scalingM}
+\end{figure}
+% \begin{algorithm}
+%  \hrulefill \\
+%   \textbf{Initialization:} Let U be a union-find data structure, initialized with clusters $V$ and \\M[i] a hash table of all active mutex edges of cluster i; Initialized with $M[i] = \emptyset$.\\[0.2cm]
+
+%  \For{$(i,j) = e \in \text{sort}(E^+\cup E^- \text{ by } w$)}
+%  {\Comment{sorting of floating point values $\mathcal{O}(E \log(E))$}\\
+%     $r_i$ = U.find(i) \Comment{$\mathcal{O}(\alpha(V))$}\\
+%     $r_j$ = U.find(j) \Comment{$\mathcal{O}(\alpha(V))$}\\
+%     connected = ( $r_i = r_j $ ) 
+
+%    \eIf{$e \in E^+$}
+%    {
+%     mutex = has\_duplicates(M[$r_i$], M[$r_j$]) \Comment{$\mathcal{O}(\min(M[r_i], M[r_j])) $}
+ 
+%    \If{\rm {\bf not} connected \textbf{and not} mutex }
+%     {
+%         M[$r_i$] = merge(M[$r_i$], M[$r_j$]) \Comment{$\mathcal{O}(\min(M[r_i], M[r_j])) $}\\ 
+%         U.merge($r_i$, $r_j$) \Comment{$\mathcal{O}(\alpha(V))$}
+%     }
+%    }{
+%     \If{\rm {\bf not} connected}
+%       {
+%           M[$r_i$].insert(e) \Comment{$\mathcal{O}(1) $}\\
+%           M[$r_j$].insert(e) \Comment{$\mathcal{O}(1) $}
+%       }
+%    }
+%  } \vspace{-6pt}\hrulefill
+%  \caption{Efficient implementation of Mutex Watershed. Runtime Complexities of subroutines are listed on the right, where $\alpha$ is the inverse Ackermann function.}
+%  \label{algo_time_code}
+% \end{algorithm}
+

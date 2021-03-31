@@ -1,0 +1,509 @@
+%!TEX root = ../main.tex
+
+\section{Appendix: MWS Objective - Proof of equivalence} \label{sec:proof}
+
+\renewcommand{\labelenumii}{\theenumii} 
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
+
+% \begin{theorem}
+% \label{theo-equivalence-obj-MWS}MSW Objective: given a segmentation
+% $\tilde{S}$ of $\mathcal{G}=(V,E^{+}\cup E^{-})$, then
+% \begin{equation}
+% \tilde{S}\,\mathrm{fulfills\,all\,path\,inequalities\,on\,}\mathcal{G}\quad\Longleftrightarrow\quad\tilde{S}=S_{\mathrm{MWS}}.\label{eq:equivalence}
+% \end{equation}
+% \end{theorem}
+% \begin{proof}
+% The theorem follows from Lemma \ref{lemma_OBJ==>MWS_partB}
+% and \ref{lemmaOBJ==>path_partB}.
+% \end{proof}
+% \begin{corollary}
+% The segmentation $S^{*}$ of $\mathcal{G}=(V,E^{+}\cup E^{-})$ that
+% fulfills all path inequalities is unique. 
+% \end{corollary}
+% \begin{proof}
+% It follows from Theorem \ref{theo-equivalence-obj-MWS}, since $S_{\mathrm{MWS}}$
+% is unique.
+% \end{proof}
+
+% \begin{itemize}
+Let us define the \textbf{attractive/repulsive maximin path} $\hat{\pi}^{\pm}\in\Pi_{v_{i}\rightarrow v_{j}}^{\pm}$
+as:
+\begin{equation}
+\hat{\pi}^{\pm}\equiv\argmax_{\pi\in\Pi_{v_{i}\rightarrow v_{j}}^{\pm}}\min_{e\in\pi}w(e)\label{eq:maximin_path}.
+\end{equation}
+% and the \textbf{weakest edge }$\hat{e}^{\pm}$\textbf{ of the attractive/repulsive
+% maximin path} $\hat{\pi}^{\pm}$ as:
+% \begin{equation}
+% \hat{e}^{\pm}\equiv\argmin_{e\in\hat{\pi}^{\pm}}w(e).\label{eq:maximin_edge}
+% \end{equation}
+Given $\mathcal{G}=(V,E^{+}\cup E^{-})$, let us run the Mutex Watershed
+algorithm to get a final segmentation $S_{\mathrm{MWS}}$. 
+
+$S_{\mathrm{MWS}}^{t}$
+represents the segmentation after $t$ iterations of the algorithm. 
+In the MWS algorithm, the edges in $E$ are sorted into $\sigma=(e_{1},...,e_{M})$
+by decreasing edge weight; let us then define the set $E_{t}\subseteq E$
+containing the first $t$ edges of $\sigma=(e_{1},...,e_{M})$ and
+let us call $\mathcal{G}_{t}=(V,E_{t})$. 
+
+% \item For each iteration, an edge $e^{t}$ is considered and we have four possible cases:
+% \begin{enumerate}
+% \item \label{itemize:MWS-cases}The edge is repulsive, i.e. $e^{t}\in E^{-}$,
+% and:
+% \begin{enumerate}
+% \item it is not on cut: $e^{t}\notin\partial S_{\mathrm{MWS}}^{t-1}$,
+% \item it is on cut: $e^{t}\in\partial S_{\mathrm{MWS}}^{t-1}$.
+% \end{enumerate}
+% \item The edge is attractive, i.e. $e^{t}\in E^{+}$, and:
+% \begin{enumerate}
+% \item it is not on cut: $e^{t}\notin\partial S_{\mathrm{MWS}}^{t-1}$,
+% \item it is on cut: $e^{t}\in\partial S_{\mathrm{MWS}}^{t-1}$.
+% \end{enumerate}
+% \end{enumerate}
+% \end{itemize}
+
+\subsection{``Path inequalities $\Rightarrow$ Mutex Watershed segmentation''}
+
+\begin{proposition}
+\label{prop:last_edge_PQ}For each iteration $t$, we can make the following two observations:
+\begin{equation}
+w(\tilde{e})>w(e^{t}),\quad\forall\tilde{e}\in E_{t-1},\label{eq:last_edge_PQ}
+\end{equation}
+\begin{equation}
+w(\tilde{e})<w(e^{t}),\quad\forall\tilde{e}\in E \setminus E_{t}.\label{eq:last_edge_PQ_b}
+\end{equation}
+\end{proposition}
+\begin{proof}
+The two observations follow directly from the definition of the set $E_{t}$.
+\end{proof}
+
+
+
+\begin{proposition} \label{coroll-MST-1}
+Let 
+$S^{*}$ be a segmentation, which fulfills all path inequalities on $\mathcal{G}$. Given the MWS segmentation $S_{\mathrm{MWS}}^{t-1}$ of iteration $t-1$, we assume that:
+
+\begin{equation}
+\partial S_{\mathrm{MWS}}^{t-1}\cap\partial S^{*}=\partial S^{*}, \label{eq:invar-1-prevIter_prop}
+\end{equation}
+\begin{equation}
+ \left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right)\cap E_{t-1}=\emptyset. \label{eq:invar-2-prevIter_prop}
+ \end{equation}
+In words, Eq. (\ref{eq:invar-1-prevIter_prop}) ensures that $S_{\mathrm{MWS}}^{t-1}$
+is an over-segmentation with respect to $S^{*}$, whereas Eq. (\ref{eq:invar-2-prevIter_prop})
+ensures that all edges in the over-segmentation cut ${\partial S_{\mathrm{MWS}}^{t}\setminus\partial S^{*}}$ have not been considered by the MWS algorithm yet, so that these over-segmentation boundaries can still be merged in later iterations. 
+
+Given these assumptions, it follows that all edges on the over-segmentation cut ${\partial S_{\mathrm{MWS}}^{t}\setminus\partial S^{*}}$ have a lower weight than the selected edge $e^t$:
+\begin{equation}
+w(\tilde{e}) < w(e^{t}),\quad\forall\tilde{e}\in\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*} \setminus \{e^t\}. \label{eq:property_not_merged_bound}
+\end{equation}
+\end{proposition}
+\begin{proof} Eq. (\ref{eq:property_not_merged_bound}) directly follows from the assumption (\ref{eq:invar-2-prevIter_prop}) and Eq. (\ref{eq:last_edge_PQ_b}) of \autoref{prop:last_edge_PQ}. 
+\end{proof}
+
+\begin{proposition}
+\label{coroll-MST-2}For an iteration $t$ and every pair of vertices
+$v_{i},v_{j}\in C_{k}$, where $C_{k}\in S_{\mathrm{MWS}}^{t-1}$, the weight of edge $e^{t}$ is lower than the one of the
+weakest edge of the maximin attractive path connecting $v_{i}$ and
+$v_{j}$:
+\begin{equation}
+\min_{e\in\hat{\pi}^{+}}w(e)>w(e^{t}).\label{eq:property_MST}
+\end{equation}
+\end{proposition}
+\begin{proof} We note that $\exists \, \pi^+\in \Pi_{v_{i}\rightarrow v_{j}}^{+}$ s.t. $\pi^+ \subseteq E_{t-1}$, since $v_{i}$ and $v_{j}$ belong to the same cluster $C_{k}$. Thus, we can use Eq. (\ref{eq:last_edge_PQ}) of \autoref{prop:last_edge_PQ} to show that the maximin attractive path $\hat{\pi}^+\subseteq E_{t-1}$ and that Eq. (\ref{eq:property_MST}) holds.
+\end{proof}
+
+
+
+\begin{lemma}
+\label{lemma_OBJ==>MWS_loopInvar}
+Let $S^{*}$ be a segmentation, which fulfills all path inequalities on $\mathcal{G}$. 
+Given the MWS segmentation $S_{\mathrm{MWS}}^{t-1}$ at iteration $t-1$, as in \autoref{coroll-MST-1} we assume that:
+\begin{equation}
+\partial S_{\mathrm{MWS}}^{t-1}\cap\partial S^{*}=\partial S^{*} \label{eq:invar-1-prevIter}
+\end{equation}
+\begin{equation}\left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right)\cap E_{t-1}=\emptyset. \label{eq:invar-2-prevIter}
+\end{equation}
+Then these relations also hold for the following iteration $t$:
+\begin{equation}
+\partial S_{\mathrm{MWS}}^{t}\cap\partial S^{*}=\partial S^{*},\label{eq:invar-1}
+\end{equation}
+\begin{equation}
+\left(\partial S_{\mathrm{MWS}}^{t}\setminus\partial S^{*}\right)\cap E_{t}=\emptyset.\label{eq:invar-2}
+\end{equation}
+\end{lemma}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{./images/cases_lemma_1.pdf}
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{The three cases considered in \autoref{lemma_OBJ==>MWS_loopInvar}. Purple boundaries represent ${\partial S_{\mathrm{MWS}}^{t-1}\cap\partial S^{*}}$, whereas blue boundaries represent $\partial S_{\mathrm{MWS}}^{t-1} \setminus \partial S^*$}.
+\label{fig:cases_lemma}
+\end{figure}
+
+\begin{proof}
+Let us consider the edge $e^{t}=(v_{i},v_{j})$ associated to iteration $t$. We note that Eq. (\ref{eq:invar-1}) trivially follows from Eq. (\ref{eq:invar-1-prevIter}), if $S_{\mathrm{MWS}}^{t-1} = S_{\mathrm{MWS}}^{t}$. Similarly, Eq. (\ref{eq:invar-2}) trivially follows from Eq. (\ref{eq:invar-2-prevIter}), if $e^t$ does not belong to the over-segmentation cut $\partial S_{\mathrm{MWS}}^{t-1} \setminus \partial S^* $. Thus, the Lemma is trivially true in all the following cases when $e^t \notin \partial S_{\mathrm{MWS}}^{t-1}$:
+\begin{itemize}
+    \item $e^t \in E^{+}, e^t \notin \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \in \partial S^{*}$
+    \item $e^t \in E^{+}, e^t \notin \partial S_{\mathrm{MWS}}^{t-1}$ and  $e^t \notin \partial S^{*}$
+     \item $e^t \in E^{-}, e^t \notin \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \notin \partial S^{*}$
+     \item $e^t \in E^{-}, e^t \notin \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \in \partial S^{*}$.
+\end{itemize}
+The corresponding remaining cases, when $e^t \in \partial S_{\mathrm{MWS}}^{t-1}$, are:
+\begin{enumerate}
+    \item $e^t \in E^{+}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \in \partial S^{*}$
+    \item $e^t \in E^{+}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and  $e^t \notin \partial S^{*}$
+    \item $e^t \in E^{-}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \notin \partial S^{*}$
+    \item $e^t \in E^{-}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \in \partial S^{*}$.
+\end{enumerate}
+Case 4 is again trivial for the same reasons mentioned above, since $e^t\in E^-$, $S_{\mathrm{MWS}}^{t-1} = S_{\mathrm{MWS}}^{t}$ and $e^t \in \partial S^{*}$.
+We will now show that the Lemma also holds for cases 1, 2 and 3.
+%   or $e^t \notin \partial S^*$. Therefore, we only need to consider the case $e^t \in \left( E^{+} \cap \partial S_{\mathrm{MWS}}^{t-1} \cap \partial S^* \right)$, where the Mutex Watershed might merge two regions.% and under-segment with respect to $S^*$:
+% \begin{enumerate}
+%  % \setcounter{enumi}{1}
+%      \item $e^t \in E^{+}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \in \partial S^{*}$
+%      % \item $e^t \in E^{+}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and  $e^t \notin \partial S^{*}$
+%  \end{enumerate} 
+% On the other hand, the non-trivial case for Eq. (\ref{eq:invar-2}) is $e^{t} \in \left(\partial S_{\mathrm{MWS}}^{t-1} \setminus \partial S^* \right)$, which can be divided in two cases:
+% \begin{enumerate}
+%  \setcounter{enumi}{1}
+%      \item $e^t \in E^{+}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and  $e^t \notin \partial S^{*}$\label{double_case}
+%      \item $e^t \in E^{-}, e^t \in \partial S_{\mathrm{MWS}}^{t-1}$ and $e^t \notin \partial S^{*}$
+%  \end{enumerate} 
+
+
+
+% In case 2.2, the selected  attractive edge $e^{t}\in E^{+}$ is such that $e^{t}\in(C_{k}\times C_{l})$ with clusters $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$. We can then distinguish two sub-cases, which will be considered separately:
+
+% \begin{itemize}[itemindent=1.8em]   
+% \item[2.2.1] $e^{t}$ is on final cut: $e^{t}\in\partial S^{*}$;
+% \item[2.2.2] $e^{t}$ is not on final cut: $e^{t}\notin\partial S^{*}$;
+% \end{itemize}
+
+\subsubsection*{Case 1: attractive edge $e^t$ on final cut}
+In this case, we have $e^{t}\in E^{+}$, $v_{i}\in C_{k}$,
+$v_{j}\in C_{l}$, where $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$. Furthermore, Eq. (\ref{eq:invar-1-prevIter}) assures that $S_{\mathrm{MWS}}^{t-1}$ is an over-segmentation with respect to $S^*$, so we have that $\exists \,C^*_g, C^*_h \in S^*$ s.t. $C_k \subseteq C^*_g$ and $C_l \subseteq C^*_h$ (see Fig. \ref{fig:cases_lemma}, case 1).  
+
+
+In this case, Eq. (\ref{eq:invar-2}) trivially follows from Eq. (\ref{eq:invar-2-prevIter}), since $e^t \in \partial S^*$.
+In order to prove Eq. (\ref{eq:invar-1}) and that we do not over-segment with respect to $S^*$, we will show that $S_{\mathrm{MWS}}^{t-1} = S_{\mathrm{MWS}}^{t}$, because there is always a mutex constraint between clusters $C_{k}$ and $C_{l}$, so that they are never merged by the MWS.
+
+
+Since $S^{*}$ fulfills the path inequality (\ref{eq:path_rel_2}), it exists a maximin repulsive path $\hat{\pi}^{-}\in\Pi_{v_{i}\rightarrow v_{j}}^{-}$. 
+This maximin path $\hat{\pi}^{-}$ is included in $C_{k}\cup C_{l}$. Otherwise, ${\exists \tilde{e}\in E^{+}}$ s.t. $\tilde{e}\in\hat{\pi}^{-}$ and $\tilde{e}\in\left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right)$  (see Fig. \ref{fig:cases_lemma}, case 1), which would lead to the contradiction \[
+w(e^{t})\stackrel{(\ref{eq:path_rel_2})}{<}  w_{v_{i}\rightarrow v_{j}}^{-}=\min_{e\in\hat{\pi}^{-}}w(e)    \stackrel{\tilde{e}\in\hat{\pi}^{-}}{\leq} w(\tilde{e})\stackrel{(\mathrm{Prop.\,}\ref{coroll-MST-1})}{<}w(e^{t}).
+\]
+% We first proof that this 
+%  is  by contradiction,
+% assuming that $\hat{\pi}^{-}\nsubseteq\left(C_{k}\cup C_{l}\right)$.
+% Thus, it exists an attractive edge ${\tilde{e}\in E^{+}}$ s.t. $\tilde{e}\in\hat{\pi}^{-}$
+% and $\tilde{e}\in\left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right)$.
+% We then get the following contradiction:
+% \[
+% w(e^{t})\stackrel{(\ref{eq:path_rel_2})}{<}  w_{v_{i}\rightarrow v_{j}}^{-}=\min_{e\in\hat{\pi}^{-}}w(e)    \stackrel{\tilde{e}\in\hat{\pi}^{-}}{\leq} w(\tilde{e})\stackrel{(\mathrm{Prop.\,}\ref{coroll-MST-1})}{<}w(e^{t}).
+% \]
+
+We now prove by contradiction that clusters $C_{k},C_{l}$ are always
+constrained by some mutex constraint. Let us assume the opposite and
+that the MWS algorithm merges $C_{k},C_{l}$. This can happen only if: 
+\begin{equation}
+w(e) < w(e^{t}),\quad\forall e\in E^{-},\,\mathrm{s.t.}\,\,e\in(C_{k}\times C_{l}).\label{eq:assumption_contradiction}
+\end{equation}
+If we now consider the repulsive edge $e^{-}\in\hat{\pi}^{-}$ of the maximin repulsive path $\hat{\pi}^{-}$ (which is included in $C_{k}\cup C_{l}$ as we noted above), we
+get the following contradiction:
+\[
+w(e^{t}) \stackrel{(\ref{eq:path_rel_2})}{<}  w_{v_{i}\rightarrow v_{j}}^{-}=\min_{e\in\hat{\pi}^{-}}w(e)   \stackrel{e^-\in\hat{\pi}^{-}}{\leq} w(e^{-}) \stackrel{(\ref{eq:assumption_contradiction})}{<}  w(e^{t}).
+\]
+Therefore there is always a mutex constraint between $C_k$ and $C_l$, which leads to $S_{\mathrm{MWS}}^{t-1} = S_{\mathrm{MWS}}^{t}$ and Eq. (\ref{eq:invar-1}) holds.
+
+
+\subsubsection*{Case 2: attractive edge $e^t$ not on final cut}
+In this case, we have $e^{t}\in E^{+}$, $v_{i}\in C_{k}$,
+$v_{j}\in C_{l}$, where $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$. Furthermore, Eq. (\ref{eq:invar-1-prevIter}) assures that $S_{\mathrm{MWS}}^{t-1}$ is an over-segmentation with respect to $S^*$, so we have that $\exists \,C^*_g \in S^*$ s.t. $C_k \subseteq C^*_g$ and $C_l \subseteq C^*_g$ (see Fig. \ref{fig:cases_lemma}, case 2).  
+
+
+We will now show that MWS always merges $e^{t}$ and therefore, $e^{t} \notin \partial S_{\mathrm{MWS}}^{t}$. This means that there can not be a mutex constrain between clusters $C_{k}$ and $C_{l}$. % and (\ref{eq:invar-2}) keeps holding for iteration $t$.
+Specifically, we want to prove that if a repulsive edge $e^{-}=(v_{a},v_{b})\in(C_{k}\times C_{l})$
+exists, it is not stronger than $e^{t}$. Let us consider a general positive path $\pi_{ab}^{+}\in\Pi_{v_{a}\rightarrow v_{b}}^{+}$
+and note that at least one of its edges belongs to the cut $\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}$ (see Fig. \ref{fig:cases_lemma}, case 2): 
+\[
+\exists\tilde{e}=(v_{c},v_{d})\in\left(\pi_{ab}^{+}\cap\left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right)\right).
+\]
+As shown in the figure, the path $\pi_{ab}^{+}$ can be then divided into three parts:
+\[
+\pi_{ab}^{+}=\pi_{ac}^{+}\cup\tilde{e}\cup\pi_{db}^{+},
+\]
+where $\pi_{ac}^{+}\in\Pi_{v_{a}\rightarrow c}^{+}$ and $\pi_{db}^{+}\in\Pi_{v_{d}\rightarrow v_{b}}^{+}$.\\
+We can then show that the weight of the weakest edge of the maximin positive path $\hat{\pi}^{+}\in\Pi_{v_{a}\rightarrow v_{b}}^{+}$ is the following:
+\begin{align*}
+w_{v_{a}\rightarrow v_{b}}^{+} & =\underset{\pi_{ab}^{+}\in\Pi_{v_{a}\rightarrow v_{b}}^{+}}{\max}\left[\underset{e\in\pi_{ab}^{+}}{\min}w(e)\right]=\\
+ & =\underset{\left(\pi_{ac}^{+}\cup\tilde{e}\cup\pi_{db}^{+}\right)\in\Pi_{v_{a}\rightarrow v_{b}}^{+}}{\max}\left[\min\left( \underset{e\in\pi_{ac}^{+}}{\min}w(e),\,\,w(\tilde{e}),\,\,\underset{e\in\pi_{db}^{+}}{\min}w(e)\right) \right]\stackrel{(\mathrm{Prop.\,}\ref{coroll-MST-2})}{=}\\
+ & =\underset{\left(\pi_{ac}^{+}\cup\tilde{e}\cup\pi_{db}^{+}\right)\in\Pi_{v_{a}\rightarrow v_{b}}^{+}}{\max}w(\tilde{e})=\underset{\tilde{e}\in\left(\partial S_{\mathrm{MWS}}^{t-1}\setminus\partial S^{*}\right) \cap \Pi_{v_{a}\rightarrow v_{b}}^{+}}{\max}w(\tilde{e})\stackrel{(\mathrm{Prop.\,}\ref{coroll-MST-1})}{=}w(e^{t}),
+\end{align*}
+and from the path inequality (\ref{eq:path_rel_1}):
+\[
+w(e^{-}) < w_{v_{a}\rightarrow v_{b}}^{+}=w(e^{t}).
+\]
+
+We can then conclude that the MWS algorithm will merge $C_{k}$ and $C_{l}$, since we showed that any repulsive edge $e^{-}$ connecting $C_{k}$
+and $C_{l}$ is not stronger than $e^{t}$. We then define a set $U$ such that:
+\begin{equation}
+S_{\mathrm{MWS}}^{t} = S_{\mathrm{MWS}}^{t-1} \setminus \ \{e | e \in C_k \times C_l\} =: S_{\mathrm{MWS}}^{t-1} \setminus U \label{eq:case2_merged}
+\end{equation}
+By using Eq. (\ref{eq:case2_merged}), we can prove Eq. (\ref{eq:invar-1}):
+\begin{equation}
+S_{\mathrm{MWS}}^{t} \cap \partial S^{*} \stackrel{(\ref{eq:case2_merged})}{=} (S_{\mathrm{MWS}}^{t-1} \setminus U) \cap\partial S^{*} \stackrel{U \not\subset \partial S^*}{=} \partial S^{*}
+\end{equation}
+and Eq. (\ref{eq:invar-2}):
+\begin{align}
+(S_{\mathrm{MWS}}^{t} \setminus \partial S^{*})\cap E^t \stackrel{(\ref{eq:case2_merged})}{=}& ((S_{\mathrm{MWS}}^{t-1} \setminus \partial S^{*}) \cap E^t )\setminus U \\
+ =& ((S_{\mathrm{MWS}}^{t-1} \setminus \partial S^{*}) \cap e^t )\setminus U  \stackrel{e^t \in U}{=}  \emptyset
+\end{align}
+
+\subsubsection*{Case 3: repulsive edge $e^t$ not on final cut}
+In this case, we have $e^{t}\in E^{-}$, $v_{i}\in C_{k}$,
+$v_{j}\in C_{l}$, where $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$. As in case 2, Eq. (\ref{eq:invar-1-prevIter}) assures that $S_{\mathrm{MWS}}^{t-1}$ is an over-segmentation with respect to $S^*$, so $\exists \,C^*_g \in S^*$ s.t. $C_k \subseteq C^*_g$ and $C_l \subseteq C^*_g$ (see Fig. \ref{fig:cases_lemma}, case 3).  
+
+In order to show that the Lemma holds, we will prove that this case never occurs, %The reason is that, an active Mutex edge inside an $S^*$ cluster would lead to an 
+% Thus, \autoref{eq:invar-2} does no longer hold for iteration $t$, since $S_{\mathrm{MWS}}^{t-1} = S_{\mathrm{MWS}}^{t}$ and $e^t \notin \partial S^*$.
+by showing that if $e^t$ exists, then path inequality (\ref{eq:path_rel_1}) on $S^*$ is violated:
+\begin{equation}
+    w_{v_{i}\rightarrow v_{j}}^{+} < w(e^{t}). \label{eq:path_violation_case_3}
+\end{equation}
+If $\Pi_{v_{i}\rightarrow v_{j}}^{+}=\emptyset$, then the violation inequality
+(\ref{eq:path_violation_case_3}) is trivially true, because $w_{v_{i}\rightarrow v_{j}}^{+}=-\epsilon<w(e^{t})$.
+Otherwise, by using Eq. (\ref{eq:invar-2}) in iteration $t-1$, we know that $\pi^{+}\in\Pi_{v_{i}\rightarrow v_{j}}^{+}$ can not be entirely contained by $\pi^{+}\nsubseteq E_{t-1}$. From $e^t \in E^{-}$ and  \autoref{prop:last_edge_PQ} we know that 
+\begin{equation}w(\tilde{e})<w(e^{t}), \quad \forall\tilde{e}\in (E^{+}\setminus E_{t-1}) = (E^{+}\setminus E_{t}) \end{equation}
+\begin{equation}
+     \underset{e\in\pi^{+}}{\min}w(e) <w(e^{t}) \quad \quad  \forall \pi^+ \in \Pi_{v_{i}\rightarrow v_{j}}^{+}
+ \end{equation} 
+and thus we prove the violation inequality (\ref{eq:path_violation_case_3}):
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{+}=\max_{\pi^{+}\in\Pi_{v_{i}\rightarrow v_{j}}^{+}}\underset{e\in\pi^{+}}{\min}w(e)<w(e^{t}).
+ \end{equation}
+\end{proof}
+
+
+
+
+\begin{lemma}
+\label{lemma_OBJ==>MWS}Let $S^{*}$ be a segmentation
+ which fulfills all path inequalities on $\mathcal{G}$, then
+\begin{equation}
+    S^{*}=S_{\mathrm{MWS}}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+We note that for iteration $t=0$ we have $E_{t=0}=\emptyset$ and
+$\partial S_{\mathrm{MWS}}^{t=0}=E$. Thus, the hypotheses of \autoref{lemma_OBJ==>MWS_loopInvar} are trivially satisfied for $t=0$ on graph $\mathcal{G}_{0}$.
+We can then iterative apply \autoref{lemma_OBJ==>MWS_loopInvar} for $t=0,...,M$. Finally at $t=M$,
+we have $E_{t=M}  \equiv E$, $\mathcal{G}_{M} \equiv \mathcal{G}$ and conclude from \autoref{lemma_OBJ==>MWS_loopInvar}, that $\partial S^{*}=\partial S_{\mathrm{MWS}}$.
+\end{proof}
+Note that \autoref{lemma_OBJ==>MWS} is not sufficient to prove \autoref{theo:equivalence_OBJ_MWS}. \autoref{lemma_OBJ==>MWS} proves that if $S^{*}$ exists, it is unique and $S^{*}=S_{\mathrm{MWS}}$. The uniqueness follows by the fact that $S_{\mathrm{MWS}}$ is the result of a deterministic algorithm and unique by definition. In order to prove its existence, we will need \autoref{lemma_MWS==>OBJ}.
+
+
+\subsection{``Path inequalities $\Leftarrow$ Mutex Watershed segmentation''}
+
+In this section we want to ultimately prove \autoref{lemma_MWS==>OBJ} using \autoref{lemma_MWS==>OBJ_loopInvar} iteratively. During the proof, we will make heavy use of the time dependent subgraph $\mathcal{G}_{t}=(V,E_{t})$ showing, that the current Mutex Watershed segmentation $S_{\mathrm{MWS}}^{t}$ always fulfills all path-inequalities on $\mathcal{G}_t$.
+
+\begin{proposition}\label{cor:previous_path_ineq_are_fulfilled}
+Let us assume that $S_{\mathrm{MWS}}^{t}$ fulfills all path inequalities
+on $\mathcal{G}_{t-1}$. Then all these inequalities that were already
+fulfilled on $\mathcal{G}_{t-1}$, are also fulfilled on $\mathcal{G}_{t}$.
+\end{proposition}
+\begin{proof}
+Let $w_{v_{i}\rightarrow v_{j}}^{\pm}(t)$ be the weights defined
+in Eq. (\ref{eq:maximin_weight_a}) and (\ref{eq:maximin_weight_b}) on graph $\mathcal{G}_{t}$
+for one iteration \textbf{$t$}. \\
+Let us now consider the path inequalities
+defined in \autoref{def:path_ineq} on the graph $\mathcal{G}_{t-1}$ and the
+clustering $S_{\mathrm{MWS}}^{t}$. Every path inequality is associated
+to an attractive edge $e^{+}$ or a repulsive edge $e^{-}$ belonging
+to the following two sets: 
+\begin{equation}
+\tilde{E}^{+}=\left\{ e^{+}=(v_{i},v_{j})|e^{+}\in\left(E^{+}\cap E_{t-1}\right),e^{+}\in\partial S_{\mathrm{MWS}}^{t}\right\} ,\label{eq:attractive_ineq}
+\end{equation}
+\begin{equation}
+\tilde{E}^{-}=\left\{ e^{-}=(v_{i},v_{j})|e^{-}\in\left(E^{-}\cap E_{t-1}\right),e^{-}\notin\partial S_{\mathrm{MWS}}^{t}\right\} ,\label{eq:repulsive_ineq}
+\end{equation}
+and the total number of path inequalities, which should be fulfilled
+is $\left|\tilde{E}^{+}\cup\tilde{E}^{-}\right|$. 
+In this formulation,
+the two path inequalities in Eq. (\ref{eq:path_rel_1}) and (\ref{eq:path_rel_2}) can be summarized as:
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{\pm}\stackrel{(\ref{eq:path_rel_1}-\ref{eq:path_rel_2})}{>}w(e^{\mp}),\quad\quad\forall e^{-}\in\tilde{E}^{-},\forall e^{+}\in\tilde{E}^{+}.\label{eq:path_ineq_unified}
+\end{equation}
+Since $S_{\mathrm{MWS}}^{t}$ fulfills the path inequalities on $\mathcal{G}_{t-1}$, it follows that:
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{\pm}(t-1)\stackrel{(\ref{eq:path_ineq_unified})}{>}w(e^{\mp})\stackrel{\mathrm{(Prop.\,\ref{prop:last_edge_PQ})}}{>}w(e^{t}). \label{eq:weakest_edge}
+\end{equation}
+With respect to $S_{\mathrm{MWS}}^{t}$ any attractive/repulsive path on $\mathcal{G}_{t}$ is either in $\mathcal{G}_{t-1}$ or must include $e^{t}$. Then $e^{t}$ is the
+weakest edge of that path. Thus, it follows that: 
+\[
+w_{v_{i}\rightarrow v_{j}}^{\pm}(t) \stackrel{\mathrm{(Prop.\,\ref{prop:last_edge_PQ})}}{=} \max\left(w_{v_{i}\rightarrow v_{j}}^{\pm}(t-1),w(e^{t})\right) \stackrel{(\ref{eq:weakest_edge})}{=} w_{v_{i}\rightarrow v_{j}}^{\pm}(t-1)\stackrel{(\ref{eq:path_ineq_unified})}{>}w(e^{\mp}),
+\]
+Therefore, all path inequalities that were fulfilled on
+$\mathcal{G}_{t-1}$ and segmentation $S_{\mathrm{MWS}}^{t}$, are
+also fulfilled on $\mathcal{G}_{t}$ and segmentation $S_{\mathrm{MWS}}^{t}$.
+\end{proof}
+
+
+\begin{lemma}
+\label{lemma_MWS==>OBJ_loopInvar}Let us assume that $S_{\mathrm{MWS}}^{t-1}$
+fulfills all path inequalities on $\mathcal{G}_{t-1}$ for some iteration
+$t=0,...,M$. Then $S_{\mathrm{MWS}}^{t}$ fulfills the path inequalities
+on $\mathcal{G}_{t}$. 
+\end{lemma}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{./images/cases_lemma_3.pdf}
+   %\includegraphics[width=0.8\linewidth]{egfigure.eps}
+   \caption{The four cases considered in \autoref{lemma_MWS==>OBJ_loopInvar}}
+   \label{fig:cases_lemma_MWS==>OBJ_loopInvar}
+\end{figure}
+
+
+\begin{proof}
+Let us consider the edge $e^{t}=(v_{i},v_{j})$ associated to iteration $t$. We can distinguish four different cases~(displayed in \autoref{fig:cases_lemma_MWS==>OBJ_loopInvar}):
+
+\begin{minipage}{.5\textwidth}
+\begin{enumerate}
+\item $e^{t}\in E^{-}$ and $e^{t}\notin\partial S_{\mathrm{MWS}}^{t-1}$
+\item $e^{t}\in E^{-}$ and $e^{t}\in\partial S_{\mathrm{MWS}}^{t-1}$
+\end{enumerate}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+\begin{enumerate}
+ \setcounter{enumi}{2}
+\item $e^{t}\in E^{+}$ and $e^{t}\notin\partial S_{\mathrm{MWS}}^{t-1}$
+\item $e^{t}\in E^{+}$ and $e^{t}\in\partial S_{\mathrm{MWS}}^{t-1}$
+\end{enumerate}
+
+\end{minipage}
+We will now show that the Lemma holds for all cases. %Particularly, for each case in which the segmentation does not change $S_{\mathrm{MWS}}^{t} = S_{\mathrm{MWS}}^{t-1}$, it is sufficient to show that all path inequalities involving the new edge $e^t$ are fulfilled, since all other inequalities are already fulfilled by assumption.
+
+\subsubsection*{Case 1: repulsive edge $e^t$ not on cut}\label{case:repuslive_edge_not_on_cut}
+In this case, we have that $e^{t}\in E^{-}$ and ${v_{i},v_{j}\in C_{k}}$, where $C_{k}\in S_{\mathrm{MWS}}^{t-1}$ (see Fig. \ref{fig:cases_lemma_MWS==>OBJ_loopInvar}, case 1). Furthermore, $S_{\mathrm{MWS}}^{t}=S_{\mathrm{MWS}}^{t-1}$ because the selected edge $e^t$ is repulsive. \autoref{cor:previous_path_ineq_are_fulfilled} proves that all previous path inequalities that were fulfilled on $\mathcal{G}_{t-1}$ are also fulfilled on $\mathcal{G}_{t}$. In addition to these, the new edge $e^t$ defines a new path inequality of type (\ref{eq:path_rel_1}), which needs to be verified:
+\begin{equation}
+w(e^{t}) \stackrel{?}{<} w_{v_{i}\rightarrow v_{j}}^{+} = \max_{\pi^{+}\in\Pi_{v_{i}\rightarrow v_{j}}^{+}}\underset{e\in\pi^{+}}{\min}w(e).\label{eq:ineq_case_1.2}
+\end{equation}
+Since $v_{i}$ and $v_{j}$ belong to the same cluster $C_{k}$, $\exists \, \pi^+\in \Pi_{v_{i}\rightarrow v_{j}}^{+}$ s.t. $\pi^+\subseteq E_{t-1}$. By using Eq. (\ref{eq:last_edge_PQ}) of \autoref{prop:last_edge_PQ}, we can then show that the maximin attractive path $\hat{\pi}^+\subseteq E_{t-1}$ and we confirm Eq. (\ref{eq:ineq_case_1.2}):
+\begin{equation}
+w_{v_{i}\rightarrow v_{j}}^{+} = \min_{e\in\hat{\pi}^{+}}  w(e) \stackrel{\mathrm{(Prop.\,\ref{prop:last_edge_PQ})}}{>} w(e^{t}).
+\end{equation}
+
+
+\subsubsection*{Case 2: repulsive edge $e^t$ on cut}\label{case:repuslive_edge_on_cut}
+In this case, we have $e^{t}\in E^{-}$, $v_{i}\in C_{k}$,
+$v_{j}\in C_{l}$, where $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$ (see Fig. \ref{fig:cases_lemma_MWS==>OBJ_loopInvar}, case 2). We also note that in this case $S_{\mathrm{MWS}}^{t}=S_{\mathrm{MWS}}^{t-1}$. The new edge $e^t$ does not define any new path inequality, so we can conclude by using \autoref{cor:previous_path_ineq_are_fulfilled}. 
+% We now consider all path inequalities, which could involve the new edge $e^t$. Particularly, we only need to show that every attractive edge ${(v_{a},v_{b})=\tilde{e}\in E^{+}}$, $\tilde{e}\in(C_{k}\times C_{l})$,
+% if it exists, fulfills the inequality of Eq. (\ref{eq:path_rel_2}):
+% \begin{equation}
+% w(\tilde{e})\stackrel{?}{<} w_{v_{a}\rightarrow v_{b}}^{-} .\label{eq:ineq_case_1.1_A}
+% \end{equation}
+% Since $S_{\mathrm{MWS}}^{t-1}$ fulfills all path inequalities, it
+% exists a maximin repulsive path ${\hat{\pi}^{-}\in\Pi_{v_{a}\rightarrow v_{b}}^{-}}$
+% s.t. $e^{t}\notin\hat{\pi}^{-}$, which fulfills the previous inequality
+% (\ref{eq:ineq_case_1.1_A}):
+% \begin{equation}
+% w(\tilde{e})<\underset{e\in\hat{\pi}^{-}}{\min}w(e),\label{eq:ineq_case_1.1_B}
+% \end{equation}
+% Thus, we proved that Eq. (\ref{eq:ineq_case_1.1_A}) holds because, from Proposition \ref{prop:last_edge_PQ},
+% we know that the maximin path $\hat{\pi}^{-}$ on $\mathcal{G}_{t-1}$
+% is also a maximin path on $\mathcal{G}_{t}$. 
+
+
+
+\subsubsection*{Case 3: attractive edge $e^t$ not on cut}\label{case:attractive_edge_not_on_cut}
+In this case, we have $e^{t}\in E^{+}$, $v_{i}, v_j\in C_{k}$, where $C_{k}\in S_{\mathrm{MWS}}^{t-1}$ (see Fig. \ref{fig:cases_lemma_MWS==>OBJ_loopInvar}, case 3). Similalrly to \hyperref[case:repuslive_edge_on_cut]{Case 2}, we note that $S_{\mathrm{MWS}}^{t}=S_{\mathrm{MWS}}^{t-1}$ and that the new edge $e^t$ does not define any new path inequality that needs to be verified, so we can conclude by using \autoref{cor:previous_path_ineq_are_fulfilled}. 
+
+%  We now consider all path inequalities, which could involve the new edge $e^t$. As in \hyperref[case:repuslive_edge_on_cut]{Case 2}, we only need to show that every repulsive edge ${(v_{a},v_{b})=\tilde{e}\in E^{-}}$, $\tilde{e}\in(C_{k}\times C_{k})$,
+% if it exists, fulfills the inequality of Eq. (\ref{eq:path_rel_1}):
+% \begin{equation}
+% w(e^{t}) \stackrel{?}{<} w_{v_{a}\rightarrow v_{b}}^{+} .\label{eq:ineq_case_3_A}
+% \end{equation}
+% Since $S_{\mathrm{MWS}}^{t-1}$ fulfills all path inequalities, it
+% exists a maximin attractive path ${\hat{\pi}^{+}\in\Pi_{v_{a}\rightarrow v_{b}}^{+}}$
+% s.t. $e^{t}\notin\hat{\pi}^{+}$, which fulfills the previous inequality
+% (\ref{eq:ineq_case_1.1_A}):
+% \begin{equation}
+% w(\tilde{e})<\underset{e\in\hat{\pi}^{+}}{\min}w(e),\label{eq:ineq_case_1.1_B}
+% \end{equation}
+% Thus, we proved that Eq. (\ref{eq:ineq_case_1.1_A}) holds because, from \autoref{prop:last_edge_PQ},
+% we know that the maximin attractive path $\hat{\pi}^{+}$ on $\mathcal{G}_{t-1}$
+% is also a maximin path on $\mathcal{G}_{t}$. 
+
+
+\subsubsection*{Case 4: attractive edge $e^t$ on cut}
+
+In this case, we have $e^{t}\in E^{+}$, $v_{i}\in C_{k}$,
+$v_{j}\in C_{l}$, where $C_{k},C_{l}\in S_{\mathrm{MWS}}^{t-1}$. We
+have two possible cases:
+
+\begin{itemize}
+
+\item \textbf{Case 4.1: ({\color{red} under construction}) there are no mutex constraints between the two clusters} and $e^t\in E^+$ is the only edge in $E_t$ connecting $C_k$ and $C_l$: 
+
+\begin{equation}
+ E_{t-1}\cap\left(C_{k}\times C_{l}\right) = \emptyset. \label{eq:observ_no_edges_on_bound}
+\end{equation}
+Thus, the MWS algorithm merges the two clusters $C_{k}$ and $C_{l}$ and this is the only case when the segmentation changes: $S_{\mathrm{MWS}}^{t} \neq S_{\mathrm{MWS}}^{t-1}$. 
+
+\begin{itemize}
+    \item This proof in words:
+    \autoref{eq:observ_no_edges_on_bound} states, that there are no edges crossing the part of the cut, that will be merged.
+    Therefore there are no new inequalities added, when we go from $\mathcal{G}_{t-1}$ to $\mathcal{G}_{t}$, since we get no new attracive edges between clusters and no new repulsive edges within clusters.
+    All other inequalities are still fulfilled, using a same argument, that we used in \autoref{cor:previous_path_ineq_are_fulfilled}
+\end{itemize}
+
+\TODO{rewrite proof}
+From Eq. (\ref{eq:observ_no_edges_on_bound}), it follows that $\forall v_a\in C_k, \forall v_b\in C_l$, it does not exist any type of path connecting the two vertices: $\nexists\, \pi\in\Pi_{v_{a}\rightarrow v_{b}}^{\pm}$ s.t. $\pi \subseteq E_{t-1}$. Thus, all path inequalities that were fulfilled on $S_{\mathrm{MWS}}^{t-1}$ and $\mathcal{G}_{t-1}$, are also fulfilled on the new segmentation $S_{\mathrm{MWS}}^{t}$ and $\mathcal{G}_{t-1}$. We then use \autoref{cor:previous_path_ineq_are_fulfilled} to show that these inequalities are also fulfilled on $\mathcal{G}_{t}$. And we can conclude because, at iteration $t$, edge $e^t$ is no longer on cut, i.e. $e^t \notin \partial S_{\mathrm{MWS}}^{t}$ (see Fig. \ref{fig:cases_lemma_MWS==>OBJ_loopInvar}, case 4.1), and it does not define any new path inequality that needs to be verified.
+
+
+
+%  since from Eq. (\ref{eq:observ_no_edges_on_bound})
+% As a first step, we then need to prove that all path inequalities, which were fulfilled on $S_{\mathrm{MWS}}^{t-1}$ and $\mathcal{G}_{t-1}$, are also fulfilled on $S_{\mathrm{MWS}}^{t}$ and $\mathcal{G}_{t-1}$, since 
+
+% We know by assumption that all path inequalities (\ref{eq:path_rel_1}) defined in $C_{k}$ and $C_{l}$ are fulfilled on $\mathcal{G}_{t-1}$. By using Eq. (\ref{eq:observ_no_edges_on_bound}), we observe that $\forall v_a, v_b \in C_k$, the maximin attractive path $\hat{\pi}_1^+ \in \Pi_{v_{a}\rightarrow v_{b}}^{+}$ defined in $C_k$ and on $\mathcal{G}_{t-1}$ is equal to the maximin attractive path $\hat{\pi}_2^+ \in \Pi_{v_{a}\rightarrow v_{b}}^{+}$ defined in $C_k \cup C_l$ and on $\mathcal{G}_{t-1}$. The same can be clearly said for all the maximin paths included in $C_l$. Thus, we conclude that all path inequalities of type (\ref{eq:path_rel_1}), which were fulfilled on $S_{\mathrm{MWS}}^{t-1}$ and $\mathcal{G}_{t-1}$, are also fulfilled on $S_{\mathrm{MWS}}^{t}$ and $\mathcal{G}_{t-1}$.   
+
+% On the other hand, the fact that all path inequalities of type (\ref{eq:path_rel_2}) are still fulfilled on $S_{\mathrm{MWS}}^{t}$ and $\mathcal{G}_{t-1}$ directly follows from Eq. (\ref{eq:observ_no_edges_on_bound}).
+
+% Finally, to prove that $S_{\mathrm{MWS}}^{t}$ fulfills all path inequalities on $\mathcal{G}_{t}$, we need to check all inequalities, which could involve the new edge $e^t$. We then note that $e^t\in E^+$ not on cut with respect to segmentation $S_{\mathrm{MWS}}^{t}$, thus to prove this last point we can use exactly the same arguments used for \hyperref[case:attractive_edge_not_on_cut]{Case 3}.
+
+\item \textbf{Case 4.2: the MWS algorithm constrains the edge\textbf{ $e^{t}$}} (see Fig. \ref{fig:cases_lemma_MWS==>OBJ_loopInvar}, case 4.2). \autoref{cor:previous_path_ineq_are_fulfilled} proves that all previous path inequalities that were fulfilled on $\mathcal{G}_{t-1}$ are also fulfilled on $\mathcal{G}_{t}$. In addition to these, the new attractive edge $e^t$ defines a new path inequality of type (\ref{eq:path_rel_2}), which needs to be verified:
+\begin{equation}
+w(e^t) \stackrel{?}{<} w_{v_{i}\rightarrow v_{j}}^{-} = \max_{\pi^{-}\in\Pi_{v_{i}\rightarrow v_{j}}^{-}}\underset{e\in\pi^{-}}{\min}w(e).\label{eq:ineq_case_2.2_A}
+\end{equation}
+Note that the equality in (\ref{eq:ineq_case_2.2_A}) holds because the MWS constrained the edge $e^{t}$, thus  $\exists \, \pi^-\in \Pi_{v_{i}\rightarrow v_{j}}^{-}$ s.t. $\pi^-\subseteq E_{t-1}$. Then, similarly to \hyperref[case:repuslive_edge_not_on_cut]{Case 1}, 
+the inequality in Eq.
+(\ref{eq:ineq_case_2.2_A}) follows from \autoref{prop:last_edge_PQ} and $\hat{\pi}^-\subseteq E_{t-1}$.
+
+\end{itemize}
+\end{proof}
+
+\begin{lemma}
+\label{lemma_MWS==>OBJ}$S_{\mathrm{MWS}}$ fulfills all
+path inequalities on $\mathcal{G}$. 
+\end{lemma}
+\begin{proof}
+We note that the initialization $S^0_{MWS}$, where every vertex is in its own cluster, fulfills the path inequalities on a
+graph without edges ${\mathcal{G}_{t=0}=(V,E_{t=0}=\emptyset)}$. This follows from
+the weight definitions in Eq. (\ref{eq:maximin_weight_a}) and (\ref{eq:maximin_weight_b}), when $\Pi_{v_{i}\rightarrow v_{j}}^{\pm}=\emptyset$.
+Thus, we can iteratively apply \autoref{lemma_MWS==>OBJ_loopInvar}
+for $t=0,...,M$ and we conclude that $S^M_{MWS} \equiv S_{MWS}$ fulfills the path inequalities.
+\end{proof}
+
+\begin{theorem}[Mutex Watershed Objective] \label{theo:equivalence_OBJ_MWS}
+On a weighted graph ${\mathcal{G}=(V,E^{+}\cup E^{-})}$
+the partition $S_{MWS}$ found by the Mutex Watershed algorithm is the only partition, that  fulfills all path inequalities (\ref{eq:path_rel_1}) and (\ref{eq:path_rel_2}).
+\end{theorem}
+\begin{proof}
+\autoref{lemma_OBJ==>MWS} proves that if a segmentation $S^*$ fulfills all path inequalities, then it is the Mutex Watershed solution $S^*=S_{MWS}$. \autoref{lemma_MWS==>OBJ} proves that if we consider the clustering $S_{MWS}$ found by the Mutex Watershed algorithm, this fulfills all path inequalities. The two lemmas prove then the equivalence between the MWS clustering and the clustering fulfilling all path inequalities. 
+% The uniqueness of the segmentation fulfilling all path inequalities then follows by the fact that $S_{MWS}$ is unique by definition, since it is the result of a deterministic algorithm.  
+
+\end{proof}
+
+

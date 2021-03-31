@@ -1,0 +1,20 @@
+%!TEX root = ../../main.tex
+
+\section{Conclusion and Discussion} \label{Conclusion}
+We have presented a fast algorithm for the clustering of graphs with both attractive and repulsive edges. The ability to consider both
+\REVIEW{gives a valid alternative to other popular graph partitioning algorithms that rely on a stopping criterion or seeds.}
+ % obviates the need for the kind of stopping criterion or even seeds that all popular algorithms except for multicut / correlation clustering need. 
+ The proposed method has low computational complexity in imitation of its close relative, Kruskal's algorithm. We have shown which objective this algorithm optimizes exactly, and that this objective emerges as a specific case of the multicut objective. \RED{It is possible that recent interesting work \cite{lange2018partial} on partial optimal solutions may open an avenue for an alternative proof.
+%An alternative approach for our proof may be derived from the recent work by \cite{lange2018partial} on partial optimal solutions. 
+% We  showing that every greedy choice can be shown to be a partial optimal solution. 
+%every edge fixed the the Mutex Watershed is part of one optimal solution.%, where they show that repulsive / attractive edges are cut / not cut in the optimal multicut solution when the edge's absolute weight is larger than the sum of absolute weights of edges along a given cutntro.
+}
+% facilitate an alternative method to prove this property,  showing that repulsive / attractive edges are cut / not cut in the optimal multicut solution when the edge's absolute weight is larger than the sum of absolute weights of edges along a given cut.}
+
+Finally, we have found that the proposed algorithm, when presented with informative edge costs from a good neural network, outperforms all known methods on a competitive bioimage partitioning benchmark, including methods that operate on the very same network predictions. 
+
+
+% \RED{We prove using dynamic programming that -- in this limit -- the optimal partitioning can be determined iteratively in order of absolute edge weight. Recent analysis of the multicut objective \cite{lange2018partial} suggests an alternative method to prove this property,  showing that repulsive / attractive edges are cut / not cut in the optimal multicut solution when the edge's absolute weight is larger than the sum of absolute weights of edges along a given cut.}
+
+
+% In future work we want to generalize our algorithm to semantic instance segmentation commonly found in natural image segmentation challenges \cite{Cordts2016Cityscapes,lin2014microsoft,mottaghi_cvpr14} and use it for end-to-end learning.

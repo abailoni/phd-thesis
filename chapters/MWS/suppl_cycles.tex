@@ -1,0 +1,28 @@
+%!TEX root = ../main.tex
+
+\subsection{Multicut Cycle Inequalities} \label{mccycle}
+
+Here we prove equation (\ref{MC_cycle_equiv}) 
+\begin{equation*}
+  % \sum_{e \in c \setminus \{e^-\}} \mccutindicator_e \ge \mccutindicator_{e^-} \quad \Leftrightarrow  \quad \mathcal{C}_1(A) = \emptyset 
+  \forall c \in \mathcal{C}_1 \quad \forall e^- \in c \, \cap \, E^-  \sum_{e \in c\setminus \{e^-\}} \mccutindicator_e \ge \mccutindicator_{e^-} \quad \Leftrightarrow 
+ \quad \mathcal{C}_1(A) = \emptyset.
+\end{equation*}
+Using the indicator $$\cutindicator_e: = \begin{cases}
+        y_e, &\text{ if }e\in E^-\\
+        1-y_e &\text{ if }e\in E^+\\
+    \end{cases}$$
+we can decompose the r.h.s. of equation (\ref{MC_cycle_equiv}) into 
+\begin{equation}
+\mathcal{C}_1(A) = \emptyset \quad \Leftrightarrow \quad  \sum_{e \in c} \cutindicator_e < |c| \qquad \forall c \in \mathcal{C}_1 \label{MC_cycle_equiv_supp}
+\end{equation}
+and show the equivalence for any cycle $ c \in \mathcal{C}_1$ with repulsive edge $e^- \in c \cap E^-$:
+\begin{align*}
+% \mathcal{C}_1(A) = \emptyset \quad & \Leftrightarrow \quad  \\
+\sum_{e \in c} \cutindicator_e < |c| \quad & \Leftrightarrow \quad  \sum_{e \in c} \cutindicator_e \le |c| - 1\\
+& \Leftrightarrow \quad \sum_{e \in c} (\cutindicator_e - 1) \le - 1 \\
+& \Leftrightarrow \quad \sum_{e \in c} (1 - \cutindicator_e) - 1 \ge 0 \\
+& \Leftrightarrow \quad \sum_{e \in c \setminus \{e^-\}} (1 - \cutindicator_e) \ge \cutindicator_{e^-} \\
+& \Leftrightarrow \quad \sum_{e \in c \setminus \{e^-\}} \mccutindicator_e \ge \mccutindicator_{e^-}
+\end{align*}
+

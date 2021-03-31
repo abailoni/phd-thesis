@@ -1,0 +1,32 @@
+% !TEX root = ../../main.tex
+
+\section{Related work} \label{sec:related_work}
+% \textbf{Proposal-based methods} have been highly successful in instance segmentation competitions like MS COCO \cite{lin2014microsoft}and CityScapes \cite{cordts2016cityscapes}. They decompose the instance segmentation task into two steps that consists in generating object proposals and assigning to each bounding box a class and a binary segmentation mask \cite{he2017mask,porzi2019seamless,liu2018path,yang2012layered,li2017fully,ladicky2010and,hariharan2014simultaneous,chen2015multi,dai2016instance,liang2016reversible}. 
+
+\textbf{Proposal-free instance segmentation methods} adopt a bottom-up approach by directly grouping pixels into instances. In the last years, there has been a growing interest in such  methods that do not involve object detection because, in certain types of data, object instances cannot be approximated by bounding boxes \cite{kirillov2017instancecut,bai2017deep}. 
+% For example, the approach proposed in \cite{kirillov2017instancecut} uses a combinatorial framework for instance segmentation, 
+% SGN \cite{liu2017sgn} sequentially group pixels into lines and then instances;
+% whereas a watershed transform is learned in \cite{bai2017deep} by also predicting its gradient direction. 
+% whereas the template matching \cite{uhrig2016pixel} deploys scene depth information.
+Some use metric learning to predict high-dimensional associative pixel embeddings that map pixels of the same instance close to each other \cite{lee2019learning,fathi2017semantic,newell2017associative,de2017semantic}
+% , while mapping pixels belonging to different instances further apart \cite{lee2019learning,fathi2017semantic,newell2017associative,de2017semantic}. % kulikov2018instance
+and then retrieve final instances by applying a clustering algorithm \cite{kong2018recurrentPix}.
+% , like in the end-to-end trainable mean-shift pipeline of \cite{kong2018recurrentPix}. 
+Other recent methods let the model predict the relative coordinates of the instance center \cite{neven2019instance,cheng2019panopticdeeplab} or, given a pixel $(x,y)$, they train a model to generate the mask of the instance located at $(x,y)$ \cite{sofiiuk2019adaptis}. 
+
+\textbf{Edge detection} also experienced recent progress thanks to deep learning, both on natural images \cite{Gao_2019_ICCV,liu2018affinity,xie2015holistically,kokkinos2015pushing} and biological data \cite{lee2017superhuman,schmidt2018cell,meirovitch2016multi,ciresan2012deep}. In neuron segmentation for connectomics, a field of neuroscience we also address in our experiments, boundaries are converted to final instances with subsequent postprocessing and superpixel-merging:
+some use a combinatorial framework \cite{beier2017multicut}, others use loopy graphs \cite{kaynig2015large,krasowski2015improving} or trees \cite{meirovitch2016multi,liu2016sshmt,liu2014modular,funke2015learning,uzunbas2016efficient} to represent the region merging hierarchy. Flood-filling networks \cite{januszewski2018high} and MaskExtend \cite{meirovitch2016multi} used a CNN to iteratively grow one region/neuron at the time.
+% recently, the work of \cite{meirovitch2019cross} made the process more efficient by employing a combinatorial encoding of the segmentation.
+A structured learning approach was also proposed in \cite{funke2018large,turaga2009maximin}.
+
+\textbf{Agglomerative graph clustering} has often been applied to instance segmentation \cite{arbelaez2011contour,ren2013image,liu2016image,salembier2000binary} because of its efficiency as compared to other divisive approaches like graph cuts. 
+Novel termination criteria and merging strategies have often been proposed: the agglomeration in \cite{malmberg2011generalized} deploys fixed sets of merge constraints; 
+% ultrametric contour maps \cite{arbelaez2011contour} combine an oriented watershed transform with an edge detector, so that superpixels are merged until the ultrametric distance exceeds a learned threshold; 
+the popular graph-based method \cite{felzenszwalb2004efficient} stops the agglomeration when the merge costs exceed a measure of quality for the current clusters. 
+The optimization approach in \cite{kiran2014global} performs greedy merge decisions that minimize a certain energy, while other pipelines use classical linkage criteria, e.g.~average linkage \cite{liu2018affinity,lee2017superhuman}, median \cite{funke2018large} or a linkage learned by a random forest classifier \cite{nunez2013machine,knowles2016rhoananet}.
+
+\textbf{Clustering of signed graphs} has the goal of partitioning a graph with both attractive and repulsive cues. Finding an optimally balanced partitioning has a long history in combinatorial optimization \cite{grotschel1989cutting,grotschel1990facets,chopra1993partition}. %and can be done without the need to specify a termination criterion. 
+NP-hardness of the \emph{correlation clustering} problem was shown in \cite{bansal2004correlation}, while the connection with graph multicuts was made by \cite{demaine2006correlation}. Modern integer linear programming solvers can tackle problems of considerable size \cite{andres2012globally}, but accurate approximations \cite{pape2017solving,beier2016efficient,yarkony2012fast}, greedy agglomerative algorithms \cite{levinkov2017comparative,wolf2019mutex,keuper2015efficient,kardoostsolving} and persistence criteria \cite{lange2018partial,lange2018combinatorial} have been proposed for even larger graphs. 
+Another line of research is given by spectral clustering methods that, on the other hand, require the user to specify the number of clusters in advance. Recently, some of these methods have been generalized to graphs with signed weights \cite{Cucuringu2019SPONGEAG,chiang2012scalable,kunegis2010spectral}, whereas others let the user specify must-link and cannot-link constraints between clusters \cite{rangapuram2012constrained,wang2014constrained,cucuringu2016simple}.
+
+This work reformulates the clustering algorithms of \cite{levinkov2017comparative,wolf2018mutex,keuper2015efficient} in a generalized framework and adopts ideas from the proposal-free instance segmentation methods \cite{liu2018affinity,wolf2018mutex,lee2017superhuman} to predict edge weights of a graph.

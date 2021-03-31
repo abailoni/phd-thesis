@@ -1,0 +1,112 @@
+% !TEX root = ./main.tex
+\usepackage{wrapfig}
+\usepackage{amsfonts}
+\usepackage{amsmath,amssymb}
+\usepackage{subcaption}
+\usepackage{epsfig}
+\usepackage{tikz}
+\usepackage{bbm}
+\usepackage{mathrsfs}
+\captionsetup{compatibility=false}
+% \usepackage[caption=false]{subfig}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{mathrsfs}
+\newcommand{\RED}[1]{#1}
+
+\newcommand\TODO[1]{{\color{red}{TODO: #1}}}
+% \newcommand\coord[1]{\bm{#1}}
+
+% \newcommand\TODO[1]{#1}
+\newcommand\UPDATE[1]{{\color{blue}{#1}}}
+\newcommand\REVIEW[1]{#1}
+\newcommand\operator[1]{\textrm{#1}}
+% \newcommand\UPDATE[1]{#1}
+\newcommand\SOURCE[1]{{\color{green}{(from: #1)}}}
+
+
+% LSI masks definitions:
+\newcommand*{\maskname}{central instance~}
+\newcommand*{\sparseBr}{sparse-neighborhood~}
+\newcommand*{\denseBr}{dense-neighborhood~}
+\newcommand*{\encBr}{encoded-neighborhood~}
+\newcommand*{\maskDec}{central-mask-decoder~}
+\newcommand*{\evidW}{w}
+\newcommand\coord{\vec}
+% \newcommand*{\coord}{\bm}
+
+% GASP definitions:
+\newcommand*{\cost}{w}%
+\newcommand*{\interact}{\mathcal{W}}
+\newcommand*{\NBE}{\Gamma} % number of edges in a boundary 
+\newcommand*{\nBE}{\gamma}
+\newcommand*{\algname}{GASP}
+\newcommand*{\treeHeight}{\interact{}_{T}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}m{#1}} 
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}m{#1}} 
+ \newcolumntype{?}{!{\vrule width 0.3em}}
+
+\usetikzlibrary{matrix,positioning,calc}
+\tikzset{line/.style ={draw, rounded corners=2pt, line width=1pt}}
+
+\newcommand\tikzmark[1]{%
+\tikz[remember picture]  \node[inner sep=0,outer sep=0] (#1){};%
+}
+
+
+
+% MWS definitions:
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}%
+\newcommand*{\intweight}{\mathfrak{r}}%
+\newcommand*{\cutindicator}{a}%
+\newcommand*{\mccutindicator}{y}%
+\newcommand*{\subproblem}{S}%
+\newcommand*{\Ainit}{\tilde{A}}%
+\newcommand*{\intSC}{ISC}%
+\newcommand*{\mcw}{{\tilde w}}%
+\newcommand*{\gt}[1]{\stackrel{\smash{*}\rule{0pt}{-1.ex}}{#1}}%
+
+
+\usepackage{thmtools}
+\usepackage{thm-restate}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{observation}{Observation}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{property}{Property}[section]
+\newtheorem{definition}{Definition}[section]
+
+
+
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{marvosym}
+% \usepackage[labelformat=simple]{subcaption}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}m{#1}} 
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}m{#1}} 
+\newcolumntype{?}{!{\vrule width 0.3em}}
+
+
+\usepackage{algorithm}% http://ctan.org/pkg/algorithm
+\PassOptionsToPackage{noend}{algpseudocode}% comment out if want end's to show
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\algrenewcommand\algorithmicindent{0.8em}
+
+
+\makeatletter
+\newcommand*{\skipnumber}[2][1]{%
+   {\renewcommand*{\alglinenumber}[1]{}\State #2}%
+   \addtocounter{ALG@line}{-#1}}
+\renewcommand{\ALG@beginalgorithmic}{\small}
+\makeatother
+
+% \usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
