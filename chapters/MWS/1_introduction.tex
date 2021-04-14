@@ -1,6 +1,6 @@
 % !TEX root = ../../main.tex
 
-\chapter{The Mutex Watershed Algorithm}
+\chapter{The Mutex Watershed Algorithm and its Objective}
 Image partitioning, or segmentation without semantics, is the task of decomposing an image into distinct segments, or equivalently to detect closed contours. Most prior work either requires seeds, one per segment; or a threshold; or formulates the task as multicut / correlation clustering, an NP-hard problem. Here, we propose an \REVIEW{efficient} algorithm for \REVIEW{graph partitioning}, the ``Mutex Watershed''. Unlike seeded watershed, the algorithm can accommodate not only attractive but also repulsive cues, allowing it to find a previously \emph{unspecified} number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm solves to global optimality an objective function that is intimately related to the multicut / correlation clustering integer linear programming formulation. 
 The algorithm is deterministic, very simple to implement, and has empirically linearithmic complexity. 
 %It can be related to with empirically linearithmic complexity. %Just like multicut / correlation clustering or modularity clustering, it determines an optimal number of segments automatically; but unlike these criteria, ours exhibits matroid structure and can be optimized globally by a simple greedy algorithm akin to a minimal spanning tree computation. 

@@ -1,13 +1,121 @@
 % !TEX root = ../main.tex
 
 \chapter{Introduction}
-\section{The First Section}
-Lorem ipsum dolor sit amet\cite{einstein,latexcompanion,knuthwebsite}, consectetur adipiscing elit. Sed aliquam elit at massa sodales, eu imperdiet ligula feugiat. Quisque nec eros sodales, pretium est sodales, iaculis lorem. Suspendisse in semper diam, nec mollis urna. Aliquam gravida lobortis ligula. Fusce pulvinar mi ipsum. Ut nibh turpis, auctor vitae interdum sit amet, fermentum non turpis. Praesent vel risus commodo, dapibus enim ac, maximus neque. Duis convallis, massa et cursus dapibus, leo erat mattis neque, ac interdum quam tortor sit amet justo. Morbi ac dui interdum, posuere risus a, pulvinar mi. Maecenas faucibus consequat suscipit. Maecenas lacinia sit amet tellus sed molestie. Suspendisse bibendum commodo dolor, vitae pulvinar lorem condimentum vitae. Sed molestie condimentum pharetra. Etiam viverra lobortis mi, a vehicula sem convallis id. Etiam gravida arcu et tellus scelerisque ultricies. Cras sed porta ipsum, sed consectetur lorem.
 
-\begin{figure}[p]
-    \centering
-    \includegraphics[width=\textwidth]{figures/placeholder.png}
-    \caption[An example Figure 1.]{\textbf{An example Figure 1.} An example 800x600 figure, that should be displayed in a new page. If you don't like it, then check this web page for more information on the figure positioning: \href{https://www.overleaf.com/learn/latex/Positioning_of_Figures}{https://www.overleaf.com/learn/latex/Positioning\_of\_Figures}}
-    \label{figlabel1}
-\end{figure}
+\section{Image Segmentation}
+The human brain is able to process information captured by our eyes and learn a remarkably rich representation of the world around us. However, developing an artificial system that can achieve the same performance and robustness has long challenged researchers from very diverse fields like psychology, physiology, engineering, computer science and artificial intelligence.
+
+\emph{Computer vision} is a multidisciplinary field of science that enables computers to gain high-level understanding from digital images, videos, and other visual inputs. 
+The idea of ``understanding digital images'' usually means deriving a compressed and meaningful description of the images that can then be used for further analysis.
+A typical example is the task of image classification, where an image is assigned to exactly one label from a fixed set of classes such as \{cat, dog, person\}. 
+Another important example is \emph{image segmentation}, which is the process of partitioning an image into meaningful segments or sets of pixels. There exist two types of image segmentation: \emph{Semantic segmentation} assigns each pixel of the image to a label from a defined set of classes (e.g. person, car, tree, sky); \emph{Instance segmentation} assigns each pixel not only to a class but also to a unique instance id so that different object instances belonging to the same class are distinguished (e.g. car-1, car-2, person-1). 
+ 
+In this thesis, we will focus on instance segmentation. An example of an application is the segmentation of neuronal tissue images (see Fig. \ref{}). In this task, there is only one class of objects (neuron cells), and each pixel has to be assigned to its corresponding neuron cell so that all pixels belonging to the same neuron cell are grouped together. 
+% Note that the number of neuron cells is not known beforehand. 
+
+In the following sections, we will introduce the deep learning models and graph partitioning algorithms studied in this thesis, and show how they can be used to solve instance segmentation tasks such as neuron segmentation.
+
+
+
+\section{Deep Learning methods for Instance Segmentation}
+In the last decade, computer vision experienced incredible progress. This was due in big part to deep learning, which is now omnipresent in the field of image analysis. As a machine learning tool, fully-connected neural networks (also known as multilayer perceptrons) encode the input through a number of non-linear fully-connected layers, where each neuron in one layer is connected to all neurons in the next layer. The neural network model's architecture is defined by the arrangement of these layers. Convolutional neural networks (CNNs) represent one of the most relevant classes of neural network architectures used in computer vision and digital image analysis. A convolutional layer of a CNN convolves its input and passes the result to the next layer. Convolution kernels shift over input features and provide in this way translation equivariant responses. As compared to fully-connected neurons, a convolutional neuron processes data only for its receptive field,  dramatically reducing the number of parameters in the network and making it less prone to overfitting data.
+Thanks to these properties, CNNs recently demonstrated outstanding performances at image-level understanding and recognition capabilities.
+
+A specific type of CNN, called fully convolutional network (FCN) \cite{long2015fully}, proved to be particularly good at solving image segmentation tasks. An FCN does not include any fully-connected layer and transforms the height and width of the intermediate layers back to the input image's size. 
+In this way, when applied to a semantic segmentation task, the pixel-wise class predictions of an FCN have a one-to-one correspondence with the input image in the spatial dimension.
+An improved version of FCN, called U-Net \cite{ronneberger2015u}, is based on an encoder-decoder structure along with long skip connections. These skip connections proved to be very successful at recovering fine-grained details in the output predictions and, recently, the U-Net model became a prevalent choice for solving image segmentation tasks in biological applications \cite{lee2017superhuman,ronneberger2015u}. In the following chapters of this thesis, we will frequently make use of the U-Net model. 
+
+FCNs and CNNs have also been commonly applied to instance segmentation tasks.
+There are two main types of deep learning approaches to instance segmentation: \emph{proposal-based} and \emph{proposal-free} methods. 
+\emph{Proposal-based} methods first perform object detection, for example by predicting anchor boxes \cite{ren2015faster}, and then assign a class and a binary segmentation mask to each detected bounding box \cite{he2017mask,porzi2019seamless}.
+However, the bounding boxes predicted by these methods may overlap, which is not always desirable. 
+In this thesis, we focus instead on \emph{proposal-free} methods, which do not require object detection and directly group pixels into instances. 
+This type of methods are preferred in imagery with object instances that cannot be approximated by bounding boxes and are much larger than the field of view of the model (see for example the task of neuron segmentation, which we review in the following section). 
+
+An instance segmentation method that will be widely used in this thesis learns to predict edge weight of a graph representing the image, so that each node is a pixel...
+
+- In particular, we predict edge weights with a UNet model (see example image) and predict affinities.
+
+
+In this thesis we will approach the task of instance segmentation by learning to predict the input weights for a graph-based segmentation algorithm, which we will review in Section 1.2. 
+
+We will also investigate methods for dense instance segmentation where all pixels have to be assigned to exactly one cluster. In particular we will be present graph-based segmentation algorithms which in particular dominate the ﬁeld of connectomics. One key aspect of their success was the use of Machine Learning to predict meaningful graph weights as an input for sophisticated graph partitioning algorithms. Very accurate graph weights can be learned by training an edge classiﬁer that predicts the transitions between objects [89] or the use of a structured loss function that directly optimizes the segmentation performance [151]. In the following section we will brieﬂy discuss a selection of graph partitioning algorithms that are commonly used in combination with learned graph weight estimators.
+
+
+
+
+Motivation (mention again connectomics), We need scalable and fast methods
+- Proposal free usually requires more or less complex post-processing method
+- One important subclass is given by graph-based instace segm methods that descibe image as graph and rely on some kind of graph partitioning algorithms to obtain the final segmentation    Predicting short- and long-range affinities with a CNN (method that will be often used in this thesis)
+ 
+\subsection{Neuron segmentation in connectomics}
+- Clear example that needs scalable proposal-free methods for instance segmentation
+- Give overview of the problem
+- Related deep learning approaches
+
+\section{Graph partitioning algorithms}
+- Why do we care at all here? Because as we have seen, we can easily describe image as a graph (nodes are pixels or super-pixels) and then edges can be easily predicted by a CNN. Works very well in connectomics CITS
+- Agglomerative algorithms is an important subclass of these: are FAST (as compared to divisive algorithms). Give small pseudo-code example of hierarchical clustering
+
+\subsection{Signed graph partitioning}
+- Edge weights can be positive or signed. With signed, we can find partitioning without extra parameters
+- Define multicut
+- We will focus on efficient algorithms that work on signed graphs
+
+
+\section{Contributions of this thesis}
+
+
+
+
+
+
+- Deep learning for instance segmentation (proposal-free and not, we )
+- Graph based instance segmentation? Agglomerative algorithms?
+- Connectomics: example of application where graph based algorithms have been successfully applied
+
+
+\emph{Instance segmentation} is a computer vision task consisting in assigning each pixel of an image to an object instance. %, where the number of instances is usually not known in advance. 
+Most recently, success in instance segmentation (IS) has been achieved by applying deep learning and there are two main types of successful deep learning approaches to IS: proposal-based \cite{he2017mask,dai2016instance,li2017fully} and proposal-free \cite{kong2018recurrent,novotny2018semi,kulikov2018instance,kirillov2017instancecut} methods. Proposal-based methods consist of two steps: detecting objects, for example by finding bounding boxes, and assigning pixels to the detected instances. Although these approaches have proven to be highly successful in instance segmentation competitions like MS COCO \cite{lin2014microsoft}, Pascal VOC2012 \cite{everingham2010pascal} and CityScapes \cite{cordts2016cityscapes}, they are not applicable to certain types of data, for example electron microscopy (EM) image volumes of neurons \cite{arganda2015crowdsourcing}, where objects are not approximated well by bounding boxes. 
+% More motivation: They are at the same time limited by the quality of the object detection routine, which is hard to train on small datasets (but no ref for this)
+Thus, there is a growing interest for more efficient proposal-free methods that perform IS by directly predicting \UPDATE{pixel features} and then grouping pixels into object instances. In this work, we focus on a common proposal-free method, where a Convolutional Neural Network (CNN) predicts affinities representing how likely it is for pairs of pixels to belong to the same instance. Recently, this approach was successfully applied both to neuron segmentation of 3D EM image stacks \cite{lee2017superhuman,wolf2018mutex} and instance segmentation of 2D urban scenes \cite{liu2018affinity}, where it achieved performances superior and comparable, respectively, to proposal-based methods.
+
+In this approach, the output of the CNN can be represented as a weighted grid graph such that each node represents a pixel of the image and the weights of the edges define interactions between the pixels. A graph clustering algorithm is then applied to cluster pixels into instances. The majority of clustering methods work with positive edge weights only, representing attractive interactions between the nodes. These methods require the user to specify the desired numbers of segments or a termination criterion (as in spectral clustering or iterated normalized cuts) or even a stronger version of supervision in terms of seeds (as in seeded watershed or random walker).  
+Hierarchical clustering (HC) is also a popular method, which creates a hierarchy of clusters. Agglomerative HC is a bottom-up approach starting with each node assigned to its own cluster and incrementally merging clusters while moving up the hierarchy \cite{lance1967general}. This method requires the user to choose a level in the cluster hierarchy defining the desired output clustering. 
+
+Other clustering methods work with so-called \emph{signed graphs}, which include both positive and negative edge weights corresponding to attraction and repulsion between pixels. The advantage of using signed graphs is that balancing attraction and repulsion allows us to perform the clustering without defining additional parameters. This can be done optimally by solving the so-called \emph{multicut optimization problem} or \emph{correlation clustering} \cite{kappes2011globally,chopra1991multiway}. However, this problem is NP-hard, so good approximations \cite{yarkony2012fast,pape2017solving} and efficient greedy heuristics \cite{levinkov2017comparative,wolf2018mutex} were proposed.
+
+Our first contribution is a review framework for graph clustering (Sec. \ref{sec:general_framework}) that represents a generalization of agglomerative HC to graphs with both attractive and repulsive edge weights (see Figure \ref{fig:intro_figure} for a visual abstract). 
+We show that various existing partitioning algorithms \cite{levinkov2017comparative,wolf2018mutex,kardoostsolving,lance1967general} can be reformulated in our framework, so that they share a general procedure but differ in the way inter-cluster interaction is updated after each iteration. Moreover, this framework allows us to introduce new variations of these algorithms that also enforce mutual-exclusion relationships between clusters.  
+
+Finally, the algorithms included in the framework are evaluated on an instance segmentation task, both on 3D biological image stacks (Sec. \ref{sec:neuro_segm_exp}) and 2D urban scenes (Sec. \ref{sec:cityscapes_exp}). Our analysis highlights strengths and weaknesses of each algorithm by comparing their robustness to noise, efficiency and inclination to output a well balanced graph partitioning.
+
+
+
+
+
+Deep learning and convolutional neural networks (CNNs) have become the dominant tool for computer vision.
+
+\section{Image Instance Segmentation}
+
+\section{Deep Learning for Instance Segmentation}
+
+\section{Neuron segmentation for Connectomics}
+\textbf{Thorsten}
+To understand how the brain is working neuroscientists are acquiring large volumes of electron microscopy (EM) images of the brain of animals with the aim of analyzing the neural circuit connectivity of the brain. This circuit formed by neurons which are connected via synapses is the so called connectome. Connectomics is the ﬁeld of science acquiring and studying connectomes. The connectome can be acquired by sequencing techniques [149] or by segmentation based approaches. Here, we only discuss the latter one. Given a segmentation of the neurons in EM volumes, synapses and their synaptic partners need to be detected [88, 90, 128] to form the graph known as connectome. In this thesis we will focus on automated segmentation of neurons. Detection of synapses and their synaptic partners is beyond the scope of this thesis.
+
+Despite impressive progress in collaborative annotation [79], the sheer size of these volumes make manual analysis infeasible. To handle large whole-brain datasets automated segmentation is needed. In chapters 4 and 5 we present algorithms and a software package to automatically segment such data sets with low error rates. The algorithms are based based on the multicut [8, 68] and lifted multicut [7, 78] formulation which we will brieﬂy described in the following sections.
+
+\textbf{Steffen}
+One notable example that we will discuss later is the instance segmentation of neuronal tissue images. Here, every pixel belongs to a neuron cell (i.e., we only have one class), which makes semantic segmentation not applicable. Instead, the image pixels have to be grouped such that each group contains only pixels of one neuron. In this work we introduce new algorithms for instance segmentation speciﬁcally tailored for neuron segmentation.
+
+Graph-based segmentation algorithms have been particularly successful in connectomics, a ﬁeld of neuroscience that strives to reconstruct the complete central nervous systems of animals and studies their neural wiring diagram. A necessary step towards this goal is the segmentation of neural tissue delineating individual neuron cells and revealing their 3D shapes. This process is known as neuron reconstruction. The neural tissue is commonly imaged using electron microscopy techniques (e.g., serial section transmission EM) that yield 3D image volumes. For example, the brain of an adult Drosophila melanogaster, with a volume of ∼ 8 · 10 7 µ m 3 and comprising ∼100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB [183]. To study data-sets of this size, automated processing, especially automated segmentation, is paramount to not only reconstruct the complete neural wiring diagram but also study neuron morphology and ultra-structure.
+
+One automatic method for neuron tracing, the ﬂood-ﬁlling networks, uses a recurrent neural network to iteratively extend individual neurons [60]. Other approaches learn to predict afﬁnity graph between voxels or supervoxels [89, 152] and determine the segmentation as optimal cuts of this graph [6, 7, 20, 49, 105, 119, 120]. Almost all of the top submissions of the CREMI [26] and SNEMI3D [135] segmentation challenge predict these afﬁnities directly using convolutional networks [89, 163]. An alternative approach to the direct prediction of afﬁnities was proposed by Lee et al. [90], who instead learn dense voxel embeddings via deep metric learning and derive afﬁnities in the embedded space.
+
+\section{Contribution and Overview of this Thesis}
+We investigate machine learning approaches for predicting input weights for classical and Mutex Watersheds, focusing especially on supervised end-to-end learning in Chapter 2 and fully unsupervised learning in Chapter 5.
+
+\textbf{Chapter 2}
+We propose a greedy algorithm for signed graph partitioning, the Mutex Watershed. Unlike seeded watershed, the algorithm can accommodate not only attractive but also repulsive interactions, allowing it to ﬁnd a previously unspeciﬁed number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm ﬁnds a global optimum of an objective function that is intimately related to the multicut / correlation clustering integer linear programming formulation.
 
