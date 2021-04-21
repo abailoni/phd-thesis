@@ -29,7 +29,6 @@ Each element of the subsets $H^+_{c}$ and $H^-_{c}$ corresponds to a specific ch
 
 \subsubsection*{Network architecture and training}
 We use the 3D U-Net \cite{ronneberger_15_u-net, cciccek20163d} architecture, as proposed in \cite{funke2018large}. %It is illustrated in Figure \ref{fig:architecture}.
-
 Our training targets for attractive / repulsive edges $\gt{w}^\pm$ can be derived from a groundtruth label image $\gt{L}$ according to
 \begin{equation}
     \gt{w}^+_{e=(i, j)} = \begin{cases}
@@ -43,10 +42,8 @@ Our training targets for attractive / repulsive edges $\gt{w}^\pm$ can be derive
         1 , & \text{otherwise}
     \end{cases}
 \end{equation}
-
 Here, $i$ and $j$ are the indices of vertices / image pixels.
-Next, we define the loss terms
-
+Next, we define the loss terms:
 \begin{equation} \label{dice_plus}
     \mathcal{J}^+_{c} = - \frac{\sum_{e \in H^+_{c}} (1 - w^+_e) (1 - \gt{w}^+_e)}{\sum_{e \in H^+_{c}} ((1 - w^+_e)^2 + (1 -\gt{w}^+_e)^2)} 
 \end{equation}\label{dice_minus}
@@ -55,16 +52,16 @@ Next, we define the loss terms
 \end{equation}
 for attractive edges (i.e. channels) and repulsive edges (i.e. channels).
 
-\begin{figure}
+\begin{figure}[htp]
     \centering
-    \begin{subfigure}[b]{0.95 \linewidth}
+    \begin{subfigure}[b]{0.8 \linewidth}
     \centering
     \includegraphics[width=0.9\linewidth]{figures/MWS/images/2d_connection.pdf}%
     \caption{XY-plane neighborhood with local attractive edges (green) and
      sparse repulsive edges (red) with approximate radius 9 and further long-range connections with distance 27}\label{fig:2d-connection}
     \end{subfigure}
     \par\bigskip
-    \begin{subfigure}[b]{0.95 \linewidth}
+    \begin{subfigure}[b]{0.8 \linewidth}
     \centering
     \includegraphics[width=0.4\linewidth]{figures/MWS/images/3d_connection3.pdf}
     \caption{Due to the great anisotropy of the data we limit the Z-plane edges to a distance of 1. The direct neighbors are attractive, whereas the indirect neighbors are repulsive.}\label{fig:3d-connection}
@@ -95,37 +92,37 @@ has a resolution of 50 $\times$ 4 $\times$ 4 nm per pixel. The groundtruth is pr
 labels, which can easily be converted to a 2D, but not 3D segmentation. To train a 3D model, we follow the procedure
 described in \cite{beier2017multicut}. 
 \captionsetup[subfigure]{justification=centering, singlelinecheck=off}
-\begin{figure}
+\begin{figure}[htp]
 \centering
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/damws_2.png}
         \caption{Mutex Watershed} \label{fig:mws1}
     \end{subfigure}\hspace{0.5cm}
     \vspace{0.3cm}
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/damws_1.png}
         \caption{Mutex Watershed} \label{fig:mws2}
     \end{subfigure}
     \vspace{0.3cm}
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/mclr_2.png}
         \caption{Multicut partitioning based segmentation~(MC-FULL)} \label{fig:mc_full}
     \end{subfigure}\hspace{0.5cm}
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/thresholded_1.png}
         \caption{Thresholding of local boundary maps ~(THRESH)} \label{fig:thresh}
     \end{subfigure}%
     
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/ws_2.png}
         \caption{Watershed, seeded at local minima of the smoothed input map~(WS)} \label{fig:ws}
     \end{subfigure}\hspace{0.5cm}%
-    \begin{subfigure}[t]{0.46 \linewidth}
+    \begin{subfigure}[t]{0.41 \linewidth}
         \centering
         \includegraphics[width=0.98\textwidth]{figures/MWS/images/wsdt_22.png}
         \caption{Distance Transform Watershed~(WSDT)} \label{fig:wsdt}
@@ -173,6 +170,9 @@ described in \cite{beier2017multicut}.
 %     \label{fig:isbi-examples}
 % \end{figure}
 
+
+
+
 The test volume has private groundtruth; results can be submitted to the leaderboard.
 They are evaluated based on the Adapted Rand Score (Rand-Score) and the Variation of Information Score (VI-Score) \cite{isbi2012challenge}.%, separately for each 2D plane. 
 %The results are evaluated separately for the individual 2D imaging planes with final score corresponding to the average over the planes.
@@ -186,12 +186,52 @@ Then it computes a merge cost for local and long-range connections between super
 Based on this, it defines a lifted multicut partioning problem that is solved approximately.
 In contrast, our method finds an optimal solution of its objective purely on the pixel level.
 
+
+
+
+
 \subsubsection*{Comparison with other segmentation methods}
 The weights predicted by the CNN described above can be post-processed directly by the Mutex Watershed algorithm. To ensure a fair comparison, we transform the same CNN predictions into a segmentation using basic and state-of-the-art post-processing methods. 
 We start from simple thresholding (THRESH) and seeded watershed. Since these cannot take long-range repulsions into account, we generate a boundary map by taking the maximum\footnote{The maximum is chosen to preserve boundaries.} values over the attractive edge channels. Based on this boundary map, we introduce seeds at the local minima (WS) and at the maxima of the smoothed distance transform (WSDT). For both variants, the degree of smoothing was optimized such that each region receives as few seeds as possible, without however causing severe under-segmentation. The performance of these three baseline methods in comparison to Mutex Watershed is summarized in Table~\ref{tab:isbi-baselines}. The methods were applied only in 2D, because the
 high degree of anisotropy leads to inferior results when applied in 3D.
 In contrast, the Mutex Watershed can be applied in 3D out of the box and yields significantly better
 2D segmentation scores.
+
+
+\begin{table}[t]
+    \centering
+        \begin{tabular}{l c c}
+            \toprule
+            Method                                  & \hspace{-0.5cm}Rand-Score & VI-Score \\        
+            \midrule
+            UNet + MWS                              & \textbf{0.98792} & \textbf{0.99183}\\        
+            ResNet + LMC \cite{xiao2018deep}        & 0.98788   &  0.99072\\
+            SCN + LMC \cite{weiler2017learning}     & 0.98680   &  0.99144\\
+            M2FCN-MFA \cite{shen2017multi}         & 0.98383   &  0.98981\\
+            FusionNet + LMC \cite{quan2016fusionnet}& 0.98365   &  0.99130\\ 
+            % ICv1 + LMC \cite{beier2017multicut}     & 0.98262   &  0.98945\\        
+        \end{tabular}
+        \caption{Top five entries at time of submission on the ISBI 2012 EM Segmentation Challenge. Our Mutex Watershed (MWS) is state-of-the-art without relying on the complex lifted multicut postprocessing used by most other top entries.}
+        \label{tab:isbi-leaderboard}
+\end{table}
+\begin{table}[t]
+    \centering
+        \begin{tabular}{l c c r}
+            \toprule
+            Method   & \hspace{-0.5cm}Rand-Score & VI-Score & Time [s] \\        
+            \midrule
+            MWS      & \textbf{0.98792} & \textbf{0.99183} & 43.3 \\        
+            MC-FULL  & 0.98029   & 0.99044 & 9415.8 \\
+            LMC      & 0.97990   & 0.99007 &  966.0 \\
+            THRESH   & 0.91435   & 0.96961 & 0.2 \\
+            WSDT     & 0.88336   & 0.96312 & 4.4 \\
+            MC-LOCAL & 0.70990   & 0.86874 & 1410.7 \\
+            WS       & 0.63958   & 0.89237 & 4.9 \\
+            % MC-LR Repulsive  &           &         & 6834.77 \\
+        \end{tabular}
+        \caption{Comparison on the ISBI 2012 EM Segmentation Challenge to other segmentation strategies, all of which are based on our CNN. Runtimes were measured on a single thread of a Intel Xeon CPU E5-2650 v3 @ 2.30GHz.}
+        \label{tab:isbi-baselines}
+\end{table}
 
 Qualitatively, we show patches of results in Figure \ref{fig:isbi-examples}.
 The major failure case for WS (Figure \ref{fig:ws}) and WSDT (Figure \ref{fig:wsdt})
@@ -227,42 +267,5 @@ despite being much cheaper in inference. We note that both MC-FULL, LMC and the 
 %  the strict separation in attractive short-range and repulsive long-range edges is beneficial for certain problems.
 % This might hold true for segmentation because ``non-connectedness'' of two pixels in an image can often only be decided reliably at larger distances.
 
-\begin{table}[t]
-    \centering
-    \begin{subtable}[t!]{0.48\textwidth}\centering
-        \begin{tabular}{l c c}
-            \toprule
-            Method                                  & \hspace{-0.5cm}Rand-Score & VI-Score \\        
-            \midrule
-            UNet + MWS                              & \textbf{0.98792} & \textbf{0.99183}\\        
-            ResNet + LMC \cite{xiao2018deep}        & 0.98788   &  0.99072\\
-            SCN + LMC \cite{weiler2017learning}     & 0.98680   &  0.99144\\
-            M2FCN-MFA \cite{shen2017multi}         & 0.98383   &  0.98981\\
-            FusionNet + LMC \cite{quan2016fusionnet}& 0.98365   &  0.99130\\ 
-            % ICv1 + LMC \cite{beier2017multicut}     & 0.98262   &  0.98945\\        
-        \end{tabular}
-        \caption{Top five entries at time of submission. Our Mutex Watershed (MWS) is state-of-the-art without relying on the complex lifted multicut postprocessing used by most other top entries.}
-        \label{tab:isbi-leaderboard}
-    \end{subtable} \quad 
-    \par\bigskip
-    \begin{subtable}[t!]{0.48\textwidth}\centering
-        \begin{tabular}{l c c r}
-            \toprule
-            Method   & \hspace{-0.5cm}Rand-Score & VI-Score & Time [s] \\        
-            \midrule
-            MWS      & \textbf{0.98792} & \textbf{0.99183} & 43.3 \\        
-            MC-FULL  & 0.98029   & 0.99044 & 9415.8 \\
-		    LMC		 & 0.97990   & 0.99007 &  966.0 \\
-            THRESH   & 0.91435   & 0.96961 & 0.2 \\
-            WSDT     & 0.88336   & 0.96312 & 4.4 \\
-            MC-LOCAL & 0.70990   & 0.86874 & 1410.7 \\
-            WS       & 0.63958   & 0.89237 & 4.9 \\
-            % MC-LR Repulsive  &           &         & 6834.77 \\
-        \end{tabular}
-        \caption{Comparison to other segmentation strategies, all of which are based on our CNN. Runtimes were measured on a single thread of a Intel Xeon CPU E5-2650 v3 @ 2.30GHz.}
-        \label{tab:isbi-baselines}
-    \end{subtable}
-    \caption{Results on the ISBI 2012 EM Segmentation Challenge.}
-    \label{tab:isbi-results}
-\end{table}
+
 

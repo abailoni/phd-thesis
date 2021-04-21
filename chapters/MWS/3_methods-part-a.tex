@@ -55,37 +55,28 @@ The ``connected'' and ``mutex'' predicates can be efficiently evaluated using a 
 \label{fig:WS_compare}
 \end{figure}
 
-\TODO{Convert algorithm}
-% \begin{algorithm}[b]
-%  \hrulefill \\
-% \textbf{Seeded Watershed:}\\
-% \SetKwProg{WS}{WS}{$\big(\mathcal{G}(V,E),$ \text{\rm pos.\ weights} $w:E\rightarrow \mathbb{R}^+$, \text{\rm seeds} $S\subseteq V\big)$:}{}
-% \WS{}{
-% $A^+ \leftarrow \emptyset$\; 
-% $A^- \leftarrow \{ (s,t) \in S \times S \,|\, s \neq t \} $\;
-% \Comment{\parbox[t]{.77\linewidth}{Equivalent to introducing infinitely \\repulsive edges between seeds}}\\
-%  %  \textbf{Input: }
-%  %     weighted graph $\mathcal{G}(V,  E, w)$ and seeds $S \subseteq V$, where only seeds are connected by repulsive edges $w_{uv} < 0 \Leftrightarrow u \in S \text{ and } v \in S$ and $\; w_{st} = -\infty \;\forall (s,t) \in S \times S; s \neq t$.\\
-%  %         % $\{(s_i, s_j) | i,j \in 1, \ldots, |S|; i \neq j \}$ is the set of infinitely repulsive edges between all pairs of seeds\;
-%  %      \textbf{Output: }
-%  %     clusters defined by activated edges $A^+$\;
-%  % \textbf{Initialization: }
-%  %     $A^+ = \emptyset $;
-%  %     $A^- = \{e \;|\; w_e = - \infty \;\forall e \in E\}$\;
-%  \For{$(i,j) = e \in E $ {\rm in descending order of } $w_e$} 
-%  {
-%     \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{and not} $\operator{mutex}$($i,j;A^+,A^-$) }  
-%     {
-%           $A^+ \leftarrow A^+ \cup e$ \;
-%           \Comment{\parbox[t]{.65\linewidth}{merge $i$ and $j$ and inherit the mutex\\ constraints of the parent clusters}}
-%     }
-%     }
-%     \textbf{return} $A^+ \cup A^-$
-%   } \vspace{5pt}\hrulefill
-%   \vspace{5pt}
-%  \caption{Mutex version of seeded watershed algorithm. The output clustering is defined by the connected components of the final attractive active set $A^+$.}
-%  \label{WS_algo_code}
-% \end{algorithm}
+
+
+
+\begin{algorithm}[t]
+  \caption{Mutex version of seeded watershed algorithm}
+
+  \begin{algorithmic}[1]
+      \Procedure{SeededWatershed}{$\mathcal{G}(V,E),$ \text{\rm pos.\ weights} $w:E\rightarrow \mathbb  {R}^+$, \text{\rm seeds} $S\subseteq V$}
+        \State $A^+ \leftarrow \emptyset$\; 
+        \State $A^- \leftarrow \{ (s,t) \in S \times S \,|\, s \neq t \} $ % \Comment{Equiv. to adding infinitely repulsive edges between seeds}
+        \For{$(i,j) = e \in E $ {\rm in descending order of } $w_e$} 
+            \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{and not} $\operator{mutex}$($i,j;A^+,A^-$) }  
+                \State $A^+ \leftarrow A^+ \cup e$ \Comment{Merge $i,j$ and inherit mutex constraints of the parent clusters}
+            \EndIf
+        \EndFor
+        \State
+        \Return $A^+ \cup A^-$
+      \EndProcedure
+  \end{algorithmic}
+    \algcomment{The output clustering is defined by the connected components of the final attractive active set $A^+$.}
+ \label{WS_algo_code}
+\end{algorithm}
 
 
 \subsection{Seeded watershed from a mutex perspective}
@@ -103,51 +94,51 @@ This algorithm differs from Kruskal's only by the check for mutual exclusion in 
 In the sequel, we generalize this construction by admitting less-than-infinitely repulsive edges. Importantly, these can be dense and are hence much easier to estimate automatically than seeds with their strict requirement of only-one-per-cluster.
 
 
-\TODO{Convert algorithm}
-% \begin{algorithm}[t]
-%  \hrulefill \\
-% % \Fn{afunc(i: int) : int}{return 0\;}
-% \textbf{Mutex Watershed:}\\
-% \SetKwProg{MWS}{MWS}{$\big(\mathcal{G}(V,E)$, $w:E\rightarrow \mathbb{R}$, \text{\rm boolean $\operator{connect\_all}\big)$}:}{}
-% \MWS{}{
-%    % \textbf{MWS-Clustering}($G$, $w$, \text{connect\_all}):\;
-%      % weighted graph $\mathcal{G}(V, E, w)$\;
-%       % \textbf{Output: }
-%      % clusters defined by active set $A^+$\;
-%   % \textbf{Initialization: }
-%      $A^+ \leftarrow \emptyset; \quad A^- \leftarrow \emptyset $\;
-%  \For{$(i,j) = e \in E $ {\rm in descending order of } $|w_e|$} 
-%  {
-%    \eIf{$e \in E^+$}
-%    {
-%    \If{\rm \textbf{not} $\operator{mutex}$($i,j; A^+, A^-$) }  
-%     {
-%         \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{or}
-%             \rm $\operator{connect\_all}$}{
-%           $\operator{merge}(i, j)$: $A^+ \leftarrow A^+ \cup e$\;
-%           \Comment{\parbox[t]{.55\linewidth}{ merge $i$ and $j$ and inherit the mutex \\constraints of the parent clusters}}
-%         }
-%     }
-%    }{
-%     \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$)}
-%       {
-%           $\operator{addmutex}(i, j)$: $A^- \leftarrow A^- \cup e$\;
-%           \Comment{\parbox[t]{.60\linewidth}{add mutex constraint between $i$ and $j$}}
-%       }
-%    }
 
-%  }
-%  \textbf{return} $A^+ \cup A^-$
-%  } \vspace{3pt}\hrulefill
-%  \vspace{6pt}
-%  \caption{Mutex Watershed Algorithm. \REVIEW{The output clustering is defined by the connected components of the final attractive active set $A^+$. The $\operator{connect\_all}$ parameter changes the internal cluster connectedness from trees to fully connected, but does not change the output clustering.} The $\operator{connected}$ predicate can be efficiently evaluated using union find data structures.}
-%  \label{algo_code_efficient}
-% % }
-% \end{algorithm}
 
-\begin{figure}[t]
+
+
+
+
+
+
+\begin{algorithm}[t]
+ % \hrulefill \\
+  \caption{Mutex Watershed Algorithm}
+  \begin{algorithmic}[1]
+    \Procedure{MutexWatershed}{$\mathcal{G}(V,E)$, $w:E\rightarrow \mathbb{R}$, \text{\rm boolean $\operator{connect\_all}$}}
+        \State $A^+ \leftarrow \emptyset; \quad A^- \leftarrow \emptyset $\;
+        \For{$(i,j) = e \in E $ {\rm in descending order of } $|w_e|$} 
+            \If{$e \in E^+$}
+                \If{\rm \textbf{not} $\operator{mutex}$($i,j; A^+, A^-$) }  
+                    \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$) \textbf{or} \rm $\operator{connect\_all}$}
+                        \State $\operator{merge}(i, j)$: $A^+ \leftarrow A^+ \cup e$
+                        \Comment{Merge $i, j$ and inherit constraints of parent clusters}
+                    \EndIf
+                \EndIf
+           \Else
+                \If{\rm {\bf not} $\operator{connected}$($i, j; A^+$)}
+                    \State $\operator{addmutex}(i, j)$: $A^- \leftarrow A^- \cup e$\;
+                    \Comment{Add mutex constraint between $i$ and $j$}
+                \EndIf
+            \EndIf
+        \EndFor
+        \State 
+        \Return $A^+ \cup A^-$
+    \EndProcedure
+    \end{algorithmic}
+ \label{algo_code_efficient}
+ \algcomment{\REVIEW{The output clustering is defined by the connected components of the final attractive active set $A^+$. The $\operator{connect\_all}$ parameter changes the internal cluster connectedness from trees to fully connected, but does not change the output clustering.} The $\operator{connected}$ predicate can be efficiently evaluated using union find data structures.}
+% }
+\end{algorithm}
+
+
+
+
+
+\begin{figure}[htp]
 \centering
-\includegraphics[width=\linewidth]{figures/MWS/images/new-diagram-MWS-2.pdf}
+\includegraphics[width=0.9\linewidth]{figures/MWS/images/new-diagram-MWS-2.pdf}
 % \includegraphics[width=\linewidth]{images/exampleg1.png}
 % \includegraphics[width=\linewidth]{images/exampleg2.png}
    %\includegraphics[width=0.8\linewidth]{egfigure.eps}
@@ -200,9 +191,9 @@ where $M$ is the expected value of $\min (|M[C_i]|, |M[C_j]|)$ and $\alpha(V) \i
 \end{equation}
 
 
-\begin{figure}
+\begin{figure}[ht]
    \centering
-\adjustbox{width=0.98\linewidth}{
+\adjustbox{width=0.88\linewidth}{
        \input{figures/MWS/fig/runtime/runtime.pgf}}
    \caption{Runtime $T$ of Mutex Watershed (without sorting of edges) measured on sub-volumes of the ISBI challenge of different sizes~(thereby varying the total number of edges $E$). We plot $\frac{T}{|E|}$ over $|E|$ in a logarithmic plot, which makes $T \sim |E| log(|E|)$ appear as straight line. A logarithmic function (blue line) is fitted to the measured $\frac{T}{|E|}$ (blue circles) with ($R^2 = 0.9896$). The good fit suggests that empirically $T \approx \mathcal{O}(E \log E)$.}
 \label{fig:scalingM}

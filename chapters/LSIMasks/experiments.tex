@@ -91,39 +91,40 @@ Finally, the graph is partitioned by applying the average agglomeration algorith
 
 
 \begin{figure}[t]
-\begin{subfigure}[t]{0.16\linewidth}
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/raw.pdf} % 
 % \caption{\centering}
 \end{subfigure}
-\begin{subfigure}[t]{0.16\linewidth}
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/GT.pdf} % ,clip
 % \caption{\centering}
 \end{subfigure}
-\begin{subfigure}[t]{0.16\linewidth}
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/dice_2.pdf} % ,clip
 % \caption{\centering}
-\end{subfigure}
-\begin{subfigure}[t]{0.16\linewidth}
+\end{subfigure}\vspace{1em}
+
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/dice_1.pdf} % ,clip
 % \caption{\centering}
 \end{subfigure}
-\begin{subfigure}[t]{0.16\linewidth}
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/mask_2.pdf} % ,clip
 % \caption{\centering}
 \end{subfigure}
-\begin{subfigure}[t]{0.16\linewidth}
+\begin{subfigure}[t]{0.32\linewidth}
 \centering
 \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/mask_1.pdf} % ,trim=0.25in 0.25in 0.65in 0.36in,clip
 % \caption{\centering}
 \end{subfigure}
 
 
-% \begin{subfigure}[t]{0.16\linewidth}
+% \begin{subfigure}[t]{0.32\linewidth}
 % \centering
 % \includegraphics[width=0.99\linewidth,trim=0in 0in 0in 0.2in,clip]{./figures/LSIMasks/aff_compare_designer/raw.pdf} % 
 % % \caption{\centering}
@@ -156,7 +157,7 @@ Finally, the graph is partitioned by applying the average agglomeration algorith
 
 
 
-\caption{Comparison between different affinities and their robustness to noise. \textbf{\mbox{(a-b)}} Raw data and ground-truth labels. \textbf{(c-d)} Affinities predicted by the \emph{sparse-neighborhood branch}, which is trained with a dense binary classification loss (high affinities are red). \textbf{(e-f)} Affinities computed by averaging overlapping masks as explained in Sec. \ref{sec:aggr_affs} (MaskAggr). Affinities from averaged masks are smoother and present a more consistent boundary evidence in the noisy region highlighted by the red circle in \textbf{(a)}. Here we show affinities along the horizontal (-4, 0, 0) and vertical (0, -4, 0) directions.}\label{fig:affs_comparison}
+\caption{Comparison between different affinities and their robustness to noise. \textbf{\mbox{(a-b)}} Raw data and ground-truth labels. \textbf{(c-d)} Affinities predicted by the \emph{sparse-neighborhood branch}, which is trained with a dense binary classification loss (high affinities are red). \textbf{(e-f)} Affinities computed by averaging overlapping masks as explained in Sec. \ref{sec:aggr_affs} (MaskAggr). Affinities from averaged masks are smoother and present a more consistent boundary evidence in the noisy region highlighted by the red circle in (a). Here we show affinities along the horizontal (-4, 0, 0) and vertical (0, -4, 0) directions.}\label{fig:affs_comparison}
 \end{figure}
 
 \subsection{Results and Discussion}

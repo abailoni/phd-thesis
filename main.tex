@@ -42,7 +42,8 @@
 
 %----------------- Start of the document ------------------
 \begin{document}
-\pagenumbering{roman}
+% \pagenumbering{roman}
+\pagenumbering{arabic}
 
 %--------------- Table and figure captions ----------------
 \captionsetup[figure]{labelfont={bf},name={Figure},labelsep=period,singlelinecheck=false}
@@ -74,7 +75,7 @@
 
 %--------------------- Main contents ----------------------
 \cleardoublepage
-\pagenumbering{arabic}
+
 \include{chapters/chapter1}
 
 %--------------------- Mutex Watershed ----------------------
@@ -106,6 +107,10 @@
 \input{chapters/LSIMasks/conclusions.tex}
 \input{chapters/LSIMasks/supplementary.tex}
 
+
+% Conclusions and final stuff
+\input{chapters/conclusion.tex}
+\input{chapters/publications.tex}
 
 %---------------------- Bibliography ----------------------
 \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\bibname}

@@ -1,6 +1,6 @@
 % !TEX root = ../../main.tex
 
-\begin{table*}[t]
+\begin{table*}[tp]
     \centering
     \scriptsize
     % \tiny
@@ -101,14 +101,14 @@ We divided the three CREMI training samples, consisting of $\sim$196 million vox
 
 
 
-\begin{table*}[t]
+\begin{table}[tp]
         \centering
+\small
 % \begin{minipage}[t]{0.6\textwidth}
 %     \centering
-    \tiny
-        \begin{subtable}[t]{0.27\textwidth}
+        \begin{subtable}[t]{\textwidth}
         \centering
-        \begin{tabular}[t]{@{\hspace{0.7\tabcolsep}}l c @{\hspace{1\tabcolsep}} c @{\hspace{1.1\tabcolsep}} c @{\hspace{1\tabcolsep}} c @{\hspace{1\tabcolsep}}}
+        \begin{tabular}[t]{l c c c c}
         \toprule
           & ARAND & VOI & VOI&  Runtime \\ 
           & Error & split & merge&  (s) \\ \midrule 
@@ -121,24 +121,13 @@ HCC-Sum & 0.0872 & 0.365 & 0.337 & 4970 \\
 HC-Complete & 0.9211 & 4.536 & \textbf{0.211} & 1020 \\
 HC-Single & 0.9264 & \textbf{0.060} & 4.887 & \textbf{312} \\
 HCC-Single & 0.9264 & \textbf{0.060} & 4.887 & 6440 \\
-% HC-Avg & \textbf{0.226}  \\
-% HCC-Sum & 0.282 \\
-% MWS \cite{wolf2018mutex} & 0.322 \\
-% GAEC \cite{keuper2015efficient} & 0.334 \\
-% HCC-Avg & 0.563 \\
-% HC-Single & 1.521 \\ 
-% HCC-Single & 0.324 \\
-% HC-Complete & 1.521 \\ 
-% HCC-Complete & 1.521 \\ 
         \end{tabular}
-        \vspace*{1.1em}
     % \captionof{table}{CREMI-Scores achieved by different linkage criteria and thresholding. All methods use the affinity predictions from our CNN as input. Scores are averaged over the three CREMI training datasets.}
-    \caption{\emph{CREMI-gridGraph (OurCNN)}}
+    \caption{\centering CREMI-gridGraph (OurCNN)}
+    \vspace*{2.5em}
     \label{tab:scores_gridGraph}
-    \centering
-    \tiny
-    \end{subtable}\hfill
-\begin{subtable}[t]{.27\textwidth}
+    \end{subtable}
+\begin{subtable}[t]{\textwidth}
 \centering
         \begin{tabular}[t]{@{\hspace{0.7\tabcolsep}}l c @{\hspace{1\tabcolsep}} c @{\hspace{1.1\tabcolsep}} c @{\hspace{1\tabcolsep}} c @{\hspace{1\tabcolsep}}}
         \toprule
@@ -155,16 +144,16 @@ HC-Single & 0.5282 & \textbf{0.437} & 1.367 & \textbf{85} \\
 HC-Complete & 0.5654 & 2.253 & \textbf{0.249} & 86 \\
         \end{tabular}
         % \hspace*{5em}
-        \vspace*{1.1em}
-    \caption{\emph{CREMI-3D-RAG (OurCNN)}}
+    \caption{\centering CREMI-3D-RAG (OurCNN)}
+    \vspace*{2.5em}
     \label{tab:scores_3drag}
-    \end{subtable} \hfill
-    \begin{subtable}[t]{.43\textwidth}
+    \end{subtable}
+
+    \begin{subtable}[t]{\textwidth}
     % \end{table}
 % \end{minipage}\hfill
 % \begin{minipage}[t]{0.38\textwidth}
     \centering
-    \tiny
         \begin{tabular}[t]{l @{\hspace{1.2\tabcolsep}} c @{\hspace{1\tabcolsep}} c @{\hspace{1\tabcolsep}} c @{\hspace{0.8\tabcolsep}} c @{\hspace{1\tabcolsep}} c}
         % \begin{tabular}[t]{lcccc}
         \toprule
@@ -183,7 +172,8 @@ MALA CNN + MC \cite{funke2018large} & \CrossedBox & 0.276  & 0.132 &0.490  & 0.0
 CRU-Net \cite{zeng2017deepem3d} & \CrossedBox &0.566 & 0.229 & 1.081 &  0.389    \\
 % LFC \cite{parag2017anisotropic} & 0.616 & 0.313 & 1.085 & 0.140     \\
         \end{tabular}
-        \caption{CREMI Challenge leader-board}
+        \caption{\centering CREMI Challenge leader-board}
+        \vspace*{1.5em}
         \label{tab:cremi_leaderboard}
         \end{subtable}
         % \vspace*{0.99em}
@@ -192,7 +182,7 @@ CRU-Net \cite{zeng2017deepem3d} & \CrossedBox &0.566 & 0.229 & 1.081 &  0.389   
     \caption{\textbf{Tables (a-b)}: Scores and run times of algorithms in the \algname{} framework on the \emph{CREMI-gridGraph} and \emph{CREMI-3D-RAG} clustering problems: average linkage methods achieved the best accuracy. Measures shown are: Adapted-Rand error (ARAND, lower is better); Variation of Information (VOI) \cite{arganda2015crowdsourcing} (VOI-merge for under-clustering error and VOI-split for over-clustering error, lower values are better). \textbf{Table (c)}: Current leading entries in the CREMI challenge leaderboard (March 2021). CREMI-score is given by the geometric mean of (VOI-split + VOI-merge)  and ARAND error (lower is better).}
     \label{tab:scores}
 % \end{minipage}
-\end{table*}
+\end{table}
 
 \subsection{Comparison of results and discussion}\label{sec:experiments_discussion}
 % Before to evaluate the clustering algorithms on real-world graphs, we compare them on two types of synthetically generated graphs and highlight some of their fundamental properties.
@@ -226,13 +216,13 @@ In summary, for the SSBM, we can obtain a deep understanding of the dynamics ind
 
 
 
-\begin{figure}[t]
-\begin{subfigure}[t]{0.23\textwidth}
+\begin{figure}[tp]
+\begin{subfigure}[t]{0.48\textwidth}
 \centering
 \includegraphics[width=\textwidth,trim=0.34in 0.34in 0.34in 0.34in,clip]{./figures/GASP/SSBM_scores/summary_SSBM_experiments_k20.pdf}
 \caption{$k=20$, $p=0.1$}
 \end{subfigure}\hfill
-\begin{subfigure}[t]{0.23\textwidth}
+\begin{subfigure}[t]{0.48\textwidth}
 \centering
 \includegraphics[width=\textwidth,trim=0.34in 0.34in 0.34in 0.34in,clip]{./figures/GASP/SSBM_scores/summary_SSBM_experiments_k50.pdf}
 \caption{$k=50$, $p=0.2$}
@@ -264,10 +254,10 @@ The plot in Fig.~\ref{fig:scores_structured_noise} confirms that HC-Avg and HCC-
 \textbf{Complete and Single Linkage} -- We use these two linkage methods as baselines to highlight the difficulty of the studied graph clustering problems listed in Table~\ref{tab:datasets_and_energies}. Scores in Tables~\ref{tab:scores_gridGraph}-\ref{tab:scores_3drag} show their poor performance: Single linkage hierarchical clustering (HC-Single), which here is equivalent to thresholding the edge weights at $w_e=0$ and computing connected components in the graph, often returned few big under-segmented clusters. HC-Complete returned instead a lot of over-segmented clusters. 
 % These algorithms are excluded from our next comparison experiments.
 
-\begin{figure}
+\begin{figure}[tp]
 \centering
 % \includegraphics[width=0.48\textwidth,trim=300 100 300 100, clip]{./figures/GASP/dendrograms/new_agglo_order_OLD.png} % left bottom right top
-\includegraphics[width=0.48\textwidth,trim=0 10 60 0, clip]{./figures/GASP/dendrograms/new_agglo_order.png} % left bottom right top
+\includegraphics[width=\textwidth,trim=0 10 60 0, clip]{./figures/GASP/dendrograms/new_agglo_order.png} % left bottom right top
 \caption{Clustering dynamics and accuracy of GASP variations on stochastic block models. The dendrograms result from three versions of \algname{} on a synthetic graph generated with SSBM ($250$ nodes, edge probability $p=0.05$, flipping probability $\eta=0.1$).  Red and blue colors show which of the two equal-sized ground-truth communities each node belongs to. At the top, dendrograms are truncated at the level of the final clustering $\Pi^*$ returned by \algname{}. \label{fig:dendrograms}}
 \end{figure}
 
@@ -296,9 +286,9 @@ The method \emph{3D-RAG + LiftedMulticut} based on the lifted multicut approxima
 % So far no other method was done from pixels
 
 
-\begin{figure}
+\begin{figure}[tp]
 \centering
-\includegraphics[width=0.48\textwidth,trim=0 10 60 0, clip]{./figures/GASP/comparison_GAEC_MWS_Avg.png} % left bottom right top
+\includegraphics[width=\textwidth,trim=0 10 60 0, clip]{./figures/GASP/comparison_GAEC_MWS_Avg.png} % left bottom right top
 \caption{Failure cases of three versions of \algname{} applied to neuron segmentation. Only \emph{wrongly} segmented regions are highlighted in different warm colors. Red arrows point to wrongly split regions; yellow arrows point to false merge errors. HC-Avg returned the best segmentation. Data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.  
 \label{fig:failure_cases}}
 \end{figure}

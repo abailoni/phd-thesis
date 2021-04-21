@@ -212,10 +212,10 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
 % \end{proof}
 
 % \subsubsection{Weight-shift invariance of \algname{} algorithms}
-\begin{figure}[t]
+\begin{figure}[htp]
 % \begin{subfigure}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=0.48\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-GAEC.pdf}
+\includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-GAEC.pdf}
 % \caption{Original graph and dendrogram}
 % \end{subfigure}
 
@@ -228,10 +228,10 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
         \caption{ Counter-example showing that GAEC is not weight-shift invariant.
         } \label{fig:counter_examples_shift_inv_GAEC}
 \end{figure}
-\begin{figure}[t!]
+\begin{figure}[htp]
 % \begin{subfigure}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=0.48\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example.pdf}
+\includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example.pdf}
 % \caption{Original graph and dendrogram}
 % \end{subfigure}
 
@@ -408,7 +408,7 @@ By construction of the SSBM, every edge $e\in E$ in the graph has a absolute wei
 Let $\tilde{\Pi}=\{\tilde{S}_1,\ldots,\tilde{S}_k\}$ denote the ground truth clustering, and $\tilde{S}_{\alpha i}=S_\alpha\cap \tilde{S}_i$ denote the intersection between cluster $S_{\alpha}$ and a ground-truth cluster $\tilde{S}_i$.
 If the generated graph is dense, i.e. $p=1$, then the total number of edges connecting clusters $S_{\alpha}$ and $S_{\beta}$ that have a true attractive or repulsive weight is (according to the ground truth labels)
 \begin{equation}
-\NBE^+=\sum_{i=1}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta i}|, \quad \NBE^-=\sum_{i=1}^k \sum_{j=1,j\neq i}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta j}|.
+\NBE^+=\sum_{i=1}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta i}|, \quad\quad\quad \NBE^-=\sum_{i=1}^k \sum_{j=1,j\neq i}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta j}|.
 \end{equation}
 When the edges in the graph are randomly added with a probability $p$, then the actual number of true attractive and repulsive interactions connecting the two clusters is (according to the ground truth labels):
 \begin{equation}
@@ -423,11 +423,9 @@ Here, we only assume that $\nBE^+ + \nBE^- >0$, i.e. there is at least one edge 
 So far we have been talking about attractive and repulsive connections according to the ground truth labels. In our SSBM however every edge has a uniform probability $\eta$ to have its sign flip, so  the actual number of attractive interactions connecting the two clusters will be instead given by the sum of the true attractive interactions $\nBE^+_{\mathrm{nf}}\sim \mathcal{B}(\nBE^+,1-\eta)$ that have not been flipped, plus the true negative interactions $\nBE^-_{\mathrm{f}}\sim \mathcal{B}(\nBE^-,\eta)$ that have been flipped.
 Putting everything together, given two clusters with $\nBE^+$ true attractive interactions and $\nBE^-$ true negative ones, the highest-absolute-weight edge connecting them has the following probability to be positive:
 \begin{align}\label{eq:mws_prob}
- \mathbb{P}[\interact_{\mathrm{AbsMax}}&(S_\alpha,S_\beta)>0;\nBE^+,\nBE^-] = \nonumber \\
-=&\sum_{\nBE^+_{\mathrm{nf}}=0}^{\nBE^+}\sum_{\nBE^-_{\mathrm{f}}=0}^{\nBE^-} 
-\mathcal{B}(\nBE^-_{\mathrm{f}};\nBE^-,\eta) \mathcal{B}(\nBE^+_{\mathrm{nf}};\nBE^+,1-\eta)\cdot  \nonumber\\
-& \qquad \qquad  \cdot \left(\frac{\nBE^+_{\mathrm{nf}}+\nBE^-_{\mathrm{f}}}{\nBE^+ + \nBE^-} \right) \nonumber\\
-\stackrel{(*)}{=}&\frac{\nBE^+(1-\eta)+\nBE^-\eta}{\nBE^+ + \nBE^-}
+ \mathbb{P}[\interact_{\mathrm{AbsMax}}(S_\alpha,S_\beta)>0;\nBE^+,\nBE^-] = &\, \sum_{\nBE^+_{\mathrm{nf}}=0}^{\nBE^+}\sum_{\nBE^-_{\mathrm{f}}=0}^{\nBE^-} 
+\mathcal{B}(\nBE^-_{\mathrm{f}};\nBE^-,\eta) \mathcal{B}(\nBE^+_{\mathrm{nf}};\nBE^+,1-\eta) \cdot \left(\frac{\nBE^+_{\mathrm{nf}}+\nBE^-_{\mathrm{f}}}{\nBE^+ + \nBE^-} \right) \nonumber\\
+\stackrel{(*)}{=}&\,\frac{\nBE^+(1-\eta)+\nBE^-\eta}{\nBE^+ + \nBE^-}
 \end{align}  
 where in $(*)$ we used the fact that the expected value of a binomial distribution $\mathcal{B}(\nBE,\eta)$ is $\nBE \eta$.
 
@@ -551,7 +549,7 @@ The computed 2D superpixels are then used to build a 3D region-adjacency graph (
 
 \begin{table*}[t]
     \centering
-    \scriptsize
+    \tiny
     % \tiny
     \begin{subtable}[t!]{\textwidth}
     \centering

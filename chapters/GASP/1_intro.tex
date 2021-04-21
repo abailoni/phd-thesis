@@ -1,8 +1,8 @@
 % !TEX root = ../../main.tex
 
-\chapter{Generalized Framework for Agglomerative Clustering of Signed Graphs}\label{chapter:GASP}
+\chapter{GASP}\label{chapter:GASP}
 
-We propose a theoretical framework that generalizes simple and fast algorithms for hierarchical agglomerative clustering to weighted graphs with both attractive and repulsive interactions between the nodes. This framework defines GASP, a Generalized Algorithm for Signed graph Partitioning, and allows us to explore many combinations of different linkage criteria and cannot-link constraints. 
+In this chapter, we propose a theoretical framework that generalizes simple and fast algorithms for hierarchical agglomerative clustering to weighted graphs with both attractive and repulsive interactions between the nodes. This framework defines GASP, a Generalized Algorithm for Signed graph Partitioning, and allows us to explore many combinations of different linkage criteria and cannot-link constraints. 
 We prove the equivalence of existing clustering methods to some of those combinations and introduce new algorithms for combinations that have not been studied before. 
 We study both theoretical and empirical properties of these combinations and prove that some of these define an ultrametric on the graph.
 We conduct a systematic comparison of various instantiations of GASP on a large variety of both synthetic and existing signed clustering problems, in terms of accuracy but also efficiency and robustness to noise. 
@@ -12,28 +12,29 @@ Going all the way from pixels to final segments with a simple procedure, we achi
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/GASP/intro_image_v6.pdf} % left bottom right top
-\caption{\textbf{(a)} Some iterations of \algname{} on a graph with attractive (green) and repulsive (red) interactions. At each iteration, the yellow edge with highest weight is contracted (example with sum linkage criterion is shown). \textbf{(b)} Linkage criteria used in this paper demonstrated on two small clusters (see definitions in Table~\ref{tab:linkage-criteria} below).  \textbf{(c)} Application of \algname{} to instance segmentation: we show raw data from the CREMI neuron-segmentation challenge and some predictions of our CNN model, where white pixels represent boundary evidence. \textbf{(d)} 
+\includegraphics[width=\textwidth]{figures/GASP/intro_image_v6.pdf} % left bottom right top
+\caption{\textbf{(a)} Some iterations of \algname{} on a graph with attractive (green) and repulsive (red) interactions. At each iteration, the yellow edge with highest weight is contracted (example with sum linkage criterion is shown). \textbf{(b)} Linkage criteria demonstrated on two small clusters (see definitions in Table~\ref{tab:linkage-criteria} below).  \textbf{(c)} Application of \algname{} to instance segmentation: we show raw data from the CREMI neuron-segmentation challenge and some predictions of our CNN model, where white pixels represent boundary evidence. \textbf{(d)} 
 Seemingly similar linkage criteria can result in very different clustering dynamics, as shown in this example: color coded sequence of merges from early (white) via late (brown) to never (black).
 % \algname{} agglomeration order for sum and average linkage: we show which pairs of neighboring pixels were merged first (white), later on (brown/red), or never (black).
 \label{fig:intro_figure}}
 \end{figure*}
 
+
+\renewcommand\theadfont{\scriptsize}
 \begin{table*}[t]
     \centering
-    \footnotesize
+    \scriptsize
     \begin{subtable}[t!]{\textwidth}\centering
-        \begin{tabular}{l |c  c  c  c  c}
-        % 
+        \begin{tabular}{c |c  c  c  c  c}
         \multicolumn{1}{c|}{\multirow{2}{*}[-1.5em]{{\Large GASP}}} 
         & \thead{Sum\\Linkage} & \thead{Absolute Maximum\\Linkage} & \thead{Average\\Linkage} & \thead{Single\\Linkage} & \thead{Complete\\Linkage} \\
  % \multicolumn{1}{c}{} 
  & $\displaystyle \sum_{e\in E_{ij}} \cost_e$  & $\displaystyle \cost_e$ with $\displaystyle e = \argmax_{t\in E_{ij}} |\cost_t|$ & $\displaystyle \sum_{e\in E_{ij}} \cost_e \bigg/ \big|E_{ij}\big| $ &  $\displaystyle \max_{e\in E_{ij}} \cost_e$ & $\displaystyle \min_{e\in E_{ij}} \cost_e$ \\ \midrule
  % \cmidrule{2-6}
 
-            \thead[r]{Unsigned graphs} & \thead{-} &\tikzmark{a} \thead{\textbf{HC-Single}} &\tikzmark{g} \thead{\textbf{HC-Avg}} &\thead{\textbf{HC-Single}}\tikzmark{z} &\thead{\textbf{HC-Complete}} \tikzmark{b} \\
-            \thead[r]{Signed graphs} & \thead{GAEC \cite{keuper2015efficient}} &  \thead{\textbf{Mutex Watershed} \cite{wolf2018mutex}}& \tikzmark{f} \thead{\textbf{HC-Avg}} &\thead{\textbf{HC-Single}} \tikzmark{e} &\thead{\textbf{HC-Complete}}\tikzmark{w} \\
-            \thead[r]{Signed graphs + cannot-link constraints} & \thead{\colorbox{yellow}{HCC-Sum}} % \thead{Greedy Fixation \cite{levinkov2017comparative}} 
+            \thead[c]{Unsigned graphs} & \thead{-} &\tikzmark{a} \thead{\textbf{HC-Single}} &\tikzmark{g} \thead{\textbf{HC-Avg}} &\thead{\textbf{HC-Single}}\tikzmark{z} &\thead{\textbf{HC-Complete}} \tikzmark{b} \\
+            \thead[c]{Signed graphs} & \thead{GAEC \cite{keuper2015efficient}} &  \thead{\textbf{Mutex Watershed} \cite{wolf2018mutex}}& \tikzmark{f} \thead{\textbf{HC-Avg}} &\thead{\textbf{HC-Single}} \tikzmark{e} &\thead{\textbf{HC-Complete}}\tikzmark{w} \\
+            \thead[c]{Signed graphs + \\cannot-link-constr} & \thead{\colorbox{yellow}{HCC-Sum}} % \thead{Greedy Fixation \cite{levinkov2017comparative}} 
             & \thead{\textbf{Mutex Watershed} \cite{wolf2018mutex}}& \thead{\colorbox{yellow}{HCC-Avg}} &  \thead{\colorbox{yellow}{HCC-Single}} \tikzmark{d} &   \thead{\textbf{HC-Complete}} \tikzmark{c} \\
             % \multicolumn{2}{c|}{\multirow{2}{*}[-0.5em]{\thead{\textbf{\algname{} linkage criteria} $\,\,\interact(S_u ,S_v)$}}}  & \multirow{2}{*}[-0.5em]{\thead{\textbf{Unsigned Graphs}}} & \multicolumn{2}{c}{\thead{\textbf{Signed Graphs}}}  \\        
             % \multicolumn{2}{c|}{} &  &  \multicolumn{1}{c}{\thead{No Constraints}} & \thead{With Constraints} \\ \midrule
@@ -58,13 +59,13 @@ Seemingly similar linkage criteria can result in very different clustering dynam
 
         \end{tabular}
     \end{subtable} 
-    \caption{Conceptual contribution: Properties of clustering algorithms included in the proposed \algname{} framework, given a linkage criterion, a type of graph (signed or unsigned) and the optional use of cannot-link constraints. New constrained hierarchical clustering algorithms (HCC) proposed in this paper are highlighted in yellow. For algorithms typeset in bold font we prove that they define an ultrametric on the graph (Eq.~\ref{eq:UM_def}). For algorithms in the green box we show that they are weight-shift invariant (Prop.~\ref{prop:weight_shift_invariant}). 
+    \caption{Conceptual contribution: Properties of clustering algorithms included in the proposed \algname{} framework, given a linkage criterion, a type of graph (signed or unsigned) and the optional use of cannot-link constraints. New constrained hierarchical clustering algorithms (HCC) proposed in this thesis are highlighted in yellow. For algorithms typeset in bold font we prove that they define an ultrametric on the graph (Eq.~\ref{eq:UM_def}). For algorithms in the green box we show that they are weight-shift invariant (Prop.~\ref{prop:weight_shift_invariant}). 
     Notation: 
     % given a signed graph $\mathcal{G}(V,E, w_e)$, we denote as 
     $E_{ij}=(S_i \times S_{j}) \cap E$ denotes the set of edges connecting two clusters $S_i, S_j \subseteq V$. } 
     \label{tab:linkage-criteria}
 \end{table*}
-
+\renewcommand\theadfont{\normalsize}
 
 
 \section{Introduction}
@@ -75,7 +76,7 @@ Other graph clustering methods work with so-called \emph{signed graphs}, which f
 Agglomerative clustering algorithms for signed graphs have clear advantages: they are parameter-free and efficient. Despite the fact that a variety of these algorithms exist, no overarching study has so far been conducted to compare their robustness and efficiency or to provide guidelines for matching an algorithm to the partitioning problem at hand. 
 
 
-Our first contribution is a simple theoretical framework that generalizes over agglomerative algorithms for signed graphs by linking them to hierarchical clustering (HC) on unsigned graphs (Section \ref{sec:algorithm}). This framework defines an underlying basic algorithm and allows us to explore its combinations with different linkage criteria and \emph{cannot-link constraints} (see Fig.~\hyperref[fig:intro_figure]{\ref*{fig:intro_figure}a}, \hyperref[fig:intro_figure]{\ref*{fig:intro_figure}b}, and Table~\ref{tab:linkage-criteria}). 
+The first contribution presented in this chapter is a simple theoretical framework that generalizes over agglomerative algorithms for signed graphs by linking them to hierarchical clustering (HC) on unsigned graphs (Section \ref{sec:algorithm}). This framework defines an underlying basic algorithm and allows us to explore its combinations with different linkage criteria and \emph{cannot-link constraints} (see Fig.~\hyperref[fig:intro_figure]{\ref*{fig:intro_figure}a}, \hyperref[fig:intro_figure]{\ref*{fig:intro_figure}b}, and Table~\ref{tab:linkage-criteria}). 
 As second contribution, in Section \ref{sec:alg_update_rules}, we formally prove that some of the combinations correspond to existing clustering algorithms, and introduce new algorithms for combinations which have not been explored before. By analyzing their theoretical properties, we also show that some of them define an ultrametric on the graph (see Table~\ref{tab:linkage-criteria}).
 
 Third, we evaluate the algorithms on a large variety of both existing and synthetically generated signed graph clustering problems (Section \ref{sec:neuro_segm_exp}). 

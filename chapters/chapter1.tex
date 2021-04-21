@@ -111,21 +111,48 @@ In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algo
 
 
 \subsection{Signed graph partitioning}
+In contrast to the class of algorithms introduced in the previous section, this thesis will investigate algorithms that can
+deal with both positive and negative edge weights, corresponding to attraction and repulsion between nodes. The resulting graph is commonly known as \emph{signed weighted graph}. The advantage of using signed graphs is that balancing attraction and repulsion allows to perform the clustering without defining additional parameters like the number of final clusters, making this problem's formalization particularly suited for applications where the number of clusters is a-priori unknown. Balancing attraction and repulsion in the graph can be done optimally by solving the so-called \emph{multicut optimization problem} or \emph{correlation clustering} \cite{kappes2011globally,chopra1991multiway}, which minimizes the sum of weights between clusters and can be formally defined by the following integer linear program:
+\begin{equation}\label{eq:MC_objective_intro}
+% \min_\Pi \texttt{MC}(\Pi) \equiv
+ \min_\Pi \sum_{e\in E} \cost_e x_e^\Pi,  \qquad \text{where} \quad x^\Pi_e = 
+ \begin{cases} 
+ 1 & \text{if } e\in E^1_\Pi \\
+ 0 & \text{otherwise},
+ \end{cases}
+\end{equation}
+where $\Pi$ denotes one of the possible clusterings of the graph $\mathcal{G}(V,E,w)$ with signed edge weights $w:E\rightarrow \mathbb{R}$, and $E_\Pi^1 \subseteq E$ is the set of edges ``on cut'' (i.e. all edges that link nodes belonging to distinct clusters of $\Pi$). 
+In general, solving the minimum multicut problem is known to be NP-hard. Therefore any exact solver will fail to scale to large graphs. However, many approximate solvers have been proposed \cite{lange2018combinatorial,pape2017solving,beier2016efficient,yarkony2012fast} together with greedy agglomerative clustering algorithms \cite{keuper2015efficient,levinkov2017comparative,wolf2018mutex,kardoostsolving}. 
 
-Other clustering methods work with so-called \emph{signed graphs}, which include both positive and negative edge weights corresponding to attraction and repulsion between pixels. The advantage of using signed graphs is that balancing attraction and repulsion allows us to perform the clustering without defining additional parameters. This can be done optimally by solving the so-called \emph{multicut optimization problem} or \emph{correlation clustering} \cite{kappes2011globally,chopra1991multiway}. However, this problem is NP-hard, so good approximations \cite{yarkony2012fast,pape2017solving} and efficient greedy heuristics \cite{levinkov2017comparative,wolf2018mutex} were proposed.
+In this work, we propose methods that are paramter-free and work with signed graphs, but they can scale up to large graphs...
 
-Some methods define a graph with both positive and negative weights and formulate the problem in a combinatorial framework, known as multicut or correlation clustering problem \cite{chopra1991multiway}. 
+In chapter 2, we relate MWS to multicut objective... (defined in more details in...)
+
 In neuron segmentation and connectomics, exact solvers can tackle problems of considerable size \cite{andres2012globally}, but accurate approximations \cite{pape2017solving,yarkony2012fast} and greedy agglomerative algorithms \cite{levinkov2017comparative,wolf2019mutex,bailoni2019generalized} are required on larger problems.
 
 
 
 
-- Edge weights can be positive or signed. With signed, we can find partitioning without extra parameters
-- Define multicut
+
 - We will focus on efficient algorithms that work on signed graphs
 
 
 \section{Contribution and Overview of this Thesis}
+
+MUTEX
+
+In this chapter, we propose an efficient algorithm for graph partitioning, the ``Mutex Watershed'', and relate it to the multicut problem. 
+Most prior work either requires seeds, one per segment; or a threshold; or formulates the task as a multicut problem. 
+Unlike seeded watershed, the Mutex Watershed algorithm can accommodate not only attractive but also repulsive cues, allowing it to find a previously \emph{unspecified} number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm solves to global optimality an objective function that is intimately related to the multicut's integer linear programming formulation. 
+The algorithm is deterministic, very simple to implement, and has empirically linearithmic complexity. 
+%It can be related to with empirically linearithmic complexity. %Just like multicut / correlation clustering or modularity clustering, it determines an optimal number of segments automatically; but unlike these criteria, ours exhibits matroid structure and can be optimized globally by a simple greedy algorithm akin to a minimal spanning tree computation. 
+%The algorithm itself, which we dub ``Mutex Watershed'', is closely related to a minimal spanning tree computation. It is deterministic and easy to implement. 
+When presented with short-range attractive and long-range repulsive cues from a deep neural network, the Mutex Watershed gives state-of-the-art results in the %define the state-of-the-art in the 
+ ISBI 2012 EM segmentation benchmark.
+
+ 
+
+
 
 Our first contribution is a review framework for graph clustering (Sec. \ref{sec:general_framework}) that represents a generalization of agglomerative HC to graphs with both attractive and repulsive edge weights (see Figure \ref{fig:intro_figure} for a visual abstract). 
 We show that various existing partitioning algorithms \cite{levinkov2017comparative,wolf2018mutex,kardoostsolving,lance1967general} can be reformulated in our framework, so that they share a general procedure but differ in the way inter-cluster interaction is updated after each iteration. Moreover, this framework allows us to introduce new variations of these algorithms that also enforce mutual-exclusion relationships between clusters.  

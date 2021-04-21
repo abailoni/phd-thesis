@@ -105,7 +105,25 @@ Let $\mathcal{G} = (V, E, w)$ be an edge-weighted graph, with unique weights $w:
 
 \subsection{Proof of optimality via dynamic programming} \label{sec:optimality_MWS}
 
-\TODO{Convert algorithm}
+\begin{algorithm}[t]
+  \caption{Conflicted-Cycles Mutex Watershed}
+  \begin{algorithmic}[1]
+      \Procedure{ConflictedCyclesMWS}{$\mathcal{G}(V,E),w:E\rightarrow \mathbb{R}$}
+      \State $A \leftarrow \emptyset$\;
+      \For{$(i,j) = e \in E $ {\rm in descending order of } $|w_e|$}     
+          \If{\rm $\mathcal{C}^-(A\cup \{e\},\mathcal{G},w) = \emptyset$}
+              \State $A \leftarrow A \cup e$
+          \EndIf
+        \EndFor
+        \State
+        \Return $A$
+      \EndProcedure
+  \end{algorithmic}
+    \label{MWS_conflicted_cycles}
+\algcomment{Equivalent formulation of the Mutex Watershed Algorithm \ref{algo_code_efficient}, \REVIEW{with input parameter $\operator{connect\_all=True}$}. The set of conflicted cycles $\mathcal{C}^-(A,\mathcal{G},w)$ is defined in Def. \ref{def:conflicted_cycles}. The output clustering is defined by the connected components of the final attractive active set $A^+=A\cap E^+$.}
+
+\end{algorithm}
+
 
 % \begin{algorithm}[b]
 %  \hrulefill \\
@@ -195,7 +213,24 @@ Let \mbox{$\mathcal{G} = (V, E, w)$} be an edge-weighted graph. Define the optim
 \end{definition}
 \noindent We note that for $\Ainit = \emptyset$, the optimal solution $\subproblem(\mathcal{G},\emptyset)$ is equivalent to the solution minimizing the Mutex Watershed Objective and Eq. (\ref{eq:full_problem_active_set}).
 
-\TODO{Convert algorithm}
+\begin{algorithm}[t]
+  \caption{Initialized Mutex Watershed}
+  \begin{algorithmic}[1]
+      \Procedure{InitializedMWS}{$(\mathcal{G}(V,E), w:E\rightarrow \mathbb{R}$, {\color{blue}\rm initial active set $\Ainit $}}
+        \State $A \leftarrow \emptyset$
+        \For{$ {\color{blue}e \in E \setminus \Ainit} $ {\rm in descending order of weight}} 
+          \If{\rm $\mathcal{C}^{-}({\color{blue}A\cup \Ainit \cup \{e\}}, \mathcal{G}, w) = \emptyset$}
+              \State $A \leftarrow A \cup e$
+          \EndIf
+        \EndFor
+        \State
+        \Return $A$
+        \EndProcedure
+  \end{algorithmic}
+    \label{algo_subproblems}
+\algcomment{Mutex Watershed algorithm starting from initial active set $\Ainit$. An initial set $\Ainit$ of active edges is given as additional input and the final active set is such that $A \subseteq E \setminus \Ainit$. Note that Algorithm \ref{MWS_conflicted_cycles} is a special case of this algorithm when $\Ainit= \emptyset$. Differences with Algorithm \ref{MWS_conflicted_cycles} are highlighted in blue.}
+\end{algorithm}
+
 % \begin{algorithm}[t]
 % % \parbox[t]{.7\linewidth}{
 %  \hrulefill \\
@@ -360,7 +395,26 @@ Then, if any sequence $(x_p)_{p>0}$ of minimizers $x_p$ of $Q^p(x)$ is bounded (
 See \cite{najman2017extending} (Theorem 3.3).
 \end{proof}
 
-\TODO{Convert algorithm}
+
+\begin{algorithm}[t]
+  \caption{Generic hierarchical optimization}
+  \begin{algorithmic}[1]
+      \Procedure{GHO}{$Q_0, \hdots, Q_{t-1}$}
+           \State $M_0 = \argmin_{x \in \mathbb{R}^m} Q_0(x)$
+           \For{$k \in 1, \ldots,t-1 $} 
+              \State $M_k = \argmin_{x \in M_{k-1}} Q_k(x)$
+            \EndFor
+           % $A^* \leftarrow A$\;
+           \textbf{Return: } some $x^* \in M_{t-1}$
+      \State
+      \Return some $x^* \in M_{t-1}$
+        \EndProcedure
+  \end{algorithmic}
+    \label{PWS_general_alg}
+\algcomment{Generic hierarchical optimization algorithm introduced in \cite{najman2017extending}. The sequence of continuous functions \mbox{$Q_k: \mathbb{R}^m \rightarrow \mathbb{R}$} is sorted according to the associated scales $\lambda_k$ (Eq.~\ref{eq:sorted lambda}).}
+
+\end{algorithm}
+
 % \begin{algorithm}[t]
 % % \parbox[t]{.7\linewidth}{
 %  \hrulefill \\
@@ -407,7 +461,7 @@ We now show that the Mutex Watershed algorithm can be seen as a special case of 
 \end{cases}\label{def:scales_MWS}
 \end{equation}
 
-\noindent \textbf{The continuous functions $Q_k(x): \mathbb{R}^{|E|} \rightarrow \mathbb{R}$} are defined as follows
+\noindent The continuous functions $Q_k(x): \mathbb{R}^{|E|} \rightarrow \mathbb{R}$ are defined as follows
 \begin{equation}
 Q_k(x) := 
 \begin{cases}
@@ -428,7 +482,23 @@ Nevertheless, if we assume that all weights are distinct, then $|E_k|=1$ for all
 
 In summary, the framework in \cite{najman2017extending} provides a new formulation of the Mutex Watershed Algorithm that is even applicable to graphs with tied edge weights. In practice, when edge weights are estimated by a CNN, we do not expect tied edge weights.
 
-\TODO{Convert algorithm}
+
+\begin{algorithm}[t]
+  \caption{PowerWatershed Mutex Watershed}
+  \begin{algorithmic}[1]
+    \Procedure{PWSMWS}{$Q_0, \hdots, Q_{t-1}$}
+        \State $M_{0} = \argmin_{x \in \mathbb{R}^{|E|}} Q_0(x)  = \mathsf{\intSC}(\mathcal{G},w)$ % \vspace{5pt}
+        \For{$k \in 1, \ldots,t-1 $} 
+            \State $M_k = \argmin_{x \in M_{k-1}} \sum_{e\in E_{k}} x_e$
+        \EndFor
+        \State
+        \Return some $x^* \in M_{t-1}$
+    \EndProcedure
+  \end{algorithmic}
+    \label{PWS_general_alg_MWS}
+\algcomment{Special case of the general hierarchical Algorithm \ref{PWS_general_alg} obtained by substituting Def.~(\ref{def:scales_MWS}) and (\ref{eq:def_Q_k_MWS}). With the additional assumption of unique signed weights $w:E\rightarrow \mathbb{R}$, this algorithm is equivalent to the Mutex Watershed Algorithm \ref{MWS_conflicted_cycles}. The sequence of functions \mbox{$Q_k: \mathbb{R}^m \rightarrow \mathbb{R}$} defined in Eq.~\ref{eq:def_Q_k_MWS} is sorted according to the associated scales $\lambda_k$ in Eq.~\ref{def:scales_MWS}. $\mathsf{\intSC}(\mathcal{G},w)$ is defined in Eq.~\ref{def:\intSC}}
+\end{algorithm}
+
 % \begin{algorithm}[t]
 % % \parbox[t]{.7\linewidth}{
 % \SetAlgoLined

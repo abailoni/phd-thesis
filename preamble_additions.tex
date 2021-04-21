@@ -5,6 +5,7 @@
 \usepackage{subcaption}
 \usepackage{epsfig}
 \usepackage{tikz}
+\usepackage{etoolbox}
 \usepackage{bbm}
 \usepackage{mathrsfs}
 \captionsetup{compatibility=false}
@@ -100,13 +101,71 @@
 \usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
 \algrenewcommand\algorithmicindent{0.8em}
 
-
+% Modifications for algorithms:
 \makeatletter
 \newcommand*{\skipnumber}[2][1]{%
    {\renewcommand*{\alglinenumber}[1]{}\State #2}%
    \addtocounter{ALG@line}{-#1}}
 \renewcommand{\ALG@beginalgorithmic}{\small}
 \makeatother
+
+% Add possible \algcomment{} with descirption below a pseudocode:
+\makeatletter
+\AfterEndEnvironment{algorithm}{\let\@algcomment\relax}
+\AtEndEnvironment{algorithm}{\kern2pt\hrule\relax\vskip3pt\@algcomment}
+\let\@algcomment\relax
+\newcommand\algcomment[1]{\def\@algcomment{\footnotesize#1}}
+\renewcommand\fs@ruled{\def\@fs@cfont{\bfseries}\let\@fs@capt\floatc@ruled
+  \def\@fs@pre{\hrule height.8pt depth0pt \kern2pt}%
+  \def\@fs@post{}%
+  \def\@fs@mid{\kern2pt\hrule\kern2pt}%
+  \let\@fs@iftopcapt\iftrue}
+\makeatother
+
+% \errorcontextlines\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \errorcontextlines\maxdimen
+
+% % begin vertical rule patch for algorithmicx (http://tex.stackexchange.com/questions/144840/vertical-loop-block-lines-in-algorithmicx-with-noend-option)
+% % note that some of the packages above are also needed
+% \newcommand{\ALGtikzmarkcolor}{black}% customise this, if you want
+% \newcommand{\ALGtikzmarkextraindent}{4pt}% customise this, if you want
+% \newcommand{\ALGtikzmarkverticaloffsetstart}{-.5ex}% customise this, if you want
+% \newcommand{\ALGtikzmarkverticaloffsetend}{-.5ex}% customise this, if you want
+% \makeatletter
+% \newcounter{ALG@tikzmark@tempcnta}
+
+% \newcommand\ALG@tikzmark@start{%
+%     \global\let\ALG@tikzmark@last\ALG@tikzmark@starttext%
+%     \expandafter\edef\csname ALG@tikzmark@\theALG@nested\endcsname{\theALG@tikzmark@tempcnta}%
+%     \tikzmark{ALG@tikzmark@start@\csname ALG@tikzmark@\theALG@nested\endcsname}%
+%     \addtocounter{ALG@tikzmark@tempcnta}{1}%
+% }
+
+% \def\ALG@tikzmark@starttext{start}
+% \newcommand\ALG@tikzmark@end{%
+%     \ifx\ALG@tikzmark@last\ALG@tikzmark@starttext
+%         % ignore this, the block was opened then closed directly without any other blocks in between (so just a \State basically)
+%         % don't draw a vertical line here
+%     \else
+%         \tikzmark{ALG@tikzmark@end@\csname ALG@tikzmark@\theALG@nested\endcsname}%
+%         \tikz[overlay,remember picture] \draw[\ALGtikzmarkcolor] let \p{S}=($(pic cs:ALG@tikzmark@start@\csname ALG@tikzmark@\theALG@nested\endcsname)+(\ALGtikzmarkextraindent,\ALGtikzmarkverticaloffsetstart)$), \p{E}=($(pic cs:ALG@tikzmark@end@\csname ALG@tikzmark@\theALG@nested\endcsname)+(\ALGtikzmarkextraindent,\ALGtikzmarkverticaloffsetend)$) in (\x{S},\y{S})--(\x{S},\y{E});%
+%     \fi
+%     \gdef\ALG@tikzmark@last{end}%
+% }
+
+
+
+% % the following line injects our new tikzmarking code
+% \apptocmd{\ALG@beginblock}{\ALG@tikzmark@start}{}{\errmessage{failed to patch}}
+% \pretocmd{\ALG@endblock}{\ALG@tikzmark@end}{}{\errmessage{failed to patch}}
+% \makeatother
+% % end vertical rule patch for algorithmicx
+% %%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
 
 % \usepackage[dvipsnames]{xcolor}
 \usepackage{hyperref}
