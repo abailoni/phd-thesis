@@ -27,7 +27,7 @@ In section \ref{3_3_MWS}, we have introduced the Mutex Watershed (MWS) algorithm
 However, since we are considering graphs with negative edge weights, the MWS is conceptually closer to the multicut problem and related heuristics such as GAEC and GF \cite{levinkov2017comparative}.
 Fortunately, due to the structure of the MWS it can be analyzed using dynamic programming. This section summarizes our second contribution, i.e. the proof that the Mutex Watershed Algorithm globally optimizes a precise objective related to the multicut.
 
-\subsection{Review of the Multicut problem and its objective}
+\subsection{Review of the Multicut problem and its objective}\label{sec:multicut_and_its_objective}
 In the following, we will review the multicut problem not in its standard formulation but in the \textit{Cycle Covering Formulation} introduced in \cite{lange2018partial}, which is similar to the MWS formulation as it also considers the set of \textit{attractive} and \textit{repulsive} edges separately. 
 Previously, in Sec.~\ref{sec:notation}, we defined a clustering by introducing the concept of an active set of edges \mbox{$A=A^+\cup A^-\subseteq E$} and the \operator{connected/}\operator{mutex} predicates. In particular, an active set describes a valid clustering if it does not include \textbf{both} a path of only attractive edges \textbf{and} a path with exactly one repulsive edge connecting any two nodes $i,j\in V$:
 \begin{equation}

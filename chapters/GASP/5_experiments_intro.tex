@@ -28,27 +28,6 @@
         & -73,317,601 & -73,328,867 & -73,330,568 & \textbf{-73,502,947} & -73,474,856\\
         \emph{Fruit-Fly Level Global} \cite{pape2017solving} & \emph{3D-RAG} & 1& 90m & 650m % & \HollowBox 
         & \textbf{-151,688} & -151,596 & -146,315 & -150,466 & -150,171 \\
-        % \emph{(CREMI-pixGrid-LSIMasksUNet)} & \emph{gridGraph} & 1 & & 4 & \CrossedBox\\
-        % \emph{(CityScapesValidation-pixGrid)} & \emph{gridGraph} &  &  & & \CrossedBox\\
-        % \emph{CREMI-test....}\\\midrule
-        % \emph{Stochastic Block Model (synthetic)} & \emph{non-planar} &-&- & - & \CrossedBox \\
-        % \emph{(epinions and slashdot?)} & \emph{dense?} &  & & & \HollowBox\\ 
-
-% % Superpixels:
-% Mutex & -1109731264 \\
-% MEANconstr & -1112099691 \\
-% MEAN & -1112176981 \\
-% SUMconstrNoLogs & -1112286144 \\
-% SUMnoLogs & -1112286741 \\
-% Agglo type & multicut_energy \\
-
-% % Pixels:
-% SUM & -73317601 \\
-% SUMconstr & -73328867 \\
-% MutexPixGrid & -73330568 \\
-% MEANconstr & -73474856 \\
-% MEAN & -73502947 \\
-
         \end{tabular}
     \end{subtable} 
     \caption{List of compared signed graph clustering problems: for each, we specify the number of instances $\# I$, number of nodes $|V|$, and number of edges $|E|$ per instance. We compare algorithms in the \algname{} framework by their value of the multicut objective defined in Eq.~\ref{eq:MC_objective} (lower is better).} 
@@ -179,7 +158,7 @@ CRU-Net \cite{zeng2017deepem3d} & \CrossedBox &0.566 & 0.229 & 1.081 &  0.389   
         % \vspace*{0.99em}
     % \captionof{table}{Current leading entries  in the CREMI challenge leaderboard \cite{cremiChallenge} (March 2021)}
     % \label{tab:results_cremi_test}
-    \caption{\textbf{Tables (a-b)}: Scores and run times of algorithms in the \algname{} framework on the \emph{CREMI-gridGraph} and \emph{CREMI-3D-RAG} clustering problems: average linkage methods achieved the best accuracy. Measures shown are: Adapted-Rand error (ARAND, lower is better); Variation of Information (VOI) \cite{arganda2015crowdsourcing} (VOI-merge for under-clustering error and VOI-split for over-clustering error, lower values are better). \textbf{Table (c)}: Current leading entries in the CREMI challenge leaderboard (March 2021). CREMI-score is given by the geometric mean of (VOI-split + VOI-merge)  and ARAND error (lower is better).}
+    \caption{\textbf{(a-b)}: Scores and run times of algorithms in the \algname{} framework on the \emph{CREMI-gridGraph} and \emph{CREMI-3D-RAG} clustering problems: average linkage methods achieved the best accuracy. Measures shown are: Adapted-Rand error (ARAND, lower is better); Variation of Information (VOI) \cite{arganda2015crowdsourcing} (VOI-merge for under-clustering error and VOI-split for over-clustering error, lower values are better). \textbf{(c)}: Current leading entries in the CREMI challenge leaderboard. CREMI-score is given by the geometric mean of (VOI-split + VOI-merge)  and ARAND error (lower is better).}
     \label{tab:scores}
 % \end{minipage}
 \end{table}

@@ -1,6 +1,6 @@
 % !TEX root = ../../main.tex
 
-\chapter{The Mutex Watershed Algorithm}
+\chapter{The Mutex Watershed Algorithm and its Objective}\label{chapter:MWS}
 In this chapter, we propose an efficient algorithm for graph partitioning, the ``Mutex Watershed'', and relate it to the multicut problem. 
 Most prior work either requires seeds, one per segment; or a threshold; or formulates the task as a multicut problem. 
 Unlike seeded watershed, the Mutex Watershed algorithm can accommodate not only attractive but also repulsive cues, allowing it to find a previously \emph{unspecified} number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm solves to global optimality an objective function that is intimately related to the multicut's integer linear programming formulation. 

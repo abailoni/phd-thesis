@@ -19,7 +19,7 @@ In the following sections, we will introduce the methods and graph partitioning 
 
 \newpage
 \section{Deep Learning and Graph-Based Instance Segmentation}
-\TODO{Add more citations?}
+% \TODO{Add more citations?}
 In the last decade, computer vision experienced incredible progress. This was due in big part to deep learning, which is now omnipresent in the field of image analysis. As a machine learning tool, fully-connected neural networks (also known as multilayer perceptrons) encode the input through a number of non-linear fully-connected layers, where each neuron in one layer is connected to all neurons in the next layer. The neural network model's architecture is defined by the arrangement of these layers. Convolutional neural networks (CNNs) represent one of the most relevant classes of neural network architectures used in computer vision and digital image analysis. A convolutional layer of a CNN convolves its input and passes the result to the next layer. Convolution kernels shift over input features and provide in this way translation equivariant responses. As compared to fully-connected neurons, a convolutional neuron processes data only for its receptive field, remarkably reducing the number of parameters in the network and making it less prone to overfitting data.
 Thanks to these properties, CNNs recently demonstrated outstanding performances at image-level understanding and recognition capabilities.
 
@@ -37,49 +37,41 @@ These types of methods are preferred in imagery with object instances that canno
 This thesis focuses on graph-based proposal-free segmentation methods, which solve the instance segmentation task by formalizing the input image as a graph. Nodes in the graph usually represent pixels or sets of pixels (commonly named \emph{superpixels}), whereas graph edges express neighboring relationships between pixels. In these graph-based instance segmentation approaches, an FCN is trained to predict the graph's edge weights. Then, a more or less complex graph-partitioning algorithm is employed to output the final instance segmentation. 
 The segmentation methods that are mostly related to this thesis predict edge weights in the form of pixel-pair affinities \cite{Gao_2019_ICCV,liu2018affinity,lee2017superhuman}, which represent how likely it is for a pair of pixels to be in the same object instance. These approaches not only predict affinities for pairs of direct-neighboring pixels in the image, but they also learn long-range pixel-pair affinities, since this proved to improve training and help the model using large-scale features in images \cite{lee2017superhuman}.
 
-In the following section, we will review the task of neuron segmentation in the field of connectomics, which has often been tackled by using graph-based instance segmentations methods. Then, in Section \ref{}, we will introduce the main graph partitioning algorithms studied in this thesis.
+In the following section, we will review the task of neuron segmentation in the field of connectomics, which has often been tackled by using graph-based instance segmentations methods. Then, in Section \ref{sec:graph_partitioning_intro}, we will introduce the main graph partitioning algorithms studied in this thesis.
 
 
 
  
 \subsection{Neuron segmentation in connectomics}
-Connectomics is a field of neuro-science with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system, and this comprehensive map of neural connections within a brain is commonly known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
+Connectomics is a field of neuro-science with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system. This comprehensive map of neural connections within a brain is known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
 
-In 2017, the whole brain of an adult Drosophila melanogaster, with a volume of approximately $8\cdot 10^7 \mu m^3$ comprising $\sim$100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB \cite{zheng2018complete}. Similar projects are generating petabytes of data \cite{yin2020petascale}, and a mouse brain of $500$ mm$^3$, at a typical isotropic resolution of 8 nm, would require almost 1000 petabytes of data.
+In 2017, the whole brain of an adult Drosophila melanogaster, with a volume of approximately $8\cdot 10^7 \mu m^3$ and comprising $\sim$100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB \cite{zheng2018complete}. Similar projects are generating petabytes of data \cite{yin2020petascale}, and a mouse brain of $500$ mm$^3$, at a typical isotropic resolution of 8 nm, would require almost 1000 petabytes of data.
 Despite progress in collaborative annotation \cite{kim2014space}, the sheer size of these volumes makes manual analysis infeasible. Thus, automated processing, and especially automated neuron segmentation, is needed to reconstruct the complete organism's neural wiring diagram.
 
 The unique features of this segmentation problem, involving large volume datasets and narrow elongated neuron segments that can span big portions of an organism's brain, encouraged the development of new proposal-free instance segmentation methods.
-Flood-filling networks \cite{januszewski2018high} and MaskExtend \cite{meirovitch2016multi} use a CNN to iteratively extend one neuron at a time. By using flood-filling networks, the dense connectome of half the central brain of Drosophila melanogaster was recently released \cite{xu2020connectome}, containing around 25,000 neurons. In order to yield sufficient accuracy for correct circuit analysis, this impressive reconstruction involved significant proof-reading efforts by expert annotators, showing that further progress is still required in automated reconstruction methods.
+Flood-filling networks \cite{januszewski2018high} and MaskExtend \cite{meirovitch2016multi} use a CNN to iteratively extend one neuron at a time. By using flood-filling networks, the dense connectome of half the central brain of Drosophila melanogaster, containing around 25,000 neurons, was recently reconstructed and publicly released \cite{xu2020connectome}. In order to yield sufficient accuracy for correct circuit analysis, this impressive reconstruction involved significant proof-reading efforts by expert annotators, showing that further progress is still required in automated reconstruction methods.
 
-Another type of instance segmentation methods that proved to be particularly useful in neuron segmentation are graph-based approaches. 
-Originally, many proposed methods predicted a boundary evidence map indicating how probable it is for every voxel to be on the boundary between two neurons. After generating superpixels and building a graph based on these boundary predictions, the final segmentation was then determined as optimal cuts on this graph \cite{andres20123d,andres2012globally,beier2017multicut,funke2018large,meirovitch2019cross,turaga2010convolutional}. Now, all of the top submissions of the CREMI \cite{cremi}, SNEMI3D \cite{SNEMI3D}, and ISBI neuron segmentation challenges employ convolutional neural networks \cite{lee2017superhuman,hirsch2020patchperpix,bailoni2019generalized}. Instead of predicting a neuron-boundary probability map, most of them predict affinities between voxels and directly use them to compute the edge weights of the graph \cite{lee2017superhuman,pape2017solving,hirsch2020patchperpix,pape2019leveraging,wolf2018mutex}. An alternative approach to the direct prediction of affinities was proposed by \cite{lee2019learning}, who instead learn dense voxel embeddings via deep metric learning and derive affinities in the embedded space. 
+Another class of instance segmentation methods that proved to be particularly useful in neuron segmentation is given by graph-based segmentation approaches. 
+Originally, many proposed methods predicted a boundary evidence map indicating how probable it is for every voxel to be on the boundary between two neurons. After generating superpixels and building a graph based on these boundary predictions, the final segmentation was then determined as optimal cuts on this graph \cite{andres20123d,andres2012globally,beier2017multicut,funke2018large,meirovitch2019cross,turaga2010convolutional}. Now, all of the top submissions of the CREMI \cite{cremi}, SNEMI3D \cite{SNEMI3D}, and ISBI neuron segmentation challenges employ convolutional neural networks \cite{lee2017superhuman,hirsch2020patchperpix,bailoni2019generalized}. Instead of predicting a neuron-boundary probability map, most of these methods predict affinities between voxels and directly use them to compute the edge weights of the graph \cite{lee2017superhuman,pape2017solving,hirsch2020patchperpix,pape2019leveraging,wolf2018mutex}. An alternative approach to the direct prediction of affinities was proposed by \cite{lee2019learning}, who instead learn dense voxel embeddings via deep metric learning and derive affinities in the embedded space. 
 
 In the next section, we will review some of the graph partitioning algorithms used in these graph-based segmentation pipelines and studied in this thesis.
 
 
-
-
-
-
-
-In neuron segmentation, boundaries predicted by a CNN are converted to final instances with subsequent postprocessing and superpixel-merging.
-
-
-\section{Graph partitioning algorithms}
+\section{Graph partitioning algorithms}\label{sec:graph_partitioning_intro}
 In the previous sections, we have seen that graph-based instance segmentation methods have been successfully applied to neuron segmentation. In this section, we review the basic ideas and notation of graph-based segmentation algorithms studied in this thesis.
 
 Usually, graph-based image segmentation methods represent the image as a graph $\mathcal{G}=(V,E)$. Each node $u\in V$ corresponds to a pixel in the image and nodes are connected by edges $(u,v)\in E$. A weight $w_e$ is associated with each edge $e \in E$ based on some property of the pixels that it connects, such as their image intensities, gradients or the output of an edge classifier (usually a neural network). Depending on the method and application, the graph might be only sparsely connected, for example as a grid graph (where every pixel is connected only its direct neighboring pixels) or a graph with limited local neighborhood connectivity.
 
 \subsection{Agglomerative hierarchical clustering}
-The majority of graph clustering methods work with positive edge weights only, which can be interpreted as similarities or distances between the nodes. These methods require the user to specify the desired numbers of segments or a termination criterion (as in spectral clustering or iterated normalized cuts) or even a stronger version of supervision by adding a seed for each object (e.g. in seeded watershed or random walker).  
+The majority of graph clustering methods work with positive edge weights representing similarities or distances between the nodes. These methods require the user to specify the desired numbers of segments or a termination criterion (as in spectral clustering or iterated normalized cuts) or even a stronger version of supervision by adding a seed for each object (e.g. in seeded watershed or random walker).  
 
-Hierarchical clustering (HC) is also a popular graph clustering method, which creates a hierarchy of clusters. Agglomerative HC is a bottom-up approach starting with each node assigned to its own cluster and incrementally merging clusters while moving up the hierarchy \cite{lance1967general}. As compared to other divisive partitioning algorithms (e.g. normalized graph cut), agglomerative clustering is a much more efficient method that, with a heap data-structure, has a time complexity of $\mathcal{O}(m^2 \log m)$, where $m$ is the number of edges in the graph. 
+Hierarchical clustering (HC) is another popular graph clustering method, which creates a hierarchy of clusters. Agglomerative HC is a bottom-up approach starting with each node assigned to its own cluster and incrementally merging clusters while moving up the hierarchy \cite{lance1967general}. As compared to other divisive partitioning algorithms (e.g. normalized graph cut), agglomerative clustering is a much more efficient method that, with a heap data-structure, has a time complexity of $\mathcal{O}(m^2 \log m)$, where $m$ is the number of edges in the graph. 
 
-In Algorithm \ref{HC_algoritm}, we show a simplified pseudo-code describing this simple partitioning algorithm. Apart from the weighted graph, another input of the algorithm is the so-called \emph{linkage criterion}, which defines the interaction between two clusters containing multiple nodes. The average linkage criterion is a very common example, which defines the interaction between two clusters as the average of all the edge weights connecting them. Each time two clusters are merged by the algorithm at line \TODO{5}, the interaction between the newly formed merged cluster and its neighbors has to be updated by using the given linkage criterion. 
+In Algorithm \ref{HC_algoritm}, we show a simplified pseudo-code describing this simple partitioning algorithm. Apart from the weighted graph, another input of the algorithm is the so-called \emph{linkage criterion}, which defines the interaction between two clusters containing multiple nodes. For example, average linkage criterion is a very common one, where the interaction between two clusters is given by the average of all the edge weights connecting them. Each time two clusters are merged by the algorithm at line \TODO{5}, the interaction between the newly formed merged cluster and its neighbors has to be updated by using the given linkage criterion. 
 Finally, the algorithm returns the hierarchy of clusters in the form of a \emph{dendrogram}, which is a rooted tree representing the order in which clusters were merged (see toy example in Fig.~\TODO{simple-dendrogram-figure}). 
 
 A downside of hierarchical agglomerative algorithms is that, after running the algorithm, the user has to choose a level in the cluster hierarchy in order to define the desired output clustering. 
-In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algorithms that are parameter-free by using graphs with both positive and negative edge weights.
+In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algorithms that are parameter-free because they are based on graphs with both positive and negative edge weights.
 
 \begin{algorithm}[t]
 \footnotesize
@@ -112,7 +104,7 @@ In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algo
 
 \subsection{Signed graph partitioning}
 In contrast to the class of algorithms introduced in the previous section, this thesis will investigate algorithms that can
-deal with both positive and negative edge weights, corresponding to attraction and repulsion between nodes. The resulting graph is commonly known as \emph{signed weighted graph}. The advantage of using signed graphs is that balancing attraction and repulsion allows to perform the clustering without defining additional parameters like the number of final clusters, making this problem's formalization particularly suited for applications where the number of clusters is a-priori unknown. Balancing attraction and repulsion in the graph can be done optimally by solving the so-called \emph{multicut optimization problem} or \emph{correlation clustering} \cite{kappes2011globally,chopra1991multiway}, which minimizes the sum of weights between clusters and can be formally defined by the following integer linear program:
+deal with both positive and negative edge weights, corresponding to attraction and repulsion between nodes. Such a graph with positive and negative edge weights is commonly known as \emph{signed weighted graph}. The advantage of using signed graphs is that balancing attraction and repulsion allows to perform the clustering without defining additional parameters like the number of final clusters, making this problem's formalization particularly suited for applications where the number of clusters is a-priori unknown. Balancing attraction and repulsion in the graph can be done optimally by solving the so-called \emph{multicut optimization problem} or \emph{correlation clustering} \cite{kappes2011globally,chopra1991multiway}, which minimizes the sum of weights between clusters and can be formally defined by the following integer linear program (for a more specific definition, see Section \ref{sec:multicut_and_its_objective}):
 \begin{equation}\label{eq:MC_objective_intro}
 % \min_\Pi \texttt{MC}(\Pi) \equiv
  \min_\Pi \sum_{e\in E} \cost_e x_e^\Pi,  \qquad \text{where} \quad x^\Pi_e = 
@@ -121,36 +113,66 @@ deal with both positive and negative edge weights, corresponding to attraction a
  0 & \text{otherwise},
  \end{cases}
 \end{equation}
-where $\Pi$ denotes one of the possible clusterings of the graph $\mathcal{G}(V,E,w)$ with signed edge weights $w:E\rightarrow \mathbb{R}$, and $E_\Pi^1 \subseteq E$ is the set of edges ``on cut'' (i.e. all edges that link nodes belonging to distinct clusters of $\Pi$). 
-In general, solving the minimum multicut problem is known to be NP-hard. Therefore any exact solver will fail to scale to large graphs. However, many approximate solvers have been proposed \cite{lange2018combinatorial,pape2017solving,beier2016efficient,yarkony2012fast} together with greedy agglomerative clustering algorithms \cite{keuper2015efficient,levinkov2017comparative,wolf2018mutex,kardoostsolving}. 
+where $\Pi$ denotes one of the possible clusterings of the graph $\mathcal{G}(V,E,w)$ with signed edge weights $w:E\rightarrow \mathbb{R}$; and $E_\Pi^1 \subseteq E$ is the set of edges ``on cut'' (i.e. all edges that link nodes belonging to distinct clusters of $\Pi$). 
+In general, solving the minimum multicut problem is known to be NP-hard. Therefore any exact solver will fail to scale to large graphs. However, in neuron segmentation and connectomics many approximate solvers have been proposed \cite{lange2018combinatorial,pape2017solving,beier2016efficient,yarkony2012fast} together with greedy agglomerative clustering algorithms \cite{keuper2015efficient,levinkov2017comparative,kardoostsolving}. 
 
-In this work, we propose methods that are paramter-free and work with signed graphs, but they can scale up to large graphs...
-
-In chapter 2, we relate MWS to multicut objective... (defined in more details in...)
-
-In neuron segmentation and connectomics, exact solvers can tackle problems of considerable size \cite{andres2012globally}, but accurate approximations \cite{pape2017solving,yarkony2012fast} and greedy agglomerative algorithms \cite{levinkov2017comparative,wolf2019mutex,bailoni2019generalized} are required on larger problems.
+This thesis studies novel partitioning algorithms that are both parameter-free and efficient. In Chapter \ref{chapter:MWS}, we introduce a new partitioning algorithm, the Mutex Watershed, and prove that it optimally optimizes an objective closely related to the multicut's objective in Eq.~\ref{eq:MC_objective_intro}. Then, in Chapter \ref{chapter:GASP}, we show that the Mutex Watershed is actually only one specific element of a larger class of agglomerative algorithms for signed graph partitioning.
 
 
 
-
-
-- We will focus on efficient algorithms that work on signed graphs
-
-
+\newpage
 \section{Contribution and Overview of this Thesis}
+Throughout the past few years, proposal-free instance segmentation methods have been successfully applied to biological imagery, achieving higher and higher accuracy mostly thanks to novel training strategies \cite{lee2017superhuman,milletari2016v}. 
+Several of these methods train an edge classifier (namely, a fully convolutional neural network) that can accurately predict transitions between object instances. The first part of this thesis proposes novel graph partitioning algorithms that can process these edge predictions and output an instance segmentation. The proposed algorithms are efficient and achieve state-of-the-art segmentation results without requiring the user to spend much time tuning complex dataset-dependent hyper-parameters. The centerpiece of this thesis is a unifying framework, named GASP, for agglomerative clustering algorithms of graphs with both attractive and repulsive interactions between the nodes (Chapter \ref{chapter:GASP}). This general framework allows us to conveniently study both theoretical and empirical properties of the algorithms included in it. 
+% Finally, in Chapter \ref{chapter:LSI}, we propose a new proposal-free instance segmentation pipeline for large-scale volumetric images. 
+In the following, we give a brief overview of each chapter’s content.
+% This thesis discusses novel partitioning algorithms for signed graphs with both positive and negative edge weights (Chapters \ref{chapter:MWS} and \ref{chapter:GASP}), together with a new proposal-free instance segmentation pipeline and its application to large-scale volumetric images (Chapter \ref{chapter:LSI}). The following paragraphs give a brief overview of each chapter’s content.
+\medskip
 
-MUTEX
-
-In this chapter, we propose an efficient algorithm for graph partitioning, the ``Mutex Watershed'', and relate it to the multicut problem. 
-Most prior work either requires seeds, one per segment; or a threshold; or formulates the task as a multicut problem. 
-Unlike seeded watershed, the Mutex Watershed algorithm can accommodate not only attractive but also repulsive cues, allowing it to find a previously \emph{unspecified} number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm solves to global optimality an objective function that is intimately related to the multicut's integer linear programming formulation. 
+\columnratio{0.12}
+\begin{paracol}{2}
+\begin{leftcolumn*}
+\noindent  Chapter 2:
+\end{leftcolumn*}
+\begin{rightcolumn}
+\noindent We propose an efficient algorithm for graph partitioning, the ``Mutex Watershed'', and relate it to the multicut problem. 
 The algorithm is deterministic, very simple to implement, and has empirically linearithmic complexity. 
+% Most prior work either requires seeds, one per segment; or a threshold; or formulates the task as a multicut problem. 
+Unlike seeded watershed, the Mutex Watershed algorithm can accommodate not only attractive but also repulsive cues, allowing it to find a previously \emph{unspecified} number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm solves to global optimality an objective function that is closely related to the multicut's objective. 
 %It can be related to with empirically linearithmic complexity. %Just like multicut / correlation clustering or modularity clustering, it determines an optimal number of segments automatically; but unlike these criteria, ours exhibits matroid structure and can be optimized globally by a simple greedy algorithm akin to a minimal spanning tree computation. 
 %The algorithm itself, which we dub ``Mutex Watershed'', is closely related to a minimal spanning tree computation. It is deterministic and easy to implement. 
-When presented with short-range attractive and long-range repulsive cues from a deep neural network, the Mutex Watershed gives state-of-the-art results in the %define the state-of-the-art in the 
- ISBI 2012 EM segmentation benchmark.
+% When presented with short-range attractive and long-range repulsive cues from a deep neural network, the Mutex Watershed gives state-of-the-art results in the %define the state-of-the-art in the 
+%  ISBI 2012 EM segmentation benchmark.
+\end{rightcolumn}
+\medskip
+\begin{leftcolumn*}
+\noindent  Chapter 3:
+\end{leftcolumn*}
+\begin{rightcolumn}
+\end{rightcolumn}
+\medskip
+\begin{leftcolumn*}
+\noindent  Chapter 4:
+\end{leftcolumn*}
+\begin{rightcolumn}
+\end{rightcolumn}
+\end{paracol}
 
- 
+\textbf{Chapter 2}
+We propose a greedy algorithm for signed graph partitioning, the Mutex Watershed. Unlike seeded watershed, the algorithm can accommodate not only attractive but also repulsive interactions, allowing it to ﬁnd a previously unspeciﬁed number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm ﬁnds a global optimum of an objective function that is intimately related to the multicut / correlation clustering integer linear programming formulation.
+
+
+
+GASP
+
+In this chapter, we propose a theoretical framework that generalizes simple and fast algorithms for hierarchical agglomerative clustering to weighted graphs with both attractive and repulsive interactions between the nodes. This framework defines GASP, a Generalized Algorithm for Signed graph Partitioning, and allows us to explore many combinations of different linkage criteria and cannot-link constraints. 
+We prove the equivalence of existing clustering methods to some of those combinations and introduce new algorithms for combinations that have not been studied before. 
+We study both theoretical and empirical properties of these combinations and prove that some of these define an ultrametric on the graph.
+We conduct a systematic comparison of various instantiations of GASP on a large variety of both synthetic and existing signed clustering problems, in terms of accuracy but also efficiency and robustness to noise. 
+Lastly, we show that some of the algorithms included in our framework, when combined with the predictions from a CNN model, result in a simple bottom-up instance segmentation pipeline.
+Going all the way from pixels to final segments with a simple procedure, we achieve state-of-the-art accuracy on the CREMI 2016 EM segmentation benchmark without requiring domain-specific superpixels.
+
+
 
 
 
@@ -159,6 +181,15 @@ We show that various existing partitioning algorithms \cite{levinkov2017comparat
 
 Finally, the algorithms included in the framework are evaluated on an instance segmentation task, both on 3D biological image stacks (Sec. \ref{sec:neuro_segm_exp}) and 2D urban scenes (Sec. \ref{sec:cityscapes_exp}). Our analysis highlights strengths and weaknesses of each algorithm by comparing their robustness to noise, efficiency and inclination to output a well balanced graph partitioning.
 
-\textbf{Chapter 2}
-We propose a greedy algorithm for signed graph partitioning, the Mutex Watershed. Unlike seeded watershed, the algorithm can accommodate not only attractive but also repulsive interactions, allowing it to ﬁnd a previously unspeciﬁed number of segments without the need for explicit seeds or a tunable threshold. We also prove that this simple algorithm ﬁnds a global optimum of an objective function that is intimately related to the multicut / correlation clustering integer linear programming formulation.
+
+
+
+MASKS
+
+In this chapter we introduce a new proposal-free instance segmentation method that builds on single-instance segmentation masks predicted across the entire image in a sliding window style.
+In contrast to related approaches, this method concurrently predicts all masks, one for each pixel, and thus resolves any conflict jointly across the entire image.
+Specifically, predictions from overlapping masks are combined into edge weights of a signed graph that is subsequently partitioned to obtain all final instances concurrently.
+The result is a parameter-free method that is strongly robust to noise and prioritizes predictions with the highest consensus across overlapping masks. 
+All masks are decoded from a low dimensional latent representation, which results in great memory savings strictly required for applications to large volumetric images. 
+We test our method on the challenging CREMI 2016 neuron segmentation benchmark where it achieves competitive scores. 
 

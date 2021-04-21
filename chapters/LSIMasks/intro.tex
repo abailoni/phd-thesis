@@ -1,8 +1,8 @@
 % !TEX root = ../../main.tex
-\chapter{Latent Single Instance Masks}
+\chapter{predicting Latent Single-Instance Masks}\label{chapter:LSI}
 
-This work introduces a new proposal-free instance segmentation method that builds on single-instance segmentation masks predicted across the entire image in a sliding window style.
-In contrast to related approaches, our method concurrently predicts all masks, one for each pixel, and thus resolves any conflict jointly across the entire image.
+In this chapter we introduce a new proposal-free instance segmentation method that builds on single-instance segmentation masks predicted across the entire image in a sliding window style.
+In contrast to related approaches, this method concurrently predicts all masks, one for each pixel, and thus resolves any conflict jointly across the entire image.
 Specifically, predictions from overlapping masks are combined into edge weights of a signed graph that is subsequently partitioned to obtain all final instances concurrently.
 The result is a parameter-free method that is strongly robust to noise and prioritizes predictions with the highest consensus across overlapping masks. 
 All masks are decoded from a low dimensional latent representation, which results in great memory savings strictly required for applications to large volumetric images. 
@@ -33,7 +33,7 @@ This results a probability mask, which from now on we call \emph{\maskname mask}
 Final object-instances are then obtained by aggregating predictions from overlapping masks which is in itself a nontrivial and interesting problem.
 % In the following, we will refer to these patch predictions as \emph{\maskname masks}.
 
-In this work, we introduce a new proposal-free segmentation method that is also based on predicting \maskname masks\footnote{For interesting, closely related but independent work, see \cite{hirsch2020patchperpix}.}.
+In this chapter, we introduce a new proposal-free segmentation method that is also based on predicting \maskname masks\footnote{For interesting, closely related but independent work, see \cite{hirsch2020patchperpix}.}.
 % \footnote{Note to reviewers: As per ECCV reviewer instructions, there is no need to cite arxiv papers and they are not considered as prior \TODO{state of the art}. However, for maximum transparency and because we appreciate their fine work, we propose to keep footnote (1), hopefully upgraded to a full reference in our camera-ready version.}
 However, our approach comes with four main advantages compared to previous methods.
 Firstly, our model concurrently predicts all \maskname masks, one for each pixel, by using a fully-convolutional approach with much smaller computational footprint than previous methods, which iteratively predict one instance at the time, one mask after the other \cite{januszewski2018high,meirovitch2016multi}.

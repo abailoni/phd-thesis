@@ -302,7 +302,7 @@ Finally, we also note that superpixel-based methods did not perform equally well
         \end{tabular}
         % }
         \vspace{1em}
-        \caption{Comparison experiments on our CREMI validation set. Training encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art approach training only affinities for a sparse neighborhood (SNB). The model that performed best was the one using the method proposed in Sec. \ref{sec:aggr_affs} to average overlapping masks (MaskAggr).} \label{tab:val_results}
+        \caption{Comparison experiments on our CREMI validation set. Training encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art approach training only affinities for a sparse neighborhood (SNB). The model that performed best was the one using the method proposed in Sec. \ref{sec:aggr_affs} to average overlapping masks (MaskAggr). } \label{tab:val_results}
 \end{table}
 
 
@@ -338,8 +338,8 @@ Our method achieves comparable scores to the only other method in the leader-boa
         \begin{tabular}[t]{l c c c c c c}
         Model & \makecell{Train \\ Sparse \\Neighbor.\\(SNB)} & \makecell{Train\\ Encoded\\Masks\\(ENB)} & \makecell{Aggregate\\Overlapping\\Masks \\(MaskAggr)} & \makecell{Partitioning\\algorithm} & \makecell{No\\superpixels\\ required}  & \makecell{CREMI-Score \\(lower is better)}  \\ \midrule
 GaspUNet\cite{bailoni2019generalized} & \CrossedBox & \HollowBox & \HollowBox & WSDT+LMulticut & \HollowBox & \textbf{0.221} \\
+GaspUNet\cite{bailoni2019generalized} & \CrossedBox & \HollowBox & \HollowBox & GaspAvg & \CrossedBox & 0.224  \\
 PNIUNet\cite{lee2017superhuman} & \CrossedBox & \HollowBox & \HollowBox & Z-Watershed+Agglo & \HollowBox & 0.228 \\
-GaspUNet\cite{bailoni2019generalized} & \CrossedBox & \HollowBox & \HollowBox & GaspAvg & \CrossedBox & 0.241  \\
 \textbf{OurUNet} & \CrossedBox & \CrossedBox & \CrossedBox &MWS & \CrossedBox & 0.246  \\
 \textbf{OurUNet} & \HollowBox & \CrossedBox & \HollowBox &  WSDT+GaspAvg  & \HollowBox & 0.268  \\
 MALAUNet\cite{funke2018large} & \CrossedBox & \HollowBox & \HollowBox & WSDT+Multicut & \HollowBox & 0.276  \\
@@ -348,7 +348,7 @@ CRUNet\cite{zeng2017deepem3d} & \HollowBox & \HollowBox & \HollowBox & 3D-Waters
 LFC\cite{parag2017anisotropic} & \CrossedBox & \HollowBox & \HollowBox & Z-Watershed+Agglo & \HollowBox & 0.616  \\
         \end{tabular}
         \vspace*{0.99em}
-    \caption{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremiChallenge} (July 2020). The best method proposed in this work achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
+    \caption{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremi}. The best method proposed in this work achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
     \label{tab:test_results}
 \end{minipage}
 \end{table}
