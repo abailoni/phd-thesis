@@ -1,12 +1,9 @@
 % !TEX root = ../../main.tex
 
-
-
-\section{Appendix}
-
-\subsection{Implementation and complexity of \algname{}} \label{sec:detailed_impl}
-
-\paragraph*{Update rules} During the agglomerative process, the interaction between adjacent clusters has to be properly updated and recomputed, as shown in Algorithm \ref{main_alg}.  
+\chapter{GASP}
+\section{Implementation and complexity of GASP} \label{sec:detailed_impl}
+\subsection{Update rules}
+During the agglomerative process, the interaction between adjacent clusters has to be properly updated and recomputed, as shown in Algorithm \ref{main_alg}.  
 An efficient way of implementing these updates can be achieved by representing the agglomeration as a sequence of \emph{edge contractions} in the graph. Given a graph $\mathcal{G}(V,E,\cost)$ and a clustering $\Pi$, we define the associated \emph{contracted graph} $\tilde{\mathcal{G}}_\Pi(\tilde{V}, \tilde{E}, \tilde{\cost})$, such that there exists exactly one representative node $|\tilde{V} \cap S| = 1$ for every cluster $S \in \Pi$ . Edges in $\tilde{E}$ represent adjacency-relationships between clusters 
 and the signed edge weights $\tilde{\cost}_e$ are given by inter-cluster interactions $\tilde{\cost}(e_{uv})=\interact_{S_u,S_v}$, where $S_u$ denotes the clustering including node $u$. 
 For the linkage criteria tested in this article, when two clusters $S_u$ and $S_v$ are merged, the interactions between the new cluster $S_u \cup S_v$ and each of its neighbors depend only on the previous interactions involving $S_u$ and $S_v$. Thus, we can recompute these interactions by using an \emph{update rule} $f$ that does not involve any loop over the edges of the original graph $\mathcal{G}$:
@@ -96,7 +93,8 @@ In Fig. \ref{fig:edge_contraction_and_contr_graph} we show an example of edge co
   \clearpage
 }
 
-\paragraph{Implementation} Our implementation of \algname{} is based on an union-find data structure and a heap allowing deletion of its elements. 
+\subsection{Implementation} 
+Our implementation of \algname{} is based on an union-find data structure and a heap allowing deletion of its elements. 
 In Phases 2 and 3, \algname{} is equivalent to a standard hierarchical agglomerative clustering algorithm with complexity $\mathcal{O}(N^2 \log N)$. In Algorithm \ref{detailed_alg}, we show our implementation of phase 1, involving cannot-link constraints.
 In phase 1, the algorithm starts with each node assigned to its own cluster and sorts all edges $e\in E$ in a heap/priority queue (PQ) by their absolute weight $|\cost_e|=|w_e^+ - w_e^-|$ in descending order, so that the most attractive and the most repulsive interactions are processed first. It then iteratively pops one edge $e_{uv}$ from PQ and, depending on the priority $\tilde{\cost}_{uv}$, does the following: in case of attractive interaction $\tilde{\cost}_{uv}>0$, provided that $e_{uv}$ was not flagged as a cannot-link constraint, merge the connected clusters, perform an edge contraction of $e_{uv}$ in $\tilde{\mathcal{G}}_\Pi$ and update the priorities of new double edges as explained in Fig. \ref{fig:edge_contraction_and_contr_graph}. 
 If, on the other hand, the interaction is repulsive ($\tilde{\cost}_{uv}\leq 0$) and the option \texttt{addCannotLinkContraints} of Alg. \ref{detailed_alg} is \texttt{True}, then the edge $e_{uv}$ is flagged as cannot-link constraint.
@@ -135,7 +133,7 @@ If, on the other hand, the interaction is repulsive ($\tilde{\cost}_{uv}\leq 0$)
 
 
 
-\paragraph*{Complexity} 
+\subsection{Complexity} 
 In the main loop of Phase 1, the algorithm iterates over all edges, but the only iterations presenting a complexity different from $\mathcal{O}(1)$ are the ones involving a merge of two clusters, which are at most $N-1$. By using a union-find data structure (with path compression and union by rank) the time complexity of \texttt{merge}$(u, v)$ and \texttt{find}($u$) operations is $\mathcal{O}(\alpha(N))$, where $\alpha$ is the slowly growing inverse Ackerman function. The algorithm then iterates over the neighbors of the merged cluster (at most $N$) and updates/deletes values in the priority queue ($\mathcal{O}(\log |E|)$). 
 Therefore, 
 similarly to a heap-based implementation of hierarchical agglomerative clustering, our implementation of \algname{} - Phase 1 has a complexity of $\mathcal{O}(N^2 \log N)$. In the worst case, when the graph is dense and $|E|=N^2$, the algorithm requires $\mathcal{O}(N^2)$ memory. Nevertheless, in our practical applications the graph is much sparser, so $\mathcal{O}(|E|)=\mathcal{O}(N)$. 
@@ -145,7 +143,7 @@ Moreover, \algname{} with \emph{Absolute Maximum} linkage can be implemented mor
 
 
 
-\subsection{Proofs of Propositions \ref{prop:absmax_mutex}, \ref{prop:weight_shift_invariant}, \ref{prop:ultraMetric1}, and \ref{prop:ultraMetric2}}
+\section{Proofs of Propositions in Section \ref{sec:alg_update_rules}}
 \label{sec:proposition_proofs}
 
 \begin{lemma} \label{lemma:absMax_and_complete_not_positive}
@@ -212,10 +210,10 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
 % \end{proof}
 
 % \subsubsection{Weight-shift invariance of \algname{} algorithms}
-\begin{figure}[htp]
+\begin{figure}[tp]
 % \begin{subfigure}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-GAEC.pdf}
+\includegraphics[width=0.8\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-GAEC.pdf}
 % \caption{Original graph and dendrogram}
 % \end{subfigure}
 
@@ -228,10 +226,10 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
         \caption{ Counter-example showing that GAEC is not weight-shift invariant.
         } \label{fig:counter_examples_shift_inv_GAEC}
 \end{figure}
-\begin{figure}[htp]
+\begin{figure}[tp]
 % \begin{subfigure}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example.pdf}
+\includegraphics[width=0.8\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example.pdf}
 % \caption{Original graph and dendrogram}
 % \end{subfigure}
 
@@ -396,44 +394,6 @@ Finally, the remaining not constrained versions of \algname{} (HC-Avg, HC-Single
 
 
 
-\subsection{Mutex Watershed on SSBM graphs}
-\begin{prop} \label{prop:MWS_on_SSBM}
-Consider a graph generated by an Erd\H os-R\'enyi signed stochastic block model (SSBM) as described in Section \ref{sec:clustering_problems}, with $N$ nodes, edges added with probability $p$, sign-flip probability $\eta<0.5$, $k$ ground-truth clusters, and edge weights Gaussian-distributed with standard deviation $\sigma$. Then, at every iteration, \algname{} with Absolute Maximum linkage (or, in other words, the Mutex Watershed algorithm) always makes a mistake with at least probability $\eta$. 
-\end{prop}
-\begin{proof}
-Thanks to Lemma \ref{lemma:absMax_and_complete_property} we know that \algname{} with Absolute Maximum linkage returns the same clustering whether or not cannot-link-constraints are used. Thus, in the following, we prove the proposition considering the version enforcing constraints.
-Let us consider a generic iteration of the algorithm, where two clusters $S_\alpha$ and $S_\beta$ have the highest priority and are popped from priority queue. Then, the MWS algorithm will either merge or constrain them depending on the fact that their interaction $\interact_{\mathrm{AbsMax}}(S_\alpha,S_\beta)$ is  positive or negative (note that, with AbsMax linkage, an interaction can never be positive and constrained, as shown in Lemma \ref{lemma:absMax_and_complete_property}).
-By construction of the SSBM, every edge $e\in E$ in the graph has a absolute weight distributed as $|w_e|\sim \mathcal{N}(1,\sigma^2)$. Thus, every edge $e'\in(S_{\alpha} \times S_{\beta})\cap E$ connecting the two clusters has the same probability to have the highest absolute weight, and the sign of the interaction $\interact_{\mathrm{AbsMax}}(S_\alpha,S_\beta)$ will only depend on the sign of this highest edge. Therefore, the probability that the MWS merges two clusters is simply given by the fraction of positive weighted edges connecting them.
-
-Let $\tilde{\Pi}=\{\tilde{S}_1,\ldots,\tilde{S}_k\}$ denote the ground truth clustering, and $\tilde{S}_{\alpha i}=S_\alpha\cap \tilde{S}_i$ denote the intersection between cluster $S_{\alpha}$ and a ground-truth cluster $\tilde{S}_i$.
-If the generated graph is dense, i.e. $p=1$, then the total number of edges connecting clusters $S_{\alpha}$ and $S_{\beta}$ that have a true attractive or repulsive weight is (according to the ground truth labels)
-\begin{equation}
-\NBE^+=\sum_{i=1}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta i}|, \quad\quad\quad \NBE^-=\sum_{i=1}^k \sum_{j=1,j\neq i}^k |\tilde{S}_{\alpha i}||\tilde{S}_{\beta j}|.
-\end{equation}
-When the edges in the graph are randomly added with a probability $p$, then the actual number of true attractive and repulsive interactions connecting the two clusters is (according to the ground truth labels):
-\begin{equation}
-\nBE^+ \sim \mathcal{B}(\NBE^+,p), \qquad \nBE^- \sim \mathcal{B}(\NBE^-,p), 
-\end{equation}
-where $\mathcal{B}(\NBE,p)$ is the binomial distribution:
-\begin{equation}
-\mathcal{B}(\nBE;\NBE,p) = \frac{\NBE !}{\nBE! (\NBE-\nBE)!} p^\nBE (1-p)^{\NBE-\nBE}.
-\end{equation}
-Here, we only assume that $\nBE^+ + \nBE^- >0$, i.e. there is at least one edge connecting the two clusters (otherwise their interaction would be zero and the MWS would not have popped them from priority queue). 
-
-So far we have been talking about attractive and repulsive connections according to the ground truth labels. In our SSBM however every edge has a uniform probability $\eta$ to have its sign flip, so  the actual number of attractive interactions connecting the two clusters will be instead given by the sum of the true attractive interactions $\nBE^+_{\mathrm{nf}}\sim \mathcal{B}(\nBE^+,1-\eta)$ that have not been flipped, plus the true negative interactions $\nBE^-_{\mathrm{f}}\sim \mathcal{B}(\nBE^-,\eta)$ that have been flipped.
-Putting everything together, given two clusters with $\nBE^+$ true attractive interactions and $\nBE^-$ true negative ones, the highest-absolute-weight edge connecting them has the following probability to be positive:
-\begin{align}\label{eq:mws_prob}
- \mathbb{P}[\interact_{\mathrm{AbsMax}}(S_\alpha,S_\beta)>0;\nBE^+,\nBE^-] = &\, \sum_{\nBE^+_{\mathrm{nf}}=0}^{\nBE^+}\sum_{\nBE^-_{\mathrm{f}}=0}^{\nBE^-} 
-\mathcal{B}(\nBE^-_{\mathrm{f}};\nBE^-,\eta) \mathcal{B}(\nBE^+_{\mathrm{nf}};\nBE^+,1-\eta) \cdot \left(\frac{\nBE^+_{\mathrm{nf}}+\nBE^-_{\mathrm{f}}}{\nBE^+ + \nBE^-} \right) \nonumber\\
-\stackrel{(*)}{=}&\,\frac{\nBE^+(1-\eta)+\nBE^-\eta}{\nBE^+ + \nBE^-}
-\end{align}  
-where in $(*)$ we used the fact that the expected value of a binomial distribution $\mathcal{B}(\nBE,\eta)$ is $\nBE \eta$.
-
-%Now we note that this probability is always bounded in the interval $[\eta, 1-\eta]$ (or $[1-\eta, \eta]$, if $\eta>0.5$). Remarkably, these lower and upper bounds do not depend on the number of edges connecting the two clusters, i.e. $\nBE^+ + \nBE^-$ (and, thus, on the sizes of the two clusters). 
-Now we note that this probability is bounded in the interval $[\eta, 1-\eta]$. So, regardless of whether the two clusters $S_\alpha$ and $S_\beta$ should be merged or constraint according to ground truth labels, the probability not to make the correct decision is always at least $\eta$.
-% So weather we consider a merge or a split of the two clusters as the correct decision, in both cases the expected probability to not make that decision is at least $\eta$. Notably while the exact probabilities depend on the cluster sizes, the lower bound does not. This confirms the intuition that the MWS, unlike Sum or Avg linkage methods, cannot properly correct for sign flip noise by agglomerating larger boundaries and profiting from the law of large numbers. 
-Remarkably, while the exact probability in Eq.~\ref{eq:mws_prob} depends on the number of edges connecting the two clusters $\nBE^++\nBE^-$ and thus on the cluster sizes, the bounds do not. Thus, this result shows that, unlike Sum or Avg linkage methods, the MWS algorithm is unable to reliably correct for the sign flip noise even for big clusters linked by many edges.
-\end{proof}
 
 % \subsection{Mutex Watershed on SSBM graphs}
 % \textbf{Proposition} \\
@@ -482,33 +442,6 @@ Remarkably, while the exact probability in Eq.~\ref{eq:mws_prob} depends on the 
 % \TODO{Assumption about $\sigma$?}
 
 
-\subsection{Application to neuron segmentation}\label{sec:cremi_details}
-\paragraph{Training and data augmentation} The data from the CREMI challenge is highly anisotropic and contains artifacts like missing sections, staining precipitations and support film folds. 
-To alleviate difficulties stemming from misalignment, we use a version of the data that was elastically realigned by the challenge organizers with the method of \cite{saalfeld2012elastic}.
-% We train a 3D U-Net \cite{ronneberger2015u,cciccek20163d} using the same architecture as \cite{funke2018large} and predict the same set of long-and-short range affinities described in \cite{lee2017superhuman}. 
-In addition to the standard data augmentation techniques of random rotations, random flips and  elastic deformations, we simulate data artifacts.
-We randomly zero-out slices, decrease the contrast of slices, simulate tears, introduce alignment jitter and paste artifacts extracted from the training data. Both \cite{funke2018large} and \cite{lee2017superhuman} have shown
-that these kinds of augmentations can help to alleviate issues caused by EM-imaging artifacts.
-We use L2 loss and Adam optimizer to train the network. The model was trained on all three samples with available ground truth labels.  
-
-\paragraph{CREMI-gridRag instances} 
-Our 3D UNet model predicts the same set of 12 long-and-short range affinities as described in \cite{lee2017superhuman}. 
-When building the pixel-grid graph, we add both direct neighbors connections and the long-range connections predicted by our model (every voxel is connected to other six voxels via direct connections and other 18 voxels via long-range edges).
-Empirically, when long-range predictions of the CNN are added as long-range connections in the graph, \algname{} achieves better scores as compared to when only direct-neighbors predictions are used.
-% Empirically, we found that adding only 10\% of the long-range connections to the grid-graph (by sampling them at random) gave the best results.
-Our intuitive explanation of this is that, where there is a clear boundary evidence between two segments, the long-range predictions of the CNN model are more certain than the direct-neighbor ones, because it is often impossible to estimate the exact ground-truth label transition for pixels that are very close to a boundary evidence. 
-However, empirically, we also find that \algname{} achieves the best scores when only 10\% of the long-range connections are randomly sampled and added to the grid-graph. When all the long-range connections predicted by the CNN are added to the graph (18 connections for every voxel), all versions of \algname{} tend to perform more over-clustering errors.
-In practice, we explain this by observing that many challenging parts of the studied neuron segmentation data involve thin and elongated segments, and our model sometimes fails to connect distant pairs of pixels that, according to the ground-truth labels, should belong to the same segment (even though, in this case, the direct neighboring predictions are correct).
-To sum up, the scores we report in Tables \ref{tab:scores_gridGraph} are obtained by using only 10\% of the long-range predictions, since this was the setup that performed the best.
-After running \algname{}, we use a simple post-processing step to delete small segments on the boundaries, most of which are given by single-voxel clusters. On the neuron segmentation predictions, we deleted all regions with less than 200 voxels and used a seeded watershed algorithm to expand the bigger segments.
-
-
-
-\paragraph{CREMI-3D-rag instances} 
-We build these clustering problems by generating superpixels and then building a 3D region adjacency graph.
-Due to the anisotropy of the data, we generate 2D superpixels by considering each 2D image in the stack singularly.
-First, we generate a boundary-evidence map by taking an average over the two direct-neighbor predictions of the CNN model (one for each direction in the 2D image of the stack) and applying some additional smoothing. Then, we threshold the boundary map, compute a distance transform, and run a watershed algorithm seeded at the maxima of the distance transform (WSDT). The degree of smoothing was optimized such that each region receives as few seeds as possible, without however causing severe under-segmentation. 
-The computed 2D superpixels are then used to build a 3D region-adjacency graph (3D-rag). The weights of the edges are given by averaging the CNN affinities over the boundaries of adjacent superpixels. 
 
 % \paragraph{Lifted Multicut pipeline}
 % Similarly to what explained in the previous paragraph, we compute 2D superpixels using the WSDT procedure and build a 3D region-adjacency graph. The weights of the edges connecting neighboring superpixels are computed by taking an average over both short- and long-range affinities connecting the two regions. 
@@ -547,79 +480,9 @@ The computed 2D superpixels are then used to build a 3D region-adjacency graph (
 %     \label{tab:extended_results_cremi}
 % \end{table*}
 
-\begin{table*}[t]
-    \centering
-    \tiny
-    % \tiny
-    \begin{subtable}[t!]{\textwidth}
-    \centering
-
-        \begin{tabular}{l | r r r r r r r r r}
-        % \toprule
-         %\multicolumn{1}{c}{}
-        % &\multicolumn{5}{c}{Multicut objective values associated to final clusterings (lower is better)} \\
-        Clustering problem & \multicolumn{1}{r}{GAEC \cite{keuper2015efficient}} & HCC-Sum & MWS \cite{wolf2018mutex} & HC-Avg & HCC-Avg & HC-Single & HCC-Single & HC-Complete \\ \midrule
-        \emph{Modularity Clustering} & 
-        -0.457 & -0.453 & -0.073 & \textbf{-0.467} & \textbf{-0.467} & 0.000 & 0.000 & -0.201 \\ 
-        \emph{Image Segmentation}  & 
-        \textbf{-2,955} & -2,953 & -2,901 & -2,903 & -2,896 & -1,384 & -1,384 & -2,102 \\
-        \emph{Knott-3D (150-300-450)}  & 
-        \textbf{-36,667} & -36,652 & -35,200 & -35,957 & -35,631 & -2,522 & -2,522 & 30,629 \\
-        % \emph{Knott-3D-300} & \emph{3D-rag} & 8& & & \HollowBox\\
-        % \emph{Knott-3D-450}& \emph{3D-rag} & 8 & & & \HollowBox\\  
-        \emph{CREMI-3D-rag}  
-        & \textbf{-1,112,287} & -1,112,286& -1,109,731 & -1,112,177 & -1,112,100 & -1,038,709 & -1,038,709 & -748,734,869 \\ 
-        \emph{Fruit-Fly Level 1-4}
-        & \textbf{-151,022} & -151,017 & -150,879 & -150,909 & -150,876 & -71,477 & -71,997 & -128,733 \\
-        \emph{CREMI-gridGraph} 
-        & -73,317,601 & -73,328,867 & -73,330,568 & \textbf{-73,502,947} & -73,474,856 & -45,194,180 &-45,194,443 & 311,598,700 \\
-        \emph{Fruit-Fly Level Global} 
-        & \textbf{-151,688} & -151,596 & -146,315 & -150,466 & -150,171 & -4,422 & - & 6,876 \\
-        % \emph{(CREMI-pixGrid-LSIMasksUNet)} & \emph{gridGraph} & 1 & & 4 & \CrossedBox\\
-        % \emph{(CityScapesValidation-pixGrid)} & \emph{gridGraph} &  &  & & \CrossedBox\\
-        % \emph{CREMI-test....}\\\midrule
-        % \emph{Stochastic Block Model (synthetic)} & \emph{non-planar} &-&- & - & \CrossedBox \\
-        % \emph{(epinions and slashdot?)} & \emph{dense?} &  & & & \HollowBox\\ 
-
-% fruitfly-large & -151687.891 & -151596.344 & -146315.031 & -150466.000 & -150171.203 & -4422.442 & - & 6875.726 & 6879.776 \\
-% modularity-clustering & -0.457 & -0.453 & -0.073 & -0.467 & -0.467 & 0.000 & 0.000 & -0.201 & -0.201 \\
-% knott & -36667 & -36652 & -35200 & -35957 & -35631 & -2522 & -2522 & 30629 & 30599 \\
-% fruitfly-medium & -151022 & -151017 & -150879 & -150909 & -150876 & -71477 & -71997 & -128733 & -128732 \\
-% image-seg & -2955 & -2953 & -2901 & -2903 & -2896 & -1384 & -1384 & -2102 & -2102 \\
-
-% % Superpixels:
-% Mutex & -1109731264 \\
-% MEANconstr & -1112099691 \\
-% MEAN & -1112176981 \\
-% SUMconstrNoLogs & -1112286144 \\
-% SUMnoLogs & -1112286741 \\
-% MAX & -1038708864 \\
-% MAXconstr & -1038708864 \\
-% MIN & -748734869 \\
-% MINconstr & -748766347 \\
-
-% % Pixels:
-% SUM & -73317601 \\
-% SUMconstr & -73328867 \\
-% MutexPixGrid & -73330568 \\
-% MEANconstr & -73474856 \\
-% MEAN & -73502947 \\
-% MAX & -45194180 \\
-% MAXconstr & -45194443 \\
-% MIN & 311598700 \\
-% MINconstr & 311520538 \\
 
 
-        \end{tabular}
-    \end{subtable} 
-    \caption{We compare algorithms in the \algname{} framework by evaluating which of the obtained clusterings is associated to the lowest value of the multicut objective defined in Eq.~\ref{eq:MC_objective} (lower is better). Single and complete linkage methods performed much worse than the others. Note that HCC-Single is the algorithm with the highest runtime (see Table \ref{tab:scores_gridGraph}) and it did not scale up to the very large clustering problem \emph{Fruit-Fly Level Global}.
-% We used a machine with CPU Intel(R) Xeon(R) E7-4870 @ 2.40GHz for our comparison experiments.
-    } 
-    \label{tab:all_multicut_energies}
-\end{table*}
-
-
-\subsection{Adding structured noise to CNN predictions} \label{sec:appendix_noise_gen}
+\section{Adding structured noise to CNN predictions} \label{sec:appendix_noise_gen}
 Additionally to the comparison on the full training dataset, we performed more experiments on a crop of the more challenging CREMI training sample B, where we perturbed the predictions of the CNN with noise and we introduced additional artifacts like missing boundary evidences.
 
 In the field of image processing there are several ways of adding noise to an image, among which the most common are Gaussian noise or Poisson shot noise. 
@@ -685,40 +548,6 @@ In our experiments, each pixel is represented by a node in the grid-graph and it
 
 
 
-\begin{table*}[t]
-\centering
-% \begin{minipage}[t]{0.48\textwidth}
-% \vspace{0pt}
-% \centering
-% \footnotesize
-\begin{tabular}[t]{l c}
-           Method & ARAND Error \\ \midrule
-           \textbf{HC-Avg} (GASP with Avg Linkage) & \textbf{0.1034} \\
-GAEC \cite{keuper2015efficient} (GASP with Sum Linkage) & 0.1035 \\
-MWS \cite{wolf2018mutex} (GASP with AbsMax linkage) & 0.1068 \\
-SPONGE$_{sym}$ \cite{Cucuringu2019SPONGEAG} & 0.4161\\
-$L_{sym}$ \cite{kunegis2010spectral} & 0.8069 \\
-SPONGE \cite{Cucuringu2019SPONGEAG} & 0.9211 \\
-BNC \cite{chiang2012scalable} & 0.9926 \\
-        \end{tabular}
-    \caption{\algname{} compared to spectral clustering methods on a small crop of the CREMI neuron segmentation dataset. 
-    Since spectral methods cannot scale to the full CREMI dataset, we evaluated them on a smaller $10\times100\times100$ sub-volume of CREMI training sample B.
-    Despite the fact that the true number of ground truth clusters was given as an input to the spectral methods, GASP significantly outperformed them. 
-    % SC methods seem to have more difficulties when the graph is sparse. 
-    % Spectral methods did not handle well pixels on the boundaries between segments and tended to cluster them together. 
-    % We also tried to vary the input number of clusters ncreasing $k$ did not improve their scores either.
-% resulting in a graph with $10^5$ nodes and~$\sim10^6$ edges.
-    }
-    \label{tab:cremi_spectral_experiments}
-% \end{minipage}
-% \begin{minipage}[t]{0.38\textwidth}
-% \vspace{0pt}
-% \centering
-%         \includegraphics[width=1.\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/GASP/SSBM_experiments.pdf} % 0.45
-%         \caption{\algname{} performances compared to spectral methods on synthetic graphs. The spectral methods were given the true number of clusters as input, in contrast to \algname{}. \TODO{Define paramters SSB; explain percentile stuff (for both noise experiments, save space!)}}
-%     \label{fig:SSBM_scores}
-% \end{minipage}
-\end{table*}
 
 
 % \subsection{Comparison with spectral clustering} \label{sec:spectral_clust}

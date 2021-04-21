@@ -5,7 +5,7 @@
 
 \subsection{Notation} \label{sec:notation}
 
-\indent \textbf{Graph formalism} -- We consider an undirected simple edge-weighted graph $\mathcal{G}(V,E,w^+, w^-)$ with both attractive and repulsive edge attributes.
+\paragraph{Graph formalism} We consider an undirected simple edge-weighted graph $\mathcal{G}(V,E,w^+, w^-)$ with both attractive and repulsive edge attributes.
 % In computer vision applications, the nodes can represent either pixels, superpixels or voxels.  
 The weight function $w^+: E \rightarrow \mathbb{R}^+$ associates to every edge a positive scalar attribute $w_e^+\in \mathbb{R}^+$ representing a merge affinity or a similarity measure.
 % the higher this number, the higher the inclination of the two incident vertices to be assigned to the same cluster\footnote{Note that other formalisms for positively weighted graphs associate distances to the edges, thus, the \emph{lower} the edge weight, the higher the attraction between the two linked nodes, contrary to our definition of $w^+$.}. 
@@ -16,7 +16,7 @@ Graphs of the type $\mathcal{G}(V,E,w^+, w^-)$ are often defined as \emph{signed
 % Some approaches directly compute $\cost_e$, whereas others compute $w_e^+$ and $w_e^-$ separately.
 % In this formalism, graphs with purely attractive interactions are a special case of $\mathcal{G}(V,E,\cost)$ with $\cost_e \geq 0, \, \forall e \in E$. 
 
-\textbf{Multicut objective} -- We call the set $\Pi=\{S_1,\ldots,S_K\}$ a \emph{clustering} or \emph{partitioning} if $V = \cup_{S\in\Pi} S $, $\,S \cap S' = \emptyset$ for different clusters $S, S'$ and every cluster $S \in \Pi$ induces a connected subgraph of $\mathcal{G}$. 
+\paragraph{Multicut objective} We call the set $\Pi=\{S_1,\ldots,S_K\}$ a \emph{clustering} or \emph{partitioning} if $V = \cup_{S\in\Pi} S $, $\,S \cap S' = \emptyset$ for different clusters $S, S'$ and every cluster $S \in \Pi$ induces a connected subgraph of $\mathcal{G}$. 
 For any clustering $\Pi$ of $\mathcal{G}$, we denote as $E^0_\Pi= \{ e_{uv} \in E \,|\, \exists S \in \Pi : u,v \in S \}$ the set of edges linking nodes in the same cluster. Its complementary set $E_\Pi^1= E \setminus E^0_\Pi$ of edges linking nodes belonging to distinct clusters, is known as the \emph{multicut} of $\mathcal{G}$ associated to clustering $\Pi$. The instance of the NP-hard \emph{minimum cost multicut problem} w.r.t. $\mathcal{G}(V,E,w_e)$ is the task of finding a clustering that optimally balances the attraction and repulsion in the graph and is given by the following binary integer program:
 % \begin{equation}
 % E_\Pi^0 \equiv \{ e_{uv} \in E \,|\, \exists S \in \Pi : u \in S \, \text{and} \, v \in S \}, \qquad E^1_\Pi \equiv E \setminus E^0_\Pi.
@@ -36,7 +36,7 @@ For any clustering $\Pi$ of $\mathcal{G}$, we denote as $E^0_\Pi= \{ e_{uv} \in 
 % In the next chapters we will use this objective as a way to measure how balanced is a clustering found by the tested agglomerative clustering algorithms.
 
 
-\textbf{Linkage criteria and hierarchical trees} -- 
+\paragraph{Linkage criteria and hierarchical trees}  
 % We also denote as $S_u$ the cluster associated with node $u$ \TODO{Needed?}.
 % We call two clusters $S,S'$ \emph{adjacent} if there exists at least one edge ${e_{ts}\in E}$ connecting a node $t\in S_u$ to a node $s\in S_v$. 
 Let the interaction $\interact(S,S')\in\mathbb{R}$ between two clusters $S,S'$ be defined as a function, named \emph{linkage criterion}, depending on the weights of \emph{all} edges connecting clusters $S$ and $S'$, i.e. ${(S \times S') \cap E}$ where $\times$ denotes the outer product. 
@@ -168,12 +168,12 @@ The algorithm was implemented using a standard HC implementation with computatio
 % \end{prop}
 In this paper we focus on five linkage methods (see columns of Table~\ref{tab:linkage-criteria}). Many more linkage criteria have been applied to unsigned graphs \cite{nunez2013machine,felzenszwalb2004efficient,funke2018large}, involving median-based or size-regularized methods, but we decided to focus this paper on those five criteria because they represent the most popular choices.  
 
-\paragraph{Sum Linkage} -- 
+\paragraph{Sum Linkage} 
 On signed graphs, the sum of two attractive (or repulsive) interactions is still attractive (repulsive). On the other hand, on unsigned graphs, a strong attractive interaction could be obtained by summing many weak interactions, which depending on the application could be undesirable. This explains why, to our knowledge, an agglomerative algorithm with sum linkage has never been used on unsigned graphs. On signed graphs, such an algorithm was pioneered in \cite{levinkov2017comparative,keuper2015efficient} and was named Greedy Agglomerative Edge Contraction (GAEC)\footnote{An algorithm equivalent to GAEC was recently independently re-proposed in \cite{chehreghani2020hierarchical}.}. All variations of \algname{} decrease the multicut objective defined in Eq.~\ref{eq:MC_objective} each time two clusters with positive interaction are merged. But only GAEC always makes the \emph{greedy choice} that most decreases the multicut objective at each iteration. The authors of \cite{levinkov2017comparative} propose an algorithm named \emph{GreedyFixation}, which, in our framework, is equivalent to phase one of \algname{} using cannot-link-constraints and a sum linkage. However, running both phase one and two of \algname{} with sum linkage (algorithm named HCC-Sum in this paper) performed better than GreedyFixation in our experiments.
 % , because some clusters are wrongly constrained in phase one and only merged in phase two. 
 % removing constraints in phase two   However, in our experiments, we noted that constrained sum-link version of \algname{} proposed here (named \emph{HCC-Sum} in Table~\ref{tab:linkage-criteria}) .
 
-\paragraph{AbsMax Linkage} -- This linkage method is also specific to signed graphs, since on unsigned graphs it would be equivalent to single linkage. Here, we prove that the Mutex Watershed Algorithm \cite{wolf2018mutex} can be seen as an agglomerative algorithm with AbsMax linkage (proofs of the following three propositions are given in Appendix \ref{sec:proposition_proofs}):
+\paragraph{AbsMax Linkage} This linkage method is also specific to signed graphs, since on unsigned graphs it would be equivalent to single linkage. Here, we prove that the Mutex Watershed Algorithm \cite{wolf2018mutex} can be seen as an agglomerative algorithm with AbsMax linkage (proofs of the following three propositions are given in Appendix \ref{sec:proposition_proofs}):
 \begin{restatable}{prop}{absmaxmutex}
 \label{prop:absmax_mutex}
 The \algname{} Algorithm \ref{main_alg} with AbsMax linkage, with or without cannot link constraints, returns the same final clustering $\Pi^*_{\mathrm{AbsMax}}$ also returned by the Mutex Watershed Algorithm (MWS) \cite{wolf2018mutex}, which has empirical complexity $\mathcal{O}(N \log N)$.
@@ -182,7 +182,7 @@ The \algname{} Algorithm \ref{main_alg} with AbsMax linkage, with or without can
 % \end{prop}
 
 
-\paragraph{Average, Single, and Complete Linkage} -- These three linkage criteria have been thoroughly studied on unsigned graphs, but never - until very recently - on signed graphs. In concurrent independent related work \cite{chehreghani2020hierarchical}, the authors prove that applying these three linkage methods to a signed graph is equivalent to applying them to the unsigned graph obtained by shifting all edge weights by a constant.  Here, we prove which of the algorithms studied here are ``intrinsically signed'' and do not have this invariance-property:
+\paragraph{Average, Single, and Complete Linkage} These three linkage criteria have been thoroughly studied on unsigned graphs, but never - until very recently - on signed graphs. In concurrent independent related work \cite{chehreghani2020hierarchical}, the authors prove that applying these three linkage methods to a signed graph is equivalent to applying them to the unsigned graph obtained by shifting all edge weights by a constant.  Here, we prove which of the algorithms studied here are ``intrinsically signed'' and do not have this invariance-property:
 \begin{restatable}{prop}{invariantAlgs}
 \label{prop:weight_shift_invariant}
 We call an agglomerative algorithm ``weight-shift invariant'' if the dendrogram $T$ returned by the algorithm is invariant w.r.t. a shift of all edge weights $w_e$  by a constant $\alpha\in \mathbb{R}$. Among the variations of \algname{}, only hierarchical clustering with Average (HC-Avg), Single (HC-Single), and Complete linkage (HC-Complete) are weight-shift-invariant (see green box in Table~\ref{tab:linkage-criteria}).
@@ -217,7 +217,7 @@ We call an agglomerative algorithm ``weight-shift invariant'' if the dendrogram 
 % On the other hand, to our knowledge, \emph{Average}, \emph{Max} or \emph{Min} linkage criteria have never been used for signed graph agglomerative algorithms or been combined with cannot-link constraints.
 
 
-\paragraph{Algorithms defining an ultrametric} -- The connection between agglomerative algorithms and ultrametrics\footnote{A metric space $(X,d)$ is an \emph{ultrametric} if, for every $x,y,z \in X$, $d(x,y)\leq \max \{d(x,z), d(y,z)\}$.} is well known. Usually, ultrametrics are associated to strictly positive \emph{similarity} or \emph{dissimilarity} measures on a graph. In our framework, a trivial ultrametric is always given by the height $h_T$ of the dendrogram. However, for some of the \algname{} variations, we now define an ultrametric based on the edge weights and the signed interactions between clusters, generalizing what has been done for HC on unsigned graphs \cite{johnson1967hierarchical,milligan1979ultrametric}. To define this measure and prove its ultrametric property, we first map the signed interaction $\treeHeight{}$ defined in Eq.~\ref{eq:def_dendr_interact} to positive ``pseudo-distances'' $d_{T}:V \times V \rightarrow \mathbb{R}^{+}$:
+\paragraph{Algorithms defining an ultrametric} The connection between agglomerative algorithms and ultrametrics\footnote{A metric space $(X,d)$ is an \emph{ultrametric} if, for every $x,y,z \in X$, $d(x,y)\leq \max \{d(x,z), d(y,z)\}$.} is well known. Usually, ultrametrics are associated to strictly positive \emph{similarity} or \emph{dissimilarity} measures on a graph. In our framework, a trivial ultrametric is always given by the height $h_T$ of the dendrogram. However, for some of the \algname{} variations, we now define an ultrametric based on the edge weights and the signed interactions between clusters, generalizing what has been done for HC on unsigned graphs \cite{johnson1967hierarchical,milligan1979ultrametric}. To define this measure and prove its ultrametric property, we first map the signed interaction $\treeHeight{}$ defined in Eq.~\ref{eq:def_dendr_interact} to positive ``pseudo-distances'' $d_{T}:V \times V \rightarrow \mathbb{R}^{+}$:
 \begin{align}\label{eq:UM_def}
 d_{T}(u,v)\equiv &\begin{cases}
 0 & \text{if}\,\, u=v\\

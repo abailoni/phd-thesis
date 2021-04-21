@@ -10,6 +10,7 @@
 ]{hdphdthesis}
 
 
+\usepackage[toc,page]{appendix}
 
 % Headings setup (sectsty)
 \usepackage{sectsty}
@@ -19,7 +20,7 @@
 \usepackage{afterpage}
 % \usepackage{fontspec} % This requires XeLaTeX
 % \setmainfont{Times New Roman}
-
+\PassOptionsToPackage{table}{xcolor}
 \usepackage[linktocpage]{hyperref,xcolor}
 \definecolor{bluish}{rgb}{0,0.4,0.65}
 \definecolor{greenish}{rgb}{0.01,0.5,0.}
@@ -96,7 +97,7 @@
 \input{chapters/GASP/5_experiments_intro}
 % % \input{chapters/GASP/5_experiments_cityscapes}
 \input{chapters/GASP/6_conclusions}
-\input{chapters/GASP/supplementary}
+
 
 %--------------------- LSI-Masks ----------------------
 \input{chapters/LSIMasks/intro}
@@ -105,11 +106,17 @@
 \input{chapters/LSIMasks/methods_1.tex}
 \input{chapters/LSIMasks/experiments.tex}
 \input{chapters/LSIMasks/conclusions.tex}
-\input{chapters/LSIMasks/supplementary.tex}
+
 
 
 % Conclusions and final stuff
 \input{chapters/conclusion.tex}
+
+\begin{appendices}
+\input{chapters/GASP/supplementary}
+\input{chapters/LSIMasks/supplementary.tex}
+\end{appendices}
+
 \input{chapters/publications.tex}
 
 %---------------------- Bibliography ----------------------
