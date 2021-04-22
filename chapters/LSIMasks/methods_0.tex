@@ -6,7 +6,7 @@ Then, in Sec. \ref{sec:encoding_masks}, we present our first main contribution, 
 % Finally, in Sec. \ref{sec:multiscale_patches}, we show how we predicted \maskname masks at different scales.
 
 \subsection{Local Central Instance Masks}\label{sec:self_masks}
-This work proposes to distinguish between different object instances based on instance-aware pixel-pair affinities in the interval $[0,1]$, which specify whether or not two pixels belong to the same instance or not.
+The method presented here proposes to distinguish between different object instances based on instance-aware pixel-pair affinities in the interval $[0,1]$, which specify whether or not two pixels belong to the same instance or not.
 Given a pixel of the input image with coordinates $\coord{u}= (u_x, u_y)$, a set of affinities to neighboring pixels within a $K\times K$ window is learned, where $K$ is an odd number. 
 We define the $K\times K$-neighborhood of a pixel as: 
 $\mathcal{N}_{K\times K} \equiv \mathcal{N}_{K} \times \mathcal{N}_{K}$, where $\mathcal{N}_{K} \equiv \left\{-\frac{K-1}{2}, \ldots, \frac{K-1}{2}\right\}$ and represent the affinities relative to pixel $\coord{u}$ as a \maskname mask $\mathcal{M}_{\coord{u}}: \mathcal{N}_{K\times K} \rightarrow [0,1]$.

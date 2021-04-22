@@ -4,40 +4,94 @@
 \section{Experiments on Neuron Segmentation}
 We evaluate and compare our method on the task of neuron segmentation in electron microscopy (EM) image volumes. This application is of key interest in connectomics, a field of neuro-science with the goal of reconstructing neural wiring diagrams spanning complete central nervous systems. 
 % Currently, only proof-reading or manual tracing yields sufficient accuracy for correct circuit reconstruction \cite{schlegel2017learning}, thus further progress is required in automated reconstruction methods (see Fig. \ref{fig:MWS_segm} for an example of output neuron segmentation).
-We test our method on the competitive CREMI 2016 EM Segmentation Challenge \cite{cremiChallenge}. 
+We test our method on the competitive CREMI 2016 EM Segmentation Challenge \cite{cremi} that is currently the neuron segmentation challenge with the largest amount of training data available. The dataset comes from serial section EM of \emph{Drosophila} fruit-fly brain tissue and consists of 6 volumes of $1250\times 1250\times 125$ voxels at resolution $4\times 4\times 40$ nm$^3$, three of which come with publicly available training ground truth. 
+We achieved the best scores by downscaling the resolution of the EM data by a factor $(\frac{1}{2},\frac{1}{2},1)$, since this helped increasing the 3D context provided as input to the model.
 We use the second half of CREMI sample C as validation set for our comparison experiments in Table \ref{tab:val_results} and then we train a final model on all the three samples with available ground truth labels to submit results to the leader-board in Tab. \ref{tab:test_results}. 
-Results  are evaluated using the CREMI score, which is given by the geometric mean of Variation of Information Score (VOI split + VOI merge) and Adapted Rand-Score (Rand-Score) \cite{arganda2015crowdsourcing}. See Sec.~\ref{sec:cremi_data_augm} for more details on data augmentation, strongly inspired by related work.
+Results  are evaluated using the CREMI score, which is given by the geometric mean of Variation of Information Score (VOI split + VOI merge) and Adapted Rand-Score (Rand-Score) \cite{arganda2015crowdsourcing}. See Sec.~\ref{sec:cremi_details} for more details on data augmentation, strongly inspired by related work.
+
+
 
 
 \subsection{Architecture details of the tested models}\label{sec:models_details}
 As a backbone model we use a 3D U-Net consisting of a hierarchy of four feature maps with anisotropic downscaling factors $(\frac{1}{2},\frac{1}{2},1)$, similarly to \cite{lee2019learning,lee2017superhuman,wolf2018mutex}. 
 % U-Net with three levels in the feauter map hierarchy, involving downscaling factors $(1, \frac{1}{2},\frac{1}{2})$
 Models are trained with the Adam optimizer and a batch size equal to one. Before applying the loss, we slightly crop the predictions to prevent training on borders where not enough surrounding context is provided. 
-See Sec. \ref{sec:arch_details_suppl} and Fig. \ref{fig:model_architecture} in supplementary material for all details about the used architecture. 
+Fig. \ref{fig:model_architecture} shows the details on the 3D-UNet architecture and Table \ref{tab:neighborhood_structures} lists the sparse neighborhood structures predicted by the \emph{\sparseBr branches}. Only the outputs at the highest resolution (given by branches SNB$_1$, ENB$_1$ and ENB$_2$) are used to compute edge weights in the pixel grid-graph. A visualization of the predicted single-instance mask latent spaces is given in Fig. \ref{fig:PCA_embeddings}.
+% - Cite architecture figure Fig: we use three type of nets, we only use highest res predictions for computing affinities of the graph
+
+The input volume has shape $272 \times 272\times12$ which is equivalent to a volume of $544\times 544\times 12$ voxels in the original resolution $4\times 4\times 40$ nm$^3$. Before to apply the loss, we crop the predictions to a shape $224\times 224\times 9$ in order to avoid border artifacts\footnote{Instead of cropping directly the final predictions, we perform several crops in the decoder part of the UNet model (see Upsample + Crop connections in Fig. \ref{fig:model_architecture}) in order to optimize GPU-memory usage.}.
+The final model trained on all available ground truth labels is trained with a slightly larger input volume of $288\times 288\times 14$.
 
  
-\textbf{Baseline Model (SNB)} -- As a strong baseline, we re-implement the current state-of-the-art and train a model to predict affinities for a sparse neighborhood structure (Fig. \ref{fig:main_figure}a). We perform deep supervision by attaching three \emph{\sparseBr branches} (SNB) at different levels in the hierarchy of the UNet decoder and train the coarser feature maps to predict longer range affinities. Details about the used neighborhood structures and the architecture can be found in Table \ref{tab:neighborhood_structures} and Fig. \ref{fig:model_architecture}.
+\paragraph{Baseline Model (SNB)} As a strong baseline, we re-implement the current state-of-the-art and train a model to predict affinities for a sparse neighborhood structure (Fig. \ref{fig:main_figure}a). We perform deep supervision by attaching three \emph{\sparseBr branches} (SNB) at different levels in the hierarchy of the UNet decoder and train the coarser feature maps to predict longer range affinities. Details about the used neighborhood structures and the architecture can be found in Table \ref{tab:neighborhood_structures} and Fig. \ref{fig:model_architecture}.
 
-\textbf{Proposed Model (ENB)} -- We then train a model to predict encoded \maskname masks (Fig. \ref{fig:main_figure}c). Similarly to the baseline model, we provide deep supervision by attaching four \emph{\encBr branches} (ENB) to the backbone U-Net. As explained in Sec. \ref{sec:multiscale_patches}, all branches predict 3D masks of shape $7 \times 7 \times 5$, but at different resolutions $(1,1,1)$, $(\frac{1}{4},\frac{1}{4},1)$ and $(\frac{1}{8},\frac{1}{8},1)$, as we show in the architecture in Fig. \ref{fig:model_architecture}. A visualization of the learned latent spaces is given in Fig. \ref{fig:PCA_embeddings}.
+\paragraph{Proposed Model (ENB)} We then train a model to predict encoded \maskname masks (Fig. \ref{fig:main_figure}c). Similarly to the baseline model, we provide deep supervision by attaching four \emph{\encBr branches} (ENB) to the backbone U-Net. As explained in Sec. \ref{sec:multiscale_patches}, all branches predict 3D masks of shape $7 \times 7 \times 5$, but at different resolutions $(1,1,1)$, $(\frac{1}{4},\frac{1}{4},1)$ and $(\frac{1}{8},\frac{1}{8},1)$, as we show in the architecture in Fig. \ref{fig:model_architecture}. A visualization of the learned latent spaces is given in Fig. \ref{fig:PCA_embeddings}.
 
-\textbf{Combined Model (SNB+ENB)} -- Finally, we also train a combined model to predict both \maskname masks and a sparse neighborhood of affinities, by providing deep supervision both via \emph{\encBr} and \emph{\sparseBr} \emph{branches}. The backbone of this model is then trained with a total of seven branches: three branches equivalent to the ones used in the baseline model SNB, plus four additional ones like those in the ENB model (see Fig. \ref{fig:model_architecture}).  
+\paragraph{Combined Model (SNB+ENB)} Finally, we also train a combined model to predict both \maskname masks and a sparse neighborhood of affinities, by providing deep supervision both via \emph{\encBr} and \emph{\sparseBr} \emph{branches}. The backbone of this model is then trained with a total of seven branches: three branches equivalent to the ones used in the baseline model SNB, plus four additional ones like those in the ENB model (see Fig. \ref{fig:model_architecture}).  
+
+
+\paragraph{Efficient Affinities for any Sparse Neighborhood}\label{sec:efficient_affs}
+An advantage of training dense \maskname masks is that the graph $N$-neighborhood structure can be defined at prediction time, after the model has been trained. As an alternative to the method presented in Sec. \ref{sec:aggr_affs} that aggregates overlapping masks, here we propose the following efficient approach to predict affinities for a sparse neighborhood structure: Given a model that has been already trained end-to-end to predict encoded \maskname masks, we stack few additional convolutional layers that are trained to convert the $Q$-dimensional latent mask space to $N$ output feature maps representing affinities for the chosen sparse neighborhood structure. These last layers are not trained jointly with the full model, so in practice they are very quick and easy to train with a binary classification loss. By using this method, we avoid to decode all masks explicitly (one for each pixel) and achieve great time and memory savings.
+As a result, we obtain a model that at inference time is no more memory-consuming than the current state-of-the-art approach predicting affinities only for a specific sparse neighborhood structure.
+
+\begin{figure}[tbp]
+\centering
+        % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
+        \includegraphics[width=\textwidth]{./figures/LSIMasks/UNet_architecture.pdf} % 0.45
+        \vspace{1em}
+        \caption{\textbf{The architecture of the model}, which is strongly inspired by the 3D-UNet models proposed in \cite{lee2017superhuman,funke2018large}. 
+        Red numbers indicate the number of used feature maps.
+        As we explain in Sec. \ref{sec:models_details}, in this work we consider three models: i) a baseline model based on the three \emph{\sparseBr branches} SNB$_{i=1,2,3}$, shown in the figure; ii) another model based on the four \emph{\encBr branches} ENB$_{i=1,2,3,4}$; iii) and, finally, a combined model trained with all seven branches shown in the Figure.
+        Even though the input of the model is a 3D volume, here, for simplicity, we show an example of 2D input image taken from the stack. As output of the \emph{\sparseBr branches} SNB$_{i=1,2,3}$, we show few channels representing some of the predicted affinities (see Table \ref{tab:neighborhood_structures} for details on the sparse neighborhood structures predicted by each branch SNB$_{i=1,2,3}$). We also show the first three principal components of the encoded masks predicted by the \emph{\encBr branches} ENB$_{i=1,2,3,4}$. All branches ENB$_{i=1,2,3,4}$ predict \maskname masks of the same window size $7 \times 7 \times 5$, but at different resolutions.}
+    \label{fig:model_architecture}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+        % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
+        \includegraphics[width=\textwidth,trim=1.80in 1.4in 1.8in 1.50in,clip]{./figures/LSIMasks/MWS_segm.pdf} % 0.45
+        \caption{Raw data from the validation set overlaid with the final instance segmentation obtained with our method: affinities are computed by averaging overlapping masks (MaskAggr); the final segmentation is achieved by running the Mutex Watershed algorithm on the obtained graph with positive and negative edge weights. Note that the data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.}
+    \label{fig:MWS_segm}
+\end{figure}
+
+
+
+
+
+\begin{figure}[tbp]
+\centering
+        % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
+        \includegraphics[width=\textwidth]{./figures/LSIMasks/PCA_embeddings.pdf} % 0.45
+        \vspace{1em}
+        \caption{\textbf{Visualization of the predicted single-instance mask latent spaces} -- Each column represents a 2D image from the 3D stack (only five are shown here). \textbf{(a)} Ground-truth labels. \textbf{(b)} Raw image given as input to the model. \textbf{(c-d-e-f)} Visualization of the first three principal components of the $32$-dimensional mask latent spaces predicted by the \encBr branches ENB$_{i=1,2,3,4}$ in our model. Note how latent spaces learned at different levels of the U-Net pyramid show different feature-scales, because they encode \maskname masks at different resolutions.}
+    \label{fig:PCA_embeddings}
+\end{figure}
+
+
 
 \subsection{Graph Partitioning Methods} 
-Given the predicted encoded \maskname masks, we compute affinities $a_e$ either with the average aggregation method introduced in Sec. \ref{sec:aggr_affs} (\textbf{MaskAggr}) or the efficient approach described in Sec. \ref{sec:efficient_affs}. 
+Given the predicted encoded \maskname masks, we compute affinities $a_e$ either with the average aggregation method introduced in Sec. \ref{sec:aggr_affs} (\textbf{MaskAggr}) or the efficient approach described in the previous section \ref{sec:efficient_affs}. 
 The result of either is a signed pixel grid-graph, i.e. a graph with positive and negative edge weights that needs to be partitioned into instances. 
-The used neighborhood connectivity of the graph is given in Table \ref{tab:neighborhood_structures}. Positive and negative edge weights $w_e$ are computed by applying the additive transformation $w_e=a_e-0.5$ to the predicted affinities.
+The used neighborhood connectivity of the graph, which is very similar to the one used in related work \cite{wolf2018mutex,lee2017superhuman}, is given in Table \ref{tab:neighborhood_structures}. Positive and negative edge weights $w_e$ are computed by applying the additive transformation $w_e=a_e-0.5$ to the predicted affinities.
+
+
 
 
 To obtain final instances, we test different partitioning algorithms.
  % that have been already applied to neuron segmentation. 
-The Mutex Watershed (\textbf{MWS}) \cite{wolf2018mutex} is an efficient algorithm to partition graphs with both attractive and repulsive weights without the need for extra parameters. It can easily handle the large graphs considered here with up to $10^8$ nodes/voxels and $10^9$ edges\footnote{Among all edges given by the chosen neighborhood structure, we add only 10\% of the long-range ones, since the Mutex Watershed was shown to perform optimally in this setup \cite{bailoni2019generalized,wolf2018mutex}.}. 
+The Mutex Watershed (\textbf{MWS}) \cite{wolf2018mutex} is an efficient algorithm to partition graphs with both attractive and repulsive weights without the need for extra parameters. It can easily handle the large graphs considered here with up to $10^8$ nodes/voxels and $10^9$ edges\footnote{Among all edges given by the chosen neighborhood structure, we add only 10\% of the long-range ones, since the Mutex Watershed was shown to perform optimally in this setup \cite{bailoni2019generalized,wolf2018mutex}.}. In Fig. \ref{fig:MWS_segm}, we show the resulting instance segmentation obtained by computing affinities from \maskname masks and then running the Mutex Watershed algorithm on the obtained graph with positive and negative edge weights.
+
 
 Then, we also test another graph partitioning pipeline that has often been applied to neuron segmentation because of its robustness. This method first generates a 2D super-pixel over-segmentation from the model predictions and then partitions the associated region-adjacency graph to obtain final instances. Super-pixels are computed with the following procedure: First, the predicted direct-neighbor affinities are averaged over the two isotropic directions to obtain a 2D neuron-membrane probability map; then, for each single 2D image in the stack, super-pixels are generated by running a watershed algorithm seeded at the maxima of the boundary-map distance transform (\textbf{WSDT}). Given this initial over-segmentation, a 3D region-adjacency graph is built, so that each super-pixel is represented by a node in the graph. Edge weights of this graph are computed by averaging short- and long-range affinities over the boundaries of neighboring super-pixels. 
 Finally, the graph is partitioned by applying the average agglomeration algorithm proposed in \cite{bailoni2019generalized} (\textbf{GaspAvg}).
 
+After running the graph partitioning method, we use a simple post-processing step to delete small segments on the boundaries, most of which are given by single-voxel clusters. On the neuron segmentation predictions, we deleted all regions with less than 200 voxels and used a seeded watershed algorithm to expand the bigger segments.
 % GaspAverage is more robust to noise as compared to Mutex Watershed \cite{bailoni2019generalized}, but it is considerably more computationally expensive on large graphs like the ones considered here (up to $10^8$ nodes/voxels and $10^9$ edges). Thus, in our comparison on the validation set, we also... 
 
   
+
+
+
 
 
 
@@ -162,7 +216,7 @@ Finally, the graph is partitioned by applying the average agglomeration algorith
 
 \subsection{Results and Discussion}
 
-\textbf{Pre-Training of the Encoded Space} -- The proposed model based on an \emph{\encBr branch} can be properly trained only if the dimension $Q$ of the latent space is large enough to accommodate all possible occurring neighborhood patterns. 
+\paragraph{Pre-Training of the Encoded Space} The proposed model based on an \emph{\encBr branch} can be properly trained only if the dimension $Q$ of the latent space is large enough to accommodate all possible occurring neighborhood patterns. 
 To find a small but sufficiently large $Q$, we trained a convolutional Variational Auto-encoder (VAE) \cite{kingma2013auto,rezende2014stochastic} to compress binary ground-truth \maskname masks $\hat{\mathcal{M}}_{\coord{u}}$ into latent variables $z_{\coord{u}}\in \mathbb{R}^Q$ and evaluated the quality of the reconstructed binary masks via the reconstruction loss. We concluded that $Q=32$ is large enough to compress the masks considered here consisting of $7\times 7 \times 5=245$ pixels. 
 As a first experiment, we tried to make use of this VAE-pretrained latent space to train the proposed \emph{\encBr branch} and predict encoded masks directly in this space by using an L2 loss on the encoded vectors. However, similarly to the findings of \cite{hirsch2020patchperpix}, this approach performed worse than directly training the full model end-to-end as described in Sec. \ref{sec:encoding_masks}. 
 % \begin{itemize}
@@ -177,7 +231,7 @@ As a first experiment, we tried to make use of this VAE-pretrained latent space 
 
 
 
-\textbf{Training Encoded Masks} -- As we show in our validation experiments in Tab. \ref{tab:val_results}, models trained to predict encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art method predicting affinities for a sparse neighborhood structure (SNB). 
+\paragraph{Training Encoded Masks} As we show in our validation experiments in Tab. \ref{tab:val_results}, models trained to predict encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art method predicting affinities for a sparse neighborhood structure (SNB). 
 % Predicting only affinities for a sparse-neighborhood, like the SBN model, is an easier task as compared to predicting large and dense neighborhood structures. 
 Our interpretation of this result is that using the encoding process to predict \maskname masks encourages the model to predict segment shapes that are consistent in a larger neighborhood, which can be helpful to correctly segment the most difficult regions of the data. 
 % Thus, we argue that the combined model is less likely to result in a basic boundary detector based on simple local features and it is instead more likely to learn more complex features and use for example prior information about the shape of the segments.
@@ -188,7 +242,7 @@ Our interpretation of this result is that using the encoding process to predict 
 
 
 
-\textbf{Aggregating Overlapping Masks}  -- 
+\paragraph{Aggregating Overlapping Masks}
 In our validation experiments of Tab. \ref{tab:val_results}, we also test the affinities computed by averaging over overlapping masks (MaskAggr), as described in Sec. \ref{sec:aggr_affs}. We then partition the resulting signed graph by using the Mutex Watershed, which has empirical linearithmic complexity in the number of edges. 
 Our experiments show that, for the first time on this type of more challenging neuron segmentation data, the Mutex Watershed (MWS) achieves better scores than the super-pixel-based methods (WSDT+GaspAvg), which have so far been known to be more robust to noise but also require the user to tune more hyper-parameters.   
 
@@ -308,7 +362,7 @@ Finally, we also note that superpixel-based methods did not perform equally well
 
 
 
-\textbf{Training Both Masks and a Sparse Neighborhood} -- In our validation experiments, the combined model, which was trained to predict both a sparse neighborhood (SNB) and encoded \maskname masks (ENB), achieved the best scores and yielded sharper and more accurate mask predictions.
+\paragraph{Training Both Masks and a Sparse Neighborhood} In our validation experiments, the combined model, which was trained to predict both a sparse neighborhood (SNB) and encoded \maskname masks (ENB), achieved the best scores and yielded sharper and more accurate mask predictions.
 In general, providing losses for multiple tasks simultaneously has often been proven beneficial in a supervised learning setting.
 Moreover, the dense gradient of the \emph{\encBr branch}, which focuses on locally correct predictions, nicely complements the sparse gradient\footnote{The gradient of the \emph{\encBr branch} is sparse, due to GPU-memory constraints as explained in Sec. \ref{sec:encoding_masks}.} of the \emph{\encBr branch}, which focuses on predictions that are consistent in a larger neighborhood. We expect this to be another reason why the combination of affinities and \maskname masks performed best in our experiments. 
 % In our case, the better performances of the combined model could also be explained by the fact that, due to GPU-memory restrictions, the \emph{\encBr branch} was trained only with a sparse gradient from a small fraction of all the predicted encoded masks (see Sec. \ref{sec:encoding_masks}), whereas the \emph{\sparseBr branch} received gradient for every pixel in the output feature map. \\
@@ -318,7 +372,7 @@ Moreover, the dense gradient of the \emph{\encBr branch}, which focuses on local
 
 
 
-\textbf{Results on Test Samples} -- The evaluation on the three test samples presented in Tab. \ref{tab:test_results} confirms our findings from the validation experiments: among the methods tested in this work, the best scores are achieved by the combined model (ENB+SNB) and by using the Mutex Watershed algorithm (MWS) on affinities averaged over overlapping masks (MaskAggr).
+\paragraph{Results on Test Samples} The evaluation on the three test samples presented in Tab. \ref{tab:test_results} confirms our findings from the validation experiments: among the methods tested here, the best scores are achieved by the combined model (ENB+SNB) and by using the Mutex Watershed algorithm (MWS) on affinities averaged over overlapping masks (MaskAggr).
 Our method achieves comparable scores to the only other method in the leader-board that does not rely on super-pixels (line 3 in Table \ref{tab:test_results}). This method uses the average agglomeration algorithm GaspAvg proposed in \cite{bailoni2019generalized} instead of the MWS. GaspAvg has been shown to be more robust to noise than Mutex Watershed, however it is also considerably more computationally expensive to run on large graphs like the ones considered here. 
 
 % The other leading entries in the leaderboard are all given by methods that are very similar to our baseline model SNB, which in our validation experiments consistently performed worse.
@@ -350,9 +404,46 @@ CRUNet\cite{zeng2017deepem3d} & \HollowBox & \HollowBox & \HollowBox & 3D-Waters
 LFC\cite{parag2017anisotropic} & \CrossedBox & \HollowBox & \HollowBox & Z-Watershed+Agglo & \HollowBox & 0.616  \\
         \end{tabular}
         \vspace*{0.99em}
-    \caption{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremi}. The best method proposed in this work achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
+    \caption{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremi}. The best method proposed here achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
     \label{tab:test_results}
 \end{minipage}
+\end{table}
+
+\begin{table}[tp]
+\small
+\centering
+\footnotesize
+\rowcolors{2}{white}{gray!25} % \rowcolors{<starting row index>}{<dispari row color>}{<pari row color>}
+  % {\renewcommand{\arraystretch}{1.3}
+  % \resizebox{\textwidth}{!}{
+        \begin{tabular}[t]{M{10em} M{8em} M{8em} M{8em} }
+         % Method & \makecell{CREMI-Score \\(lower is better)} \\ \midrule 
+\thead{Graph neighborhood\\structure\\(16 neighbors)} & \thead{SNB$_1$\\(18 neighbors)} &  \thead{SNB$_2$\\(10 neighbors)}  & \thead{SNB$_3$\\(10 neighbors)} \\ \toprule 
+(0, 0, -1)      & (0, 0, -1)    & (0, 0, -1)    & (0, 0, -1) \\
+(-1, 0, 0)      & (-1, 0, 0)    & (-4, 0, 0)    & (-4, 0, 0) \\
+(0, -1, 0)     & (0, -1, 0)     & (0, -4, 0)    & (0, -4, 0) \\
+(-4, 0, 0)     & (-4, 0, 0)     & (0, 0, -2)    & (0, 0, -2) \\
+(0, -4, 0)     & (0, -4, 0)     & (0, 0, -3)    & (0, 0, -3) \\
+(-4, -4, 0)    & (-4, -4, 0)    & (0, 0, -4)    & (0, 0, -4) \\
+(4, -4, 0)     & (4, -4, 0)     & (-14, 0, 0)   & (-12, 0, 0) \\
+(-4, 0, -1)     & (-4, 0, -1)   & (0, -14, 0)   & (0, -12, 0) \\
+(0, -4, -1)     & (0, -4, -1)   & (-14, -14, 0) & (-12, -12, 0) \\
+(-4, -4, -1)    & (-4, -4, -1)  & (14, -14, 0)  & (12, -12, 0) \\
+(4, -4, -1)     & (4, -4, -1)   &  - & - \\
+(0, 0, -2)      & (0, 0, -2)    & - & - \\
+(-8, -8, 0)    & (0, 0, -3)     & - & - \\
+(8, -8, 0)     & (0, 0, -4)     & - & - \\
+(-12, 0, 0)    & (-8, -8, 0)    & - & - \\
+(0, -12, 0)    & (8, -8, 0)     & - & - \\
+-                & (-12, 0, 0)   & - & - \\
+-               & (0, -12, 0)   & - & - \\
+        \end{tabular}
+        % }
+        \vspace{3em}
+        \caption{\textbf{Sparse neighborhood structures} --  
+        In this table, we represent sparse neighborhood structures (see for example the one shown in Fig. \ref{fig:main_figure}a) as lists of offsets $(\delta_x,\delta_y, \delta_z)$ indicating the relative coordinates of neighboring pixels with respect to the central pixel.
+        The first column shows the neighborhood structure of the pixel grid-graph, such that each pixel / node is connected to 16 neighbors. In the following columns, we provide the neighborhood structures predicted by the three \emph{\sparseBr branches} SNB$_i$ used in our model (see architecture in Fig. \ref{fig:model_architecture}).
+        These neighborhood structures were inspired by the ones used in \cite{wolf2018mutex,lee2017superhuman} but were adapted to our version of the CREMI data that is downscaled by a factor $(\frac{1}{2},\frac{1}{2},1)$. Note that the offsets provided here are given in the downscaled resolution.} \label{tab:neighborhood_structures}
 \end{table}
 
 
