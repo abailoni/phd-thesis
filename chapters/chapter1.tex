@@ -43,7 +43,7 @@ In the following section, we will review the task of neuron segmentation in the 
 
  
 \subsection{Neuron Segmentation in Connectomics}
-Connectomics is a field of neuro-science with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system. This comprehensive map of neural connections within a brain is known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
+Connectomics is a field of neuroscience with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system. This comprehensive map of neural connections within a brain is known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
 
 In 2017, the whole brain of an adult Drosophila melanogaster, with a volume of approximately $8\cdot 10^7 \mu m^3$ and comprising $\sim$100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB \cite{zheng2018complete}. Similar projects are generating petabytes of data \cite{yin2020petascale}, and a mouse brain of $500$ mm$^3$, at a typical isotropic resolution of 8 nm, would require almost 1000 petabytes of data.
 Despite progress in collaborative annotation \cite{kim2014space}, the sheer size of these volumes makes manual analysis infeasible. Thus, automated processing, and especially automated neuron segmentation, is needed to reconstruct the complete organism's neural wiring diagram.
@@ -77,7 +77,7 @@ In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algo
 \footnotesize
   \begin{flushleft}
   \footnotesize
-  \caption{Agglomerative hierarchical clustering}
+  \caption{Agglomerative Hierarchical Clustering}
   % \caption{\algname{}: generalized algorithm for signed graph partitioning}
    \hspace*{\algorithmicindent} \textbf{Input:} Graph $\mathcal{G}(V,E,w)$ with affinity weights $w:E \rightarrow \mathbb{R}^+$; linkage criterion $\interact{}$ \\
   \begin{algorithmic}[1]
@@ -123,7 +123,7 @@ This thesis studies novel partitioning algorithms that are both parameter-free a
 \newpage
 \section{Contribution and Overview of this Thesis}
 Throughout the past few years, proposal-free instance segmentation methods have been successfully applied to biological imagery and achieved higher and higher accuracy, primarily thanks to novel training strategies \cite{lee2017superhuman,milletari2016v}. 
-Several of these methods train an edge classifier (namely, a fully convolutional neural network) that can accurately predict transitions between object instances. The first part of this thesis proposes novel graph partitioning algorithms that can process these edge predictions and output an instance segmentation. The proposed algorithms are efficient and achieve state-of-the-art segmentation results without requiring the user to spend much time tuning complex dataset-dependent hyper-parameters. The centerpiece of this thesis is a unifying framework, named GASP, for agglomerative clustering algorithms of graphs with both attractive and repulsive interactions between the nodes (Chapter \ref{chapter:GASP}). 
+Several of these methods train an edge classifier (namely, a fully convolutional neural network) that can accurately predict transitions between object instances. This thesis proposes novel graph partitioning algorithms that can process these edge predictions and output an instance segmentation. The proposed algorithms are efficient and achieve state-of-the-art segmentation results without requiring the user to spend much time tuning complex dataset-dependent hyper-parameters. The centerpiece of this thesis is a unifying framework, named GASP, for agglomerative clustering algorithms of graphs with both attractive and repulsive interactions between the nodes (Chapter \ref{chapter:GASP}). 
 % This general framework allows us to conveniently study both theoretical and empirical properties of the algorithms included in it. 
 % Finally, in Chapter \ref{chapter:LSI}, we propose a new proposal-free instance segmentation pipeline for large-scale volumetric images. 
 In the following, we give a brief overview of each chapter’s content.
