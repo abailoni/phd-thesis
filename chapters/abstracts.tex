@@ -12,7 +12,7 @@ In the first part of this thesis, we introduce a simple and efficient graph part
 Secondly, we propose a generalized framework for agglomerative graph clustering algorithms, named \emph{GASP}, and prove that the Mutex Watershed is one of the algorithms included in it.
 This unifying framework allows us to conveniently study both theoretical and empirical properties of the algorithms included in it. Some of the algorithms in the framework also result in a simple segmentation pipeline that achieves state-of-the-art accuracy on a neuron segmentation challenge without requiring to tune domain-specific hyper-parameters. 
 
-Thirdly and finally, this thesis proposes a new bottom-up instance segmentation method...
+Thirdly and finally, this thesis proposes a new bottom-up instance segmentation method for large-scale volumetric images. The approach predicts single-instance segmentation masks across the entire image, one for each pixel, in a sliding window style. All masks are decoded from a low dimensional latent representation, which results in significant memory savings. The method achieves competitive scores on a neuron segmentation challenge and is considerably robust to noise by prioritizing predictions with the highest consensus across overlapping masks.
 
 \end{coverpage}
 

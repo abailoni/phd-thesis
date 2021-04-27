@@ -74,10 +74,8 @@
 
 
 %------------------- Table of contents --------------------
-\cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\contentsname}\tableofcontents\newpage
-% \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\listfigurename}\listoffigures\newpage
-% \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\listtablename}\listoftables\newpage
 
+\cleardoublepage\phantomsection\tableofcontents\newpage
 %--------------------- Main contents ----------------------
 \cleardoublepage
 
@@ -123,10 +121,16 @@
 
 \input{chapters/publications.tex}
 
+
+
 %---------------------- Bibliography ----------------------
 \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\bibname}
 \bibliography{bibliography}
 \bibliographystyle{abbrv}
+
+% \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\listfigurename}\listoffigures\newpage
+% \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\listtablename}\listoftables\newpage
+
 
 
 \end{document}

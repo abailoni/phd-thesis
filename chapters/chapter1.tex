@@ -11,7 +11,7 @@ A typical example is the task of image classification, where an image is assigne
 Another important example is \emph{image segmentation}, which is the process of partitioning an image into meaningful segments or sets of pixels. 
 
 There exist two types of image segmentation: \emph{Semantic segmentation} assigns each pixel of the image to a label from a defined set of classes (e.g. person, car, tree, sky); \emph{Instance segmentation} assigns each pixel not only to a class but also to a unique instance id so that different object instances belonging to the same class are distinguished (e.g. car-1, car-2, person-1). 
-In this thesis, we focus on instance segmentation. An example of an application is the segmentation of neuronal tissue images (see Fig. \ref{}). In this task, there is only one class of objects (neuron cells), and each pixel has to be assigned to its corresponding neuron cell so that all pixels belonging to the same neuron cell are grouped together. 
+In this thesis, we focus on instance segmentation. An example of an application is the segmentation of neuronal tissue images (see \TODO{Fig.} \ref{}). In this task, there is only one class of objects (neuron cells), and each pixel has to be assigned to its corresponding neuron cell so that all pixels belonging to the same neuron cell are grouped together. 
 % Note that the number of neuron cells is not known beforehand. 
 
 In the following sections, we will introduce the methods and graph partitioning algorithms that are studied in this thesis, and show how they can be used to solve instance segmentation tasks such as neuron segmentation.
@@ -25,7 +25,7 @@ Thanks to these properties, CNNs recently demonstrated outstanding performances 
 
 A specific type of CNN, called fully convolutional network (FCN) \cite{long2015fully}, proved to be particularly good at solving image segmentation tasks. An FCN does not include any fully-connected layer and transforms the height and width of the intermediate layers back to the input image's size. 
 In this way, when applied to a semantic segmentation task, the pixel-wise class predictions of an FCN have a one-to-one correspondence with the input image in the spatial dimension.
-Later, an improved version of FCN has been proposed, called U-Net \cite{ronneberger2015u}, which is based on an encoder-decoder structure along with long skip connections. These skip connections proved to be very successful at recovering fine-grained details in the output predictions and, recently, the U-Net model became a prevalent choice for solving image segmentation tasks in biological applications \cite{lee2017superhuman,ronneberger2015u}. In the following chapters of this thesis, we will frequently make use of the U-Net model. 
+Few years ago, an improved version of FCN was proposed, called U-Net \cite{ronneberger2015u}, which is based on an encoder-decoder structure along with long skip connections. These skip connections proved to be very successful at recovering fine-grained details in the output predictions and, recently, the U-Net model became a prevalent choice for solving image segmentation tasks in biological applications \cite{lee2017superhuman,ronneberger2015u}. In the following chapters of this thesis, we will frequently make use of the U-Net model. 
 
 FCNs and CNNs have also been applied to instance segmentation tasks.
 There are two main types of deep learning approaches to instance segmentation: \emph{proposal-based} and \emph{proposal-free} methods. 
@@ -35,7 +35,7 @@ In this thesis, instead, we study \emph{proposal-free} methods, which do not req
 These types of methods are preferred in imagery with object instances that cannot be approximated by bounding boxes and are much larger than the field of view of the model. 
 
 This thesis focuses on graph-based proposal-free segmentation methods, which solve the instance segmentation task by formalizing the input image as a graph. Nodes in the graph usually represent pixels or sets of pixels (commonly named \emph{superpixels}), whereas graph edges express neighboring relationships between pixels. In these graph-based instance segmentation approaches, an FCN is trained to predict the graph's edge weights. Then, a more or less complex graph-partitioning algorithm is employed to output the final instance segmentation. 
-The segmentation methods that are mostly related to this thesis predict edge weights in the form of pixel-pair affinities \cite{Gao_2019_ICCV,liu2018affinity,lee2017superhuman}, which represent how likely it is for a pair of pixels to be in the same object instance. These approaches not only predict affinities for pairs of direct-neighboring pixels in the image, but they also learn long-range pixel-pair affinities, since this proved to improve training and help the model using large-scale features in images \cite{lee2017superhuman}.
+The segmentation methods that are mostly related to this thesis predict edge weights in the form of pixel-pair affinities \cite{Gao_2019_ICCV,liu2018affinity,lee2017superhuman}, which represent how likely it is for a pair of pixels to be in the same object instance. These approaches not only predict affinities for pairs of direct-neighboring pixels in the image, but they also learn long-range pixel-pair affinities \TODO{Fig}, since this proved to improve training and help the model to use large-scale features in images \cite{lee2017superhuman}.
 
 In the following section, we will review the task of neuron segmentation in the field of connectomics, which has often been tackled by using graph-based instance segmentations methods. Then, in Section \ref{sec:graph_partitioning_intro}, we will introduce the main graph partitioning algorithms studied in this thesis.
 
@@ -43,6 +43,7 @@ In the following section, we will review the task of neuron segmentation in the 
 
  
 \subsection{Neuron Segmentation in Connectomics}
+\TODO{Fig}
 Connectomics is a field of neuroscience with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system. This comprehensive map of neural connections within a brain is known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
 
 In 2017, the whole brain of an adult Drosophila melanogaster, with a volume of approximately $8\cdot 10^7 \mu m^3$ and comprising $\sim$100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB \cite{zheng2018complete}. Similar projects are generating petabytes of data \cite{yin2020petascale}, and a mouse brain of $500$ mm$^3$, at a typical isotropic resolution of 8 nm, would require almost 1000 petabytes of data.

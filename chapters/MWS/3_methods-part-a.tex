@@ -30,7 +30,7 @@ and collect them in $E^{-} = \{  e \in E \,|\, w_e < 0 \}$ and $E^{+} = \{ e \in
 In our application, each vertex corresponds to one pixel in the image to be segmented. 
 % \REVIEW{\sout{Edges can be either {\it local/short-range} (when connecting two pixels that are immediately adjacent in the image) or {\it long-range}.}}
 % Our algorithm ``activates'' attractive edges to merge and introduces mutual exclusion relations by ``activating'' repulsive edges. Given the ``active'' subset $A^+ \subseteq E^+$ of attractive edges, clusters are defined via the ``connected'' predicate: 
-The Mutex Watershed algorithm, defined in \autoref{3_3_MWS}, maintains disjunct active sets $A^+ \subseteq E^+$, $A^- \subseteq E^-$, $A^+ \cap A^- = \emptyset$ that encode merges and mutual exclusion constraints, respectively. Clusters are defined via the ``connected'' predicate: %
+The Mutex Watershed algorithm, defined in Section \ref{3_3_MWS}, maintains disjunct active sets $A^+ \subseteq E^+$, $A^- \subseteq E^-$, $A^+ \cap A^- = \emptyset$ that encode merges and mutual exclusion constraints, respectively. Clusters are defined via the ``connected'' predicate: %
 \begin{eqnarray*}
 \forall i,j\in V:\\
 \Pi_{i \rightarrow j} & = & \{ \text{paths } \pi\text{ from }i\text{ to }j\text{ with }\pi\subseteq E^+\}\\
