@@ -66,7 +66,7 @@ for attractive edges (i.e. channels) and repulsive edges (i.e. channels).
     \includegraphics[width=0.4\linewidth]{figures/MWS/images/3d_connection3.pdf}
     \caption{Due to the great anisotropy of the data we limit the Z-plane edges to a distance of 1. The direct neighbors are attractive, whereas the indirect neighbors are repulsive.}\label{fig:3d-connection}
     \end{subfigure}%
-    \caption{Local neighborhood structure of attractive~(green) and repulsive~(red) edges in the Mutex Watershed graph.}
+    \caption[Local neighborhood structure of the graph]{Local neighborhood structure of attractive~(green) and repulsive~(red) edges in the Mutex Watershed graph.}
     \label{fig:connectivity}
 \end{figure}
 Equation \ref{dice_plus} is the S{\o}rensen-Dice coefficient \cite{dice1945measures,sorensen1948method} formulated for fuzzy set membership values.
@@ -128,7 +128,7 @@ described in \cite{beier2017multicut}.
         \caption{Distance Transform Watershed~(WSDT)} \label{fig:wsdt}
     \end{subfigure}
     % \vspace{-0.4cm}
-    \caption{Mutex Watershed and baseline segmentation algorithms applied on the ISBI Challenge test data. Red arrows point out major errors. Orange arrows point to difficult, but correctly segmented regions. All methods share the same input maps.}
+    \caption[Segmentations results for Mutex Watershed and baseline algorithms]{Mutex Watershed and baseline segmentation algorithms applied on the ISBI Challenge test data. Red arrows point out major errors. Orange arrows point to difficult, but correctly segmented regions. All methods share the same input maps.}
     \label{fig:isbi-examples}
 \end{figure}% \captionsetup[figure]{justification=centering, singlelinecheck=off}
 % \begin{figure}
@@ -212,7 +212,7 @@ In contrast, the Mutex Watershed can be applied in 3D out of the box and yields 
             FusionNet + LMC \cite{quan2016fusionnet}& 0.98365   &  0.99130\\ 
             % ICv1 + LMC \cite{beier2017multicut}     & 0.98262   &  0.98945\\        
         \end{tabular}
-        \caption{Top five entries at time of submission on the ISBI 2012 EM Segmentation Challenge. Our Mutex Watershed (MWS) is state-of-the-art without relying on the complex lifted multicut postprocessing used by most other top entries.}
+        \caption[Results on ISBI 2012 EM Segmentation Challenge]{Top five entries at time of submission on the ISBI 2012 EM Segmentation Challenge. Our Mutex Watershed (MWS) is state-of-the-art without relying on the complex lifted multicut postprocessing used by most other top entries.}
         \label{tab:isbi-leaderboard}
 \end{table}
 \begin{table}[t]
@@ -231,7 +231,7 @@ In contrast, the Mutex Watershed can be applied in 3D out of the box and yields 
             WS       & 0.63958   & 0.89237 & 4.9 \\
             % MC-LR Repulsive  &           &         & 6834.77 \\
         \end{tabular}
-        \caption{Comparison on the ISBI 2012 EM Segmentation Challenge to other segmentation strategies, all of which are based on our CNN. Runtimes were measured on a single thread of a Intel Xeon CPU E5-2650 v3 @ 2.30GHz.}
+        \caption[Different segmentation strategies on ISBI 2012 EM Segmentation Challenge]{Comparison on the ISBI 2012 EM Segmentation Challenge to other segmentation strategies, all of which are based on our CNN. Runtimes were measured on a single thread of a Intel Xeon CPU E5-2650 v3 @ 2.30GHz.}
         \label{tab:isbi-baselines}
 \end{table}
 

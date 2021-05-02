@@ -13,7 +13,7 @@ Going all the way from pixels to final segments with a simple procedure, we achi
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/GASP/intro_image_v6.pdf} % left bottom right top
-\caption{\textbf{(a)} Some iterations of \algname{} on a graph with attractive (green) and repulsive (red) interactions. At each iteration, the yellow edge with highest weight is contracted (example with sum linkage criterion is shown). \textbf{(b)} Linkage criteria demonstrated on two small clusters (see definitions in Table~\ref{tab:linkage-criteria} below).  \textbf{(c)} Application of \algname{} to instance segmentation: we show raw data from the CREMI neuron-segmentation challenge and some predictions of our CNN model, where white pixels represent boundary evidence. \textbf{(d)} 
+\caption[GASP: some iterations on a toy graph with different linkage criteria]{\textbf{(a)} Some iterations of \algname{} on a graph with attractive (green) and repulsive (red) interactions. At each iteration, the yellow edge with highest weight is contracted (example with sum linkage criterion is shown). \textbf{(b)} Linkage criteria demonstrated on two small clusters (see definitions in Table~\ref{tab:linkage-criteria} below).  \textbf{(c)} Application of \algname{} to instance segmentation: we show raw data from the CREMI neuron-segmentation challenge and some predictions of our CNN model, where white pixels represent boundary evidence. \textbf{(d)} 
 Seemingly similar linkage criteria can result in very different clustering dynamics, as shown in this example: color coded sequence of merges from early (white) via late (brown) to never (black).
 % \algname{} agglomeration order for sum and average linkage: we show which pairs of neighboring pixels were merged first (white), later on (brown/red), or never (black).
 \label{fig:intro_figure}}
@@ -59,7 +59,7 @@ Seemingly similar linkage criteria can result in very different clustering dynam
 
         \end{tabular}
     \end{subtable} 
-    \caption{Conceptual contribution: Properties of clustering algorithms included in the proposed \algname{} framework, given a linkage criterion, a type of graph (signed or unsigned) and the optional use of cannot-link constraints. New constrained hierarchical clustering algorithms (HCC) proposed in this thesis are highlighted in yellow. For algorithms typeset in bold font we prove that they define an ultrametric on the graph (Eq.~\ref{eq:UM_def}). For algorithms in the green box we show that they are weight-shift invariant (Prop.~\ref{prop:weight_shift_invariant}). 
+    \caption[Conceptual contribution: Clustering algorithms in GASP framework]{Conceptual contribution: Properties of clustering algorithms included in the proposed \algname{} framework, given a linkage criterion, a type of graph (signed or unsigned) and the optional use of cannot-link constraints. New constrained hierarchical clustering algorithms (HCC) proposed in this thesis are highlighted in yellow. For algorithms typeset in bold font we prove that they define an ultrametric on the graph (Eq.~\ref{eq:UM_def}). For algorithms in the green box we show that they are weight-shift invariant (Prop.~\ref{prop:weight_shift_invariant}). 
     Notation: 
     % given a signed graph $\mathcal{G}(V,E, w_e)$, we denote as 
     $E_{ij}=(S_i \times S_{j}) \cap E$ denotes the set of edges connecting two clusters $S_i, S_j \subseteq V$. } 

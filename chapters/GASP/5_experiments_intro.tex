@@ -19,7 +19,7 @@
         \emph{Fruit-Fly Level Global} \cite{pape2017solving} & \emph{3D-RAG} & 1& 90m & 650m \\
         \end{tabular}
     \end{subtable} 
-    \caption{List of compared signed graph clustering problems: for each, we specify the number of instances $\# I$, number of nodes $|V|$, and number of edges $|E|$ per instance.} 
+    \caption[List of studied signed graph clustering problems]{List of compared signed graph clustering problems: for each, we specify the number of instances $\# I$, number of nodes $|V|$, and number of edges $|E|$ per instance.} 
     \label{tab:datasets}
 \end{table*}
 
@@ -141,7 +141,7 @@ However, these methods do not scale up to the large graph instances considered h
 \includegraphics[width=\textwidth,trim=0.34in 0.34in 0.34in 0.34in,clip]{./figures/GASP/SSBM_scores/summary_SSBM_experiments_k50.pdf}
 \caption{$k=50$, $p=0.2$}
 \end{subfigure}
-        \caption{
+        \caption[ARAND errors on synthetic graphs]{
 ARAND errors (median values over 20 experiments, lower is better) on synthetic graphs generated with SSBM. We consider $k$ ground truth communities of random size. Graphs have $N=10000$ nodes and edges are randomly added with probability $p$. 
 % The spectral clustering methods, SPONGE and SPONGE$_sym$, were given the true number of clusters as input. 
 % Solid lines represent median values over \TODO{30} experiments. Values between the 25th and the 75th percentile are shown in shaded areas.
@@ -180,7 +180,7 @@ ARAND errors (median values over 20 experiments, lower is better) on synthetic g
 
         \end{tabular}
     \end{subtable} 
-    \caption{We compare algorithms in the \algname{} framework by their value of the multicut objective defined in Eq.~\ref{eq:MC_objective} (lower is better).} 
+    \caption[Multicut objective values achieved by different algorithms]{We compare algorithms in the \algname{} framework by their value of the multicut objective defined in Eq.~\ref{eq:MC_objective} (lower is better).} 
     \label{tab:energies}
 \end{table*}
 
@@ -188,7 +188,7 @@ ARAND errors (median values over 20 experiments, lower is better) on synthetic g
 \centering
 % \includegraphics[width=0.48\textwidth,trim=300 100 300 100, clip]{./figures/GASP/dendrograms/new_agglo_order_OLD.png} % left bottom right top
 \includegraphics[width=\textwidth,trim=0 10 60 0, clip]{./figures/GASP/dendrograms/new_agglo_order.png} % left bottom right top
-\caption{Clustering dynamics and accuracy of GASP variations on stochastic block models. The dendrograms result from three versions of \algname{} on a synthetic graph generated with SSBM ($250$ nodes, edge probability $p=0.05$, flipping probability $\eta=0.1$).  Red and blue colors show which of the two equal-sized ground-truth communities each node belongs to. At the top, dendrograms are truncated at the level of the final clustering $\Pi^*$ returned by \algname{}. \label{fig:dendrograms}}
+\caption[Clustering dynamics of GASP variations on synthetic graphs]{Clustering dynamics and accuracy of GASP variations on stochastic block models. The dendrograms result from three versions of \algname{} on a synthetic graph generated with SSBM ($250$ nodes, edge probability $p=0.05$, flipping probability $\eta=0.1$).  Red and blue colors show which of the two equal-sized ground-truth communities each node belongs to. At the top, dendrograms are truncated at the level of the final clustering $\Pi^*$ returned by \algname{}. \label{fig:dendrograms}}
 \end{figure}
 
 \begin{table*}[t]
@@ -209,7 +209,7 @@ $L_{sym}$ \cite{kunegis2010spectral} & 0.8069 \\
 SPONGE \cite{Cucuringu2019SPONGEAG} & 0.9211 \\
 BNC \cite{chiang2012scalable} & 0.9926 \\
         \end{tabular}
-    \caption{\algname{} compared to spectral clustering methods on a small crop of the CREMI neuron segmentation dataset. 
+    \caption[ARAND errors of GASP and spectral clustering algorithms]{\algname{} compared to spectral clustering methods on a small crop of the CREMI neuron segmentation dataset. 
     Since spectral methods cannot scale to the full CREMI dataset, we evaluated them on a smaller $10\times100\times100$ sub-volume of CREMI training sample B.
     Despite the fact that the true number of ground truth clusters was given as an input to the spectral methods, GASP significantly outperformed them. 
     % SC methods seem to have more difficulties when the graph is sparse. 
@@ -363,20 +363,20 @@ CRU-Net \cite{zeng2017deepem3d} & \CrossedBox &0.566 & 0.229 & 1.081 &  0.389   
         % \vspace*{0.99em}
     % \captionof{table}{Current leading entries  in the CREMI challenge leaderboard \cite{cremiChallenge} (March 2021)}
     % \label{tab:results_cremi_test}
-    \caption{\textbf{(a-b)}: Scores and run times of algorithms in the \algname{} framework on the \emph{CREMI-gridGraph} and \emph{CREMI-3D-RAG} clustering problems: average linkage methods achieved the best accuracy. Measures shown are: Adapted-Rand error (ARAND, lower is better); Variation of Information (VOI) \cite{arganda2015crowdsourcing} (VOI-merge for under-clustering error and VOI-split for over-clustering error, lower values are better). \textbf{(c)}: Current leading entries in the CREMI challenge leaderboard. CREMI-score is given by the geometric mean of (VOI-split + VOI-merge)  and ARAND error (lower is better).}
+    \caption[Scores of GASP algorithms on CREMI neuron segmentation challenge]{\textbf{(a-b)}: Scores and run times of algorithms in the \algname{} framework on the \emph{CREMI-gridGraph} and \emph{CREMI-3D-RAG} clustering problems: average linkage methods achieved the best accuracy. Measures shown are: Adapted-Rand error (ARAND, lower is better); Variation of Information (VOI) \cite{arganda2015crowdsourcing} (VOI-merge for under-clustering error and VOI-split for over-clustering error, lower values are better). \textbf{(c)}: Current leading entries in the CREMI challenge leaderboard. CREMI-score is given by the geometric mean of (VOI-split + VOI-merge)  and ARAND error (lower is better).}
     \label{tab:scores}
 % \end{minipage}
 \end{table}
 \begin{figure}[tp]
 \centering
 \includegraphics[width=\textwidth,trim=0 10 60 0, clip]{./figures/GASP/comparison_GAEC_MWS_Avg.png} % left bottom right top
-\caption{Failure cases of three versions of \algname{} applied to neuron segmentation. Only \emph{wrongly} segmented regions are highlighted in different warm colors. Red arrows point to wrongly split regions; yellow arrows point to false merge errors. HC-Avg returned the best segmentation. Data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.  
+\caption[Failure cases of GASP on neuron segmentation]{Failure cases of three versions of \algname{} applied to neuron segmentation. Only \emph{wrongly} segmented regions are highlighted in different warm colors. Red arrows point to wrongly split regions; yellow arrows point to false merge errors. HC-Avg returned the best segmentation. Data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.  
 \label{fig:failure_cases}}
 \end{figure}
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=0.87\textwidth,trim=0.2in 0.17in 0.2in 0.2in,clip]{./figures/GASP/noise_plots_adapted-rand_1.pdf}
-        \caption{
+        \caption[ARAND errors of GASP on clustering problems perturbed with structured noise]{
 ARAND errors (median values over 20 experiments, lower is better) on \emph{CREMI-gridGraph} clustering problems perturbed with structured noise. Average-linkage algorithms proved to be the most robust.
 % We report median, 25th, and the 75th percentile values over \TODO{30} experiments.
 % \algname{} performances compared to spectral methods on synthetic graphs. The spectral methods were given the true number of clusters as input, in contrast to \algname{}. \TODO{Define paramters SSB; explain percentile stuff (for both noise experiments), user ARAND-error}

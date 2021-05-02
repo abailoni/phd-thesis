@@ -29,13 +29,13 @@ We actually use similar definitions in 3D, but use 2D notation here for simplici
         \centering
         % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
         \includegraphics[width=0.99\textwidth]{./figures/LSIMasks/valid_masks.pdf} % 0.45
-        \captionof{figure}{Examples of expected (\textbf{a-b}) and not expected (\textbf{c-d}) binary 2D \maskname masks. }
+        \captionof{figure}[Examples of expected and not expected masks]{Examples of expected (\textbf{a-b}) and not expected (\textbf{c-d}) binary 2D \maskname masks. }
     \label{fig:valid_masks}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.58\textwidth}
 \centering
 \includegraphics[width=0.99\textwidth]{./figures/LSIMasks/mask_cases_new.pdf} % 0.45
-        \captionof{figure}{Computing instance-aware affinity between pixels $u$ and $v$ from instance masks associated to the central pixel in the patch (orange cross). 
+        \captionof{figure}[Affinities from single-instance masks]{Computing instance-aware affinity between pixels $u$ and $v$ from instance masks associated to the central pixel in the patch (orange cross). 
         % Dashed lines represent ground-truth boundaries separating neighboring segments. 
         % We distinguish three cases: \textbf{(a)} when both pixels are part of the mask, a high affinity between the pixels is predicted; \textbf{(b)} when only one of them is part of the mask, we predict a low affinity; \textbf{(c)} when both pixels are not part of the mask, nothing can be said about their affinity.
         }

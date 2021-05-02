@@ -39,7 +39,7 @@ As a result, we obtain a model that at inference time is no more memory-consumin
         % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
         \includegraphics[width=\textwidth]{./figures/LSIMasks/UNet_architecture.pdf} % 0.45
         \vspace{1em}
-        \caption{\textbf{The architecture of the model}, which is strongly inspired by the 3D-UNet models proposed in \cite{lee2017superhuman,funke2018large}. 
+        \caption[Architecture of the used UNet model]{\textbf{The architecture of the model}, which is strongly inspired by the 3D-UNet models proposed in \cite{lee2017superhuman,funke2018large}. 
         Red numbers indicate the number of used feature maps.
         As we explain in Sec. \ref{sec:models_details}, in this work we consider three models: i) a baseline model based on the three \emph{\sparseBr branches} SNB$_{i=1,2,3}$, shown in the figure; ii) another model based on the four \emph{\encBr branches} ENB$_{i=1,2,3,4}$; iii) and, finally, a combined model trained with all seven branches shown in the Figure.
         Even though the input of the model is a 3D volume, here, for simplicity, we show an example of 2D input image taken from the stack. As output of the \emph{\sparseBr branches} SNB$_{i=1,2,3}$, we show few channels representing some of the predicted affinities (see Table \ref{tab:neighborhood_structures} for details on the sparse neighborhood structures predicted by each branch SNB$_{i=1,2,3}$). We also show the first three principal components of the encoded masks predicted by the \emph{\encBr branches} ENB$_{i=1,2,3,4}$. All branches ENB$_{i=1,2,3,4}$ predict \maskname masks of the same window size $7 \times 7 \times 5$, but at different resolutions.}
@@ -50,7 +50,7 @@ As a result, we obtain a model that at inference time is no more memory-consumin
 \centering
         % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
         \includegraphics[width=\textwidth,trim=1.80in 1.4in 1.8in 1.50in,clip]{./figures/LSIMasks/MWS_segm.pdf} % 0.45
-        \caption{Raw data from the validation set overlaid with the final instance segmentation obtained with our method: affinities are computed by averaging overlapping masks (MaskAggr); the final segmentation is achieved by running the Mutex Watershed algorithm on the obtained graph with positive and negative edge weights. Note that the data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.}
+        \caption[Raw data and obtained instance segmentation on neuron segmentation]{Raw data from the validation set overlaid with the final instance segmentation obtained with our method: affinities are computed by averaging overlapping masks (MaskAggr); the final segmentation is achieved by running the Mutex Watershed algorithm on the obtained graph with positive and negative edge weights. Note that the data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D.}
     \label{fig:MWS_segm}
 \end{figure}
 
@@ -63,7 +63,7 @@ As a result, we obtain a model that at inference time is no more memory-consumin
         % \includegraphics[width=0.4\textwidth,trim=0.25in 0.25in 0.68in 0.36in,clip]{./figures/LSIMasks/SSBM_experiments.pdf} % 0.45
         \includegraphics[width=\textwidth]{./figures/LSIMasks/PCA_embeddings.pdf} % 0.45
         \vspace{1em}
-        \caption{\textbf{Visualization of the predicted single-instance mask latent spaces} -- Each column represents a 2D image from the 3D stack (only five are shown here). \textbf{(a)} Ground-truth labels. \textbf{(b)} Raw image given as input to the model. \textbf{(c-d-e-f)} Visualization of the first three principal components of the $32$-dimensional mask latent spaces predicted by the \encBr branches ENB$_{i=1,2,3,4}$ in our model. Note how latent spaces learned at different levels of the U-Net pyramid show different feature-scales, because they encode \maskname masks at different resolutions.}
+        \caption[Visualization of the predicted single-instance mask latent spaces]{\textbf{Visualization of the predicted single-instance mask latent spaces} -- Each column represents a 2D image from the 3D stack (only five are shown here). \textbf{(a)} Ground-truth labels. \textbf{(b)} Raw image given as input to the model. \textbf{(c-d-e-f)} Visualization of the first three principal components of the $32$-dimensional mask latent spaces predicted by the \encBr branches ENB$_{i=1,2,3,4}$ in our model. Note how latent spaces learned at different levels of the U-Net pyramid show different feature-scales, because they encode \maskname masks at different resolutions.}
     \label{fig:PCA_embeddings}
 \end{figure}
 
@@ -211,7 +211,7 @@ After running the graph partitioning method, we use a simple post-processing ste
 
 
 
-\caption{Comparison between different affinities and their robustness to noise. \textbf{\mbox{(a-b)}} Raw data and ground-truth labels. \textbf{(c-d)} Affinities predicted by the \emph{sparse-neighborhood branch}, which is trained with a dense binary classification loss (high affinities are red). \textbf{(e-f)} Affinities computed by averaging overlapping masks as explained in Sec. \ref{sec:aggr_affs} (MaskAggr). Affinities from averaged masks are smoother and present a more consistent boundary evidence in the noisy region highlighted by the red circle in (a). Here we show affinities along the horizontal (-4, 0, 0) and vertical (0, -4, 0) directions.}\label{fig:affs_comparison}
+\caption[Comparison between different affinities and their robustness to noise]{Comparison between different affinities and their robustness to noise. \textbf{\mbox{(a-b)}} Raw data and ground-truth labels. \textbf{(c-d)} Affinities predicted by the \emph{sparse-neighborhood branch}, which is trained with a dense binary classification loss (high affinities are red). \textbf{(e-f)} Affinities computed by averaging overlapping masks as explained in Sec. \ref{sec:aggr_affs} (MaskAggr). Affinities from averaged masks are smoother and present a more consistent boundary evidence in the noisy region highlighted by the red circle in (a). Here we show affinities along the horizontal (-4, 0, 0) and vertical (0, -4, 0) directions.}\label{fig:affs_comparison}
 \end{figure}
 
 \subsection{Results and Discussion}
@@ -357,7 +357,7 @@ Finally, we also note that superpixel-based methods did not perform equally well
         \end{tabular}
         % }
         \vspace{1em}
-        \caption{Comparison experiments on our CREMI validation set. Training encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art approach training only affinities for a sparse neighborhood (SNB). The model that performed best was the one using the method proposed in Sec. \ref{sec:aggr_affs} to average overlapping masks (MaskAggr). } \label{tab:val_results}
+        \caption[Comparison experiments on CREMI validation set]{Comparison experiments on our CREMI validation set. Training encoded \maskname masks (ENB) achieved better scores than the current state-of-the-art approach training only affinities for a sparse neighborhood (SNB). The model that performed best was the one using the method proposed in Sec. \ref{sec:aggr_affs} to average overlapping masks (MaskAggr). } \label{tab:val_results}
 \end{table}
 
 
@@ -404,7 +404,7 @@ CRUNet\cite{zeng2017deepem3d} & \HollowBox & \HollowBox & \HollowBox & 3D-Waters
 LFC\cite{parag2017anisotropic} & \CrossedBox & \HollowBox & \HollowBox & Z-Watershed+Agglo & \HollowBox & 0.616  \\
         \end{tabular}
         \vspace*{0.99em}
-    \caption{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremi}. The best method proposed here achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
+    \caption[Achieved scores on the CREMI neuron segmentation challenge]{Representative excerpt of the published methods currently part of the CREMI leaderboard \cite{cremi}. The best method proposed here achieves competitive scores and is based on an efficient parameter-free algorithm that does not rely on superpixels. For more details about the partitioning algorithms used by related work, see references in the first column.}
     \label{tab:test_results}
 \end{minipage}
 \end{table}
@@ -440,7 +440,7 @@ LFC\cite{parag2017anisotropic} & \CrossedBox & \HollowBox & \HollowBox & Z-Water
         \end{tabular}
         % }
         \vspace{3em}
-        \caption{\textbf{Sparse neighborhood structures} --  
+        \caption[Sparse neighborhood structures]{\textbf{Sparse neighborhood structures} --  
         In this table, we represent sparse neighborhood structures (see for example the one shown in Fig. \ref{fig:main_figure}a) as lists of offsets $(\delta_x,\delta_y, \delta_z)$ indicating the relative coordinates of neighboring pixels with respect to the central pixel.
         The first column shows the neighborhood structure of the pixel grid-graph, such that each pixel / node is connected to 16 neighbors. In the following columns, we provide the neighborhood structures predicted by the three \emph{\sparseBr branches} SNB$_i$ used in our model (see architecture in Fig. \ref{fig:model_architecture}).
         These neighborhood structures were inspired by the ones used in \cite{wolf2018mutex,lee2017superhuman} but were adapted to our version of the CREMI data that is downscaled by a factor $(\frac{1}{2},\frac{1}{2},1)$. Note that the offsets provided here are given in the downscaled resolution.} \label{tab:neighborhood_structures}

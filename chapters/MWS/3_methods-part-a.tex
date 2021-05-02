@@ -51,7 +51,7 @@ The ``connected'' and ``mutex'' predicates can be efficiently evaluated using a 
 \centering
 \includegraphics[width=\linewidth]{figures/MWS/images/seeded-WS.pdf}%
    %\includegraphics[width=0.8\linewidth]{egfigure.eps}
-   \caption{Two equivalent representations of the seeded watershed clustering obtained using (a) a maximum spanning tree computation or (b) Algorithm \ref{WS_algo_code}. Both graphs share the weighted attractive~(green) edges and seeds (hatched nodes). The infinitely attractive connections to the auxiliary node (gray) in (a) are replaced by infinitely repulsive~(red) edges between each pair of seeds in (b). The two final clusterings are defined by the active sets (bold edges) and are identical. Node colors indicate the clustering result, but are arbitrary.}
+   \caption[Two equivalent representations of the seeded watershed clustering]{Two equivalent representations of the seeded watershed clustering obtained using (a) a maximum spanning tree computation or (b) Algorithm \ref{WS_algo_code}. Both graphs share the weighted attractive~(green) edges and seeds (hatched nodes). The infinitely attractive connections to the auxiliary node (gray) in (a) are replaced by infinitely repulsive~(red) edges between each pair of seeds in (b). The two final clusterings are defined by the active sets (bold edges) and are identical. Node colors indicate the clustering result, but are arbitrary.}
 \label{fig:WS_compare}
 \end{figure}
 
@@ -142,7 +142,7 @@ In the sequel, we generalize this construction by admitting less-than-infinitely
 % \includegraphics[width=\linewidth]{images/exampleg1.png}
 % \includegraphics[width=\linewidth]{images/exampleg2.png}
    %\includegraphics[width=0.8\linewidth]{egfigure.eps}
-   \caption{Some iterations of the Mutex Watershed Algorithm \ref{algo_code_efficient} applied to a graph with weighted attractive (green) and repulsive (red) edges. Edges accumulated in the active set $A$ after a given number of iterations are shown in bold. \REVIEW{The $\operator{connect\_all}$ parameter of the algorithm is set to $\operator{False}$, so that only the positive edges belonging to the maximum spanning tree of each cluster are added to the active set.} Once the algorithm terminates, the final active set (f) defines the final clustering (indicated using arbitrary node colors). Some edges are not added to the active set because they are mutex constrained~(yellow highlight) or because the associated nodes are already connected and in the same cluster~(blue highlight).}
+   \caption[Some iterations of the Mutex Watershed Algorithm]{Some iterations of the Mutex Watershed Algorithm \ref{algo_code_efficient} applied to a graph with weighted attractive (green) and repulsive (red) edges. Edges accumulated in the active set $A$ after a given number of iterations are shown in bold. \REVIEW{The $\operator{connect\_all}$ parameter of the algorithm is set to $\operator{False}$, so that only the positive edges belonging to the maximum spanning tree of each cluster are added to the active set.} Once the algorithm terminates, the final active set (f) defines the final clustering (indicated using arbitrary node colors). Some edges are not added to the active set because they are mutex constrained~(yellow highlight) or because the associated nodes are already connected and in the same cluster~(blue highlight).}
    %Some edges that are not added to the active set because they would violate constraints $\mathcal{C}_{0}$ or $\mathcal{C}_{1}$ are highlighted in blue and yellow, respectively. \TODO{Update}}
 \label{fig:MWS_algorithm}
 \end{figure}
@@ -195,7 +195,7 @@ where $M$ is the expected value of $\min (|M[C_i]|, |M[C_j]|)$ and $\alpha(V) \i
    \centering
 \adjustbox{width=0.88\linewidth}{
        \input{figures/MWS/fig/runtime/runtime.pgf}}
-   \caption{Runtime $T$ of Mutex Watershed (without sorting of edges) measured on sub-volumes of the ISBI challenge of different sizes~(thereby varying the total number of edges $E$). We plot $\frac{T}{|E|}$ over $|E|$ in a logarithmic plot, which makes $T \sim |E| log(|E|)$ appear as straight line. A logarithmic function (blue line) is fitted to the measured $\frac{T}{|E|}$ (blue circles) with ($R^2 = 0.9896$). The good fit suggests that empirically $T \approx \mathcal{O}(E \log E)$.}
+   \caption[Runtime of the Mutex Watershed algorithm]{Runtime $T$ of Mutex Watershed (without sorting of edges) measured on sub-volumes of the ISBI challenge of different sizes~(thereby varying the total number of edges $E$). We plot $\frac{T}{|E|}$ over $|E|$ in a logarithmic plot, which makes $T \sim |E| log(|E|)$ appear as straight line. A logarithmic function (blue line) is fitted to the measured $\frac{T}{|E|}$ (blue circles) with ($R^2 = 0.9896$). The good fit suggests that empirically $T \approx \mathcal{O}(E \log E)$.}
 \label{fig:scalingM}
 \end{figure}
 

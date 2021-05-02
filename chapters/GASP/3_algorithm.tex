@@ -173,10 +173,10 @@ On signed graphs, the sum of two attractive (or repulsive) interactions is still
 % , because some clusters are wrongly constrained in phase one and only merged in phase two. 
 % removing constraints in phase two   However, in our experiments, we noted that constrained sum-link version of \algname{} proposed here (named \emph{HCC-Sum} in Table~\ref{tab:linkage-criteria}) .
 
-\paragraph{AbsMax Linkage} This linkage method is also specific to signed graphs, since on unsigned graphs it would be equivalent to single linkage. Here, we prove that the Mutex Watershed Algorithm \cite{wolf2018mutex} can be seen as an agglomerative algorithm with AbsMax linkage (proofs of the following three propositions are given in Appendix \ref{sec:proposition_proofs}):
+\paragraph{AbsMax Linkage} This linkage method is also specific to signed graphs, since on unsigned graphs it would be equivalent to single linkage. Here, we prove that the Mutex Watershed Algorithm \cite{wolf2018mutex} introduced in Chapter \ref{chapter:MWS} can be seen as an agglomerative algorithm with AbsMax linkage (proofs of the following three propositions are given in Appendix \ref{sec:proposition_proofs}):
 \begin{restatable}{prop}{absmaxmutex}
 \label{prop:absmax_mutex}
-The \algname{} Algorithm \ref{main_alg} with AbsMax linkage, with or without cannot link constraints, returns the same final clustering $\Pi^*_{\mathrm{AbsMax}}$ also returned by the Mutex Watershed Algorithm (MWS) \cite{wolf2018mutex}, which has empirical complexity $\mathcal{O}(N \log N)$.
+The \algname{} Algorithm \ref{main_alg} with AbsMax linkage, with or without cannot link constraints, returns the same final clustering $\Pi^*_{\mathrm{AbsMax}}$ also returned by the Mutex Watershed Algorithm (MWS) \cite{wolf2018mutex} (see Chapter \ref{chapter:MWS}), which has empirical complexity $\mathcal{O}(N \log N)$.
 \end{restatable}
 % \begin{prop} 
 % \end{prop}

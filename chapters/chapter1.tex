@@ -35,10 +35,28 @@ In this thesis, instead, we study \emph{proposal-free} methods, which do not req
 These types of methods are preferred in imagery with object instances that cannot be approximated by bounding boxes and are much larger than the field of view of the model. 
 
 This thesis focuses on graph-based proposal-free segmentation methods, which solve the instance segmentation task by formalizing the input image as a graph. Nodes in the graph usually represent pixels or sets of pixels (commonly named \emph{superpixels}), whereas graph edges express neighboring relationships between pixels. In these graph-based instance segmentation approaches, an FCN is trained to predict the graph's edge weights. Then, a more or less complex graph-partitioning algorithm is employed to output the final instance segmentation. 
-The segmentation methods that are mostly related to this thesis predict edge weights in the form of pixel-pair affinities \cite{Gao_2019_ICCV,liu2018affinity,lee2017superhuman}, which represent how likely it is for a pair of pixels to be in the same object instance. These approaches not only predict affinities for pairs of direct-neighboring pixels in the image, but they also learn long-range pixel-pair affinities \TODO{Fig}, since this proved to improve training and help the model to use large-scale features in images \cite{lee2017superhuman}.
+The segmentation methods that are mostly related to this thesis predict edge weights in the form of pixel-pair affinities \cite{Gao_2019_ICCV,liu2018affinity,lee2017superhuman}, which represent how likely it is for a pair of pixels to be in the same object instance. These approaches not only predict affinities for pairs of direct-neighboring pixels in the image, but they also learn long-range pixel-pair affinities, since this proved to improve training and help the model to use large-scale features in images \cite{lee2017superhuman}.
 
 In the following section, we will review the task of neuron segmentation in the field of connectomics, which has often been tackled by using graph-based instance segmentations methods. Then, in Section \ref{sec:graph_partitioning_intro}, we will introduce the main graph partitioning algorithms studied in this thesis.
 
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=0.7\linewidth]{figures/connectomics-pipeline.png}%
+%     \caption{High-level connectome reconstruction pipeline}
+%     \label{fig:connectome_pipeline}
+%     % \vspace{-0.05cm}
+% \end{figure}
+
+
+
+
+\begin{figure}[tp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/hemi-brain-data.jpg}%
+    \caption{Neuron segmentation data}
+    \label{fig:neuron_segmentation_data}
+    % \vspace{-0.05cm}
+\end{figure}
 
 
  

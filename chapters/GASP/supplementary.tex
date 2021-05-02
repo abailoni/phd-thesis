@@ -70,7 +70,7 @@ In Fig. \ref{fig:edge_contraction_and_contr_graph} we show an example of edge co
   % \label{fig:abs_max_proof_example}  
   % \end{figure*}
   \begin{algorithm*}[p]
-    \caption{Mutex Watershed Algorithm proposed by \cite{wolf2018mutex}}
+    \caption[Alternative formulation of the Mutex Watershed Algorithm]{Mutex Watershed Algorithm proposed in Chapter \ref{chapter:MWS}}
   \hspace*{\algorithmicindent} \textbf{Input:} $\mathcal{G}(V,E,w^+,w^-)$ with $N$ nodes and $M$ edges \\
   \hspace*{\algorithmicindent} \textbf{Output:} Final clustering \\
     \hspace*{\algorithmicindent} 
@@ -121,14 +121,14 @@ If, on the other hand, the interaction is repulsive ($\tilde{\cost}_{uv}\leq 0$)
             Single: & \thead[l]{$f(\tilde{\cost}_1,\tilde{\cost}_2) = \max \{ \tilde{\cost}_1, \tilde{\cost}_2 \}  $} \\
             Complete:& \thead[l]{$f(\tilde{\cost}_1,\tilde{\cost}_2) = \min \{ \tilde{\cost}_1, \tilde{\cost}_2 \}  $} 
         \end{tabular}\vspace{1em}
-        \caption{The table lists the update rules $f(\tilde{\cost}_1, \tilde{\cost}_2)$ associated to the linkage criteria of Table \ref{tab:linkage-criteria} and that are used to efficiently update the interactions between clusters.}
+        \caption[Update rules associated to different linkage criteria]{The table lists the update rules $f(\tilde{\cost}_1, \tilde{\cost}_2)$ associated to the linkage criteria of Table \ref{tab:linkage-criteria} and that are used to efficiently update the interactions between clusters.}
 \label{tab:linkage_criteria_explicit}  
 \end{table}
 \begin{figure}[t]
         \centering
         \includegraphics[width=0.48\textwidth]{./figures/GASP/edge_contraction.pdf} % left bottom right top
     \centering
-    \caption{Example of edge contraction. First row: original graph $\mathcal{G}$; clustering $\Pi$ (gray shaded areas) with dashed edges on cut; cannot-link constraints (violet bars). Second row: contracted graph $\tilde{\mathcal{G}}_\Pi$. In step ii), edge $e_{uv}$ is contracted and node $v$ deleted from $\tilde{\mathcal{G}}_\Pi$. In step iii), double edges $e_{tu}$ and $e_{tv}$ resulting from the edge contraction are replaced by a single edge with updated interaction.}\label{fig:edge_contraction_and_contr_graph}  
+    \caption[Example of edge contraction]{Example of edge contraction. First row: original graph $\mathcal{G}$; clustering $\Pi$ (gray shaded areas) with dashed edges on cut; cannot-link constraints (violet bars). Second row: contracted graph $\tilde{\mathcal{G}}_\Pi$. In step ii), edge $e_{uv}$ is contracted and node $v$ deleted from $\tilde{\mathcal{G}}_\Pi$. In step iii), double edges $e_{tu}$ and $e_{tv}$ resulting from the edge contraction are replaced by a single edge with updated interaction.}\label{fig:edge_contraction_and_contr_graph}  
 \end{figure}
 
 
@@ -223,7 +223,7 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
 % \includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-GAEC-shifted.pdf}
 % \caption{Graph with shifted edge-weights ($\alpha=-3$) and GAEC dendrogram}
 % \end{subfigure}
-        \caption{ Counter-example showing that GAEC is not weight-shift invariant.
+        \caption[Counter-example: GAEC is not weight-shift invariant]{ Counter-example showing that GAEC is not weight-shift invariant.
         } \label{fig:counter_examples_shift_inv_GAEC}
 \end{figure}
 \begin{figure}[tp]
@@ -239,7 +239,7 @@ However, since with an Abs. Max. linkage the interaction between clusters is sim
 % \includegraphics[width=\textwidth,trim=0in 0in 0in 0in,clip]{./figures/GASP/counter-examples/counter-example-shifted.pdf}
 % \caption{Graph with shifted edge-weights ($\alpha=+2$) and dendrogram}
 % \end{subfigure}
-        \caption{ Counter-example showing that HCC-Sum, MWS, HCC-Avg, and HCC-Single are not weight-shift invariant.
+        \caption[Counter-examples for not weight-shift invariant algorithms]{ Counter-example showing that HCC-Sum, MWS, HCC-Avg, and HCC-Single are not weight-shift invariant.
         } \label{fig:counter_examples_shift_inv}
 \end{figure}
 
@@ -504,7 +504,7 @@ In our experiments, each pixel is represented by a node in the grid-graph and it
 \begin{figure*}[t]
 \centering
         \includegraphics[width=\textwidth,trim=0.0in -0.in -0.0in -0.4in,clip]{./figures/GASP/noisy_affs_comparison_v2.pdf}
-    \caption{CNN predictions on a slice of the CREMI neuron segmentation challenge with and without additional spatially-correlated noise. (\textbf{a}) Raw data (\textbf{b}) Original CNN predictions $F(x)$, where blue pixels represent boundary evidence (\textbf{c}) Strongly perturbed version $\tilde{F}(x;\mathcal{K})$ of the predictions defined in Eq. \ref{eq:noise_biased_predictions} with $\mathcal{K}=8$. Long-range predictions are not shown. 
+    \caption[CNN predictions with and without additional spatially-correlated noise]{CNN predictions on a slice of the CREMI neuron segmentation challenge with and without additional spatially-correlated noise. (\textbf{a}) Raw data (\textbf{b}) Original CNN predictions $F(x)$, where blue pixels represent boundary evidence (\textbf{c}) Strongly perturbed version $\tilde{F}(x;\mathcal{K})$ of the predictions defined in Eq. \ref{eq:noise_biased_predictions} with $\mathcal{K}=8$. Long-range predictions are not shown. 
     }
     \label{fig:noisy_affs}
 \end{figure*}
