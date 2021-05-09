@@ -146,14 +146,14 @@ Moreover, \algname{} with \emph{Absolute Maximum} linkage can be implemented mor
 \section{Proofs of Propositions in Section \ref{sec:alg_update_rules}}
 \label{sec:proposition_proofs}
 
-\begin{lemma} \label{lemma:absMax_and_complete_not_positive}
+\begin{lemma} \label{lemma:complete_not_positive}
 If \algname{} Algorithm \ref{main_alg} with \textbf{Complete linkage criteria} enforces a constraint between two clusters in \emph{Phase 1}, then the interaction between the clusters will never become positive over the course of the following agglomeration steps.
 \end{lemma}
 \begin{proof}
 Two clusters are constrained in \emph{Phase 1} only if their interaction is repulsive and, with complete linkage,  the signed interaction between two clusters can only decrease over the course of the agglomeration. Thus, if two clusters are constrained by the algorithm, their negative interaction cannot increase and become positive later on in the agglomeration process.
 \end{proof}
 
-\begin{lemma} \label{lemma:absMax_and_complete_not_positive}
+\begin{lemma} \label{lemma:absMax_not_positive}
 If \algname{} Algorithm \ref{main_alg} with \textbf{AbsMax linkage criteria} enforces a constraint between two clusters in \emph{Phase 1}, then the interaction between the clusters will never become positive over the course of the following agglomeration steps.
 \end{lemma}
 \begin{proof}
@@ -165,7 +165,7 @@ If such clusters $S_l, S_t$ with positive interaction exist, we note that they m
 In the \algname{} Algorithm \ref{main_alg} with AbsMax or Complete linkage criteria (see linkage definition in Table \ref{tab:linkage-criteria}), the same final clustering is returned whether or not cannot-link constraints are enforced.
 \end{lemma}
 \begin{proof}
-In phase 1 of Algorithm \ref{detailed_alg}, two clusters are merged only if the condition at line 9 is satisfied (i.e. when an interaction is both positive and not constrained). From Lemma \ref{lemma:absMax_and_complete_not_positive} and Lemma \ref{lemma:absMax_and_complete_not_positive} follows that with Complete and AbsMax linkage an interaction can never be both positive and constrained at the same time, so we directly conclude that the constrained and unconstrained versions of the algorithm will perform precisely the same agglomeration steps in phase 1.
+In phase 1 of Algorithm \ref{detailed_alg}, two clusters are merged only if the condition at line 9 is satisfied (i.e. when an interaction is both positive and not constrained). From Lemma \ref{lemma:complete_not_positive} and Lemma \ref{lemma:absMax_not_positive} follows that with Complete and AbsMax linkage an interaction can never be both positive and constrained at the same time, so we directly conclude that the constrained and unconstrained versions of the algorithm will perform precisely the same agglomeration steps in phase 1.
 In phase 2 (after constraints have been removed) no clusters are merged because all interactions are already negative (whether they previously constrained or not). Thus, both constrained and unconstrained versions of \algname{} return the same clustering $\Pi^*$.
 \end{proof}
 

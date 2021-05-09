@@ -11,7 +11,7 @@ A typical example is the task of image classification, where an image is assigne
 Another important example is \emph{image segmentation}, which is the process of partitioning an image into meaningful segments or sets of pixels. 
 
 There exist two types of image segmentation: \emph{Semantic segmentation} assigns each pixel of the image to a label from a defined set of classes (e.g. person, car, tree, sky); \emph{Instance segmentation} assigns each pixel not only to a class but also to a unique instance id so that different object instances belonging to the same class are distinguished (e.g. car-1, car-2, person-1). 
-In this thesis, we focus on instance segmentation. An example of an application is the segmentation of neuronal tissue images (see \TODO{Fig.} \ref{}). In this task, there is only one class of objects (neuron cells), and each pixel has to be assigned to its corresponding neuron cell so that all pixels belonging to the same neuron cell are grouped together. 
+In this thesis, we focus on instance segmentation. An example of an application is the segmentation of neuronal tissue images (see Fig.~ \ref{fig:neuron_segmentation_data} and \ref{fig:segmentation_cremi_GASP}). In this task, there is only one class of objects (neuron cells), and each pixel has to be assigned to its corresponding neuron cell so that all pixels belonging to the same neuron cell are grouped together. 
 % Note that the number of neuron cells is not known beforehand. 
 
 In the following sections, we will introduce the methods and graph partitioning algorithms that are studied in this thesis, and show how they can be used to solve instance segmentation tasks such as neuron segmentation.
@@ -39,29 +39,36 @@ The segmentation methods that are mostly related to this thesis predict edge wei
 
 In the following section, we will review the task of neuron segmentation in the field of connectomics, which has often been tackled by using graph-based instance segmentations methods. Then, in Section \ref{sec:graph_partitioning_intro}, we will introduce the main graph partitioning algorithms studied in this thesis.
 
-% \begin{figure}[t]
-%     \centering
-%     \includegraphics[width=0.7\linewidth]{figures/connectomics-pipeline.png}%
-%     \caption{High-level connectome reconstruction pipeline}
-%     \label{fig:connectome_pipeline}
-%     % \vspace{-0.05cm}
-% \end{figure}
-
-
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/zoom-in-fruitfly.png}%
+    \caption[Illustration of neuron reconstruction]{Reconstruction of the neural wiring diagram of the fruit-fly \emph{Drosophila melanogaster}. The neuronal processes are reconstructed from serial section transmission EM (TEM) volumes (shown on the left) of the organism's neural tissue. Four automatically reconstructed neuron instances are displayed in different colors. On the right, the ventral view of the brain is shown (image taken from \cite{zheng2018complete}).}
+    \label{fig:zoom_in_fruitfly}
+    % \vspace{-0.05cm}
+\end{figure}
 
 
 \begin{figure}[tp]
     \centering
-    \includegraphics[width=\linewidth]{figures/hemi-brain-data.jpg}%
-    \caption{Neuron segmentation data}
+    \includegraphics[width=0.8\linewidth]{figures/hemi-brain-data.jpg}%
+    \caption[Image of neuronal tissue at different scales]{Example of electron microscopy volume image of neuronal tissue with isotropic resolution of $8 \times 8 \times 8$ nm$^3$ shown at three different scales. Data is taken from the hemibrain \cite{Xu2020.01.21.911859}: the dataset covers a large portion of the central brain of the fruit fly \emph{Drosophila melanogaster}, including the mushroom body and central complex circuits critical for associative learning and fly navigation.  Data is three dimensional. Only one 2D image from the stack is shown.}
     \label{fig:neuron_segmentation_data}
+    % \vspace{-0.05cm}
+\end{figure}
+
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=\linewidth,trim=0 0 100 0, clip]{figures/segmentation-cremi.jpg}%
+    \caption[Dense segmentation obtained with GASP and average linkage]{
+Neuron segmentation data overlaid with the dense instance segmentation obtained with the method proposed in Chapter \ref{chapter:GASP} (\emph{GASP} with average linkage). Colors are randomly assigned. Note that the data is 3D, hence the same color could be assigned to parts of segments that appear disconnected in 2D. Only one 2D image from the stack is shown here. Data is taken from the test set of the CREMI neuron segmentation challenge \cite{cremi}.}
+    \label{fig:segmentation_cremi_GASP}
     % \vspace{-0.05cm}
 \end{figure}
 
 
  
 \subsection{Neuron Segmentation in Connectomics}
-\TODO{Fig}
 Connectomics is a field of neuroscience with the goal of reconstructing the complete neural wiring diagram of an organism's central nervous system. This comprehensive map of neural connections within a brain is known as the \emph{connectome}. A fundamental step towards the reconstruction of the connectome is the segmentation of neural tissue images, which are commonly acquired using electron microscopy techniques (e.g., serial section transmission EM) yielding 3D image volumes. 
 
 In 2017, the whole brain of an adult Drosophila melanogaster, with a volume of approximately $8\cdot 10^7 \mu m^3$ and comprising $\sim$100,000 neurons has been imaged with nanometer resolution producing a dataset of 106 TB \cite{zheng2018complete}. Similar projects are generating petabytes of data \cite{yin2020petascale}, and a mouse brain of $500$ mm$^3$, at a typical isotropic resolution of 8 nm, would require almost 1000 petabytes of data.
@@ -76,6 +83,7 @@ Originally, many proposed methods predicted a boundary evidence map indicating h
 In the next section, we will review some of the graph partitioning algorithms used in these graph-based segmentation pipelines and studied in this thesis.
 
 
+
 \section{Graph Partitioning Algorithms}\label{sec:graph_partitioning_intro}
 In the previous sections, we have seen that graph-based instance segmentation methods have been successfully applied to neuron segmentation. In this section, we review the basic ideas and notation of graph-based segmentation algorithms studied in this thesis.
 
@@ -84,14 +92,22 @@ Usually, graph-based image segmentation methods represent the image as a graph $
 \subsection{Agglomerative Hierarchical Clustering}
 The majority of graph clustering methods work with positive edge weights representing similarities or distances between the nodes. These methods require the user to specify the desired numbers of segments or a termination criterion (as in spectral clustering or iterated normalized cuts) or even a stronger version of supervision by adding a seed for each object (e.g. in seeded watershed or random walker).  
 
-Hierarchical clustering (HC) is another popular graph clustering method, which creates a hierarchy of clusters. Agglomerative HC is a bottom-up approach starting with each node assigned to its own cluster and incrementally merging clusters while moving up the hierarchy \cite{lance1967general}. As compared to other divisive partitioning algorithms (e.g. normalized graph cut), agglomerative clustering is a much more efficient method that, with a heap data-structure, has a time complexity of $\mathcal{O}(m^2 \log m)$, where $m$ is the number of edges in the graph. 
+Hierarchical clustering (HC) is another popular graph clustering method, which creates a hierarchy of clusters. Agglomerative HC is a bottom-up approach starting with each node assigned to its own cluster and incrementally merging clusters starting from those with the highest edge weight \cite{lance1967general}. As compared to other divisive partitioning algorithms (e.g. normalized graph cut), agglomerative clustering is a much more efficient method that, with a heap data-structure, has a time complexity of $\mathcal{O}(m^2 \log m)$, where $m$ is the number of edges in the graph. 
 
 In Algorithm \ref{HC_algoritm}, we show a simplified pseudo-code describing this simple partitioning algorithm. Apart from the weighted graph, another input of the algorithm is the so-called \emph{linkage criterion}, which defines the interaction between two clusters containing multiple nodes. For example, average linkage criterion is a very common one, where the interaction between two clusters is given by the average of all the edge weights connecting them. Each time two clusters are merged by the algorithm at line 5, the interaction between the newly formed merged cluster and its neighbors has to be updated by using the given linkage criterion. 
-Finally, the algorithm returns the hierarchy of clusters in the form of a \emph{dendrogram}, which is a rooted tree representing the order in which clusters were merged (see toy example in Fig.~\TODO{simple-dendrogram-figure}). 
+Finally, the algorithm returns the hierarchy of clusters in the form of a \emph{dendrogram}, which is a rooted tree representing the order in which clusters were merged (see toy example in Fig.~\ref{fig:example_HC}). 
 
 A downside of hierarchical agglomerative algorithms is that, after running the algorithm, the user has to choose a level in the cluster hierarchy in order to define the desired output clustering. 
 In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algorithms that are parameter-free because they are based on graphs with both positive and negative edge weights.
 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/example-HC.pdf}%
+    \caption[Agglomerative Hierarchical Clustering demonstrated on a toy graph]{Agglomerative Hierarchical Clustering (with Average linkage criterion) on a toy graph. \textbf{(a)} On the left, the agglomeration steps of the algorithms are demonstrated on a small graph with four nodes. Edge weights are shown in green. At every step, the pair of clusters with highest interaction (according to average linkage) is merged. \textbf{(b)} On the right, the resulting dendrogram is shown, representing the merging hierarchy.}
+    \label{fig:example_HC}
+    % \vspace{-0.05cm}
+\end{figure}
 \begin{algorithm}[t]
 \footnotesize
   \begin{flushleft}
@@ -106,7 +122,7 @@ In Chapter \ref{chapter:GASP}, we will define a framework for agglomerative algo
       \State Initialize empty dendrogram $T$
       % \State Sort interactions between clusters, starting from those with highest affinity $w_e$
       \Repeat 
-        \State Select the two clusters $S$ and $S'$ with highest affinity
+        \State Select the two clusters $S$ and $S'$ with highest interaction
         \State Merge the two selected clusters $S$ and $S'$, and update the dendrogram $T$ accordingly
         \State Update interactions between the new merged cluster $S \cup S'$ and its neighboring clusters, based on the linkage criterion $\interact{}$
       \Until{All nodes have been merged into a single cluster}
